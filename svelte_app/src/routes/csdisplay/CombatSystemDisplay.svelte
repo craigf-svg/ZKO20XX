@@ -140,7 +140,7 @@
       `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%` : '0%'
   
   let dynamicBars = 
-    $derived(Object.entries(matchupData?.moves || SAMPLE_DYNAMIC_DATA?.moves).map([moveName, koPercent]) => {
+    $derived(Object.entries(matchupData?.moves || SAMPLE_DYNAMIC_DATA?.moves).map(([moveName, koPercent]) => {
       const isHighlighted = checkHighlighted(currentPercent, koPercent);
       const calculatedWidth = calcWidth(currentPercent, koPercent);
 
