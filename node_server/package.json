@@ -1,0 +1,27 @@
+{
+  "name": "zko20xx",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@slippi/slippi-js": "^6.7.0",
+    "chokidar": "^4.0.3",
+    "dotenv": "^16.5.0",
+    "lodash": "^4.17.21",
+    "socket.io": "^4.8.1",
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.17",
+    "@types/ws": "^8.18.1",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
