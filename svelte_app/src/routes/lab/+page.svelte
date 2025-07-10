@@ -3,14 +3,17 @@
 <script lang="ts">
   import Bars from '../csdisplay/Bars.svelte';
   import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
-  const toaster = createToaster();
+  const toaster = createToaster({ placement: 'bottom-left'});
 
   const CHARACTER_SHORT_NAMES = [
   'fox', 'falco', 'marth', 'sheik', 'jigglypuff', 'peach', 'iceclimbers',
   'captainfalcon', 'pikachu', 'samus', 'drmario', 'luigi', 'ganondorf',
   'mario', 'link', 'younglink', 'donkeykong', 'yoshi', 'kirby', 'roy',
   'mewtwo', 'gameandwatch', 'zelda', 'ness', 'pichu', 'bowser'
-]
+  ];
+  const FILE_FETCH_ERROR = 'FILE_FETCH_ERROR';
+  const STAGE_NOT_FOUND_ERROR = 'STAGE_NOT_FOUND';
+
   function stageInitialsToName(initials: string): string {
     const stageNames: { [key: string]: string } = {
       DL: "Dream Land N64",
@@ -24,20 +27,22 @@
     return stageNames[initials] || "Battlefield";
   }
 
+  // Review logic
   function isCurrentStage(matchupEntry) {
       const fullStageName = stageInitialsToName(matchupEntry.stage);
       console.log("testing matchup.stage", matchupEntry.stage);
       console.log("selected stage", selectedStage)
+      console.log('fullStageName', fullStageName)
       return fullStageName === selectedStage;
     }
 
-  let myChar = $state('fox'), opponentChar = $state('falco'), selectedStage = $state("YS"), matchupData;
+  let myChar = $state('fox'), opponentChar = $state('falco'), selectedStage = $state("Yoshi's Story");
+
+  let matchupData;
 
   let currentPercent = $state(0);
 
   let filePath = $derived(`/data/${myChar}/vs_${opponentChar}.json`);
-
-  let status = $state('')
 
   $effect(() => {
     console.log(myChar)
@@ -45,29 +50,36 @@
     console.log(selectedStage)
   })
 
-  async function triggerToast(){
-    console.log("test")
-    console.log('French')
-  }
-
-  async function loadFile() {
-    console.log('filePath', filePath)
+async function loadFile(): Promise<any | null> {
+    console.log('[loadFile] filePath:', filePath);
     try {
-      const response = await fetch(filePath);
-      const allStagesKOData = await response.json();
-      console.log("loaded lab data here", allStagesKOData);
-      const currentStageData = allStagesKOData.find(isCurrentStage);
-      console.log("currentStageData", currentStageData);
-      matchupData = currentStageData
-      status = 'Success!'
-      toaster.success({title: 'Success!'})
-      return matchupData;
-    } catch (e) {
-      status = `Could not load matchup data for ${myChar} vs ${opponentChar} on ${selectedStage}`;
-      matchupData = null;
-      throw e;
+        const response = await fetch(filePath);
+        if (!response.ok) {
+            console.log(filePath)
+            throw new Error(FILE_FETCH_ERROR);
+        }
+        const allStagesKOData = await response.json();
+        console.debug('[loadFile] Loaded JSON:', allStagesKOData);
+        const currentStageData = allStagesKOData.find(isCurrentStage);
+        console.log('currentStageData', currentStageData)
+        if (!currentStageData) {
+            throw new Error(STAGE_NOT_FOUND_ERROR);
+        }
+        console.debug('[loadFile] Current stage data:', currentStageData);
+        toaster.success({ title: 'Success!' });
+        return currentStageData;
+    } catch (error) {
+        console.error('[loadFile] Error:', error.message);
+        let message = 'Unexpected error occurred.';
+        if (error.message.startsWith(FILE_FETCH_ERROR)) {
+            message = `Could not load file ${filePath}.`; 
+        } else if (error.message === STAGE_NOT_FOUND_ERROR) {
+            message = `Could not find ${selectedStage} stage in the file.`;
+        }
+        toaster.error({ title: message, closable: false, duration: 1200 });
+        return null;
     }
-  } 
+  }
 
   const SAMPLE_DYNAMIC_DATA: any = {
     "fileDone?": false,
