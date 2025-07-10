@@ -2,6 +2,8 @@
 </style>
 <script lang="ts">
   import Bars from '../csdisplay/Bars.svelte';
+  import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
+  const toaster = createToaster();
 
   const CHARACTER_SHORT_NAMES = [
   'fox', 'falco', 'marth', 'sheik', 'jigglypuff', 'peach', 'iceclimbers',
@@ -35,26 +37,38 @@
 
   let filePath = $derived(`/data/${myChar}/vs_${opponentChar}.json`);
 
+  let status = $state('')
+
   $effect(() => {
     console.log(myChar)
     console.log(opponentChar)
     console.log(selectedStage)
   })
 
-  async function loadMatchupData() {
+  async function triggerToast(){
+    console.log("test")
+    console.log('French')
+  }
+
+  async function loadFile() {
+    console.log('filePath', filePath)
     try {
-      console.log('filePath', filePath)
       const response = await fetch(filePath);
       const allStagesKOData = await response.json();
       console.log("loaded lab data here", allStagesKOData);
       const currentStageData = allStagesKOData.find(isCurrentStage);
       console.log("currentStageData", currentStageData);
       matchupData = currentStageData
+      status = 'Success!'
+      toaster.success({title: 'Success!'})
+      return matchupData;
     } catch (e) {
-      console.error(`Could not load matchup data for ${myChar} vs ${opponentChar} on ${selectedStage}`);
+      status = `Could not load matchup data for ${myChar} vs ${opponentChar} on ${selectedStage}`;
       matchupData = null;
+      throw e;
     }
-  }
+  } 
+
   const SAMPLE_DYNAMIC_DATA: any = {
     "fileDone?": false,
     "attacker": "Fox",
@@ -77,7 +91,7 @@
       `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%` : '0%'
   
   let dynamicBars = 
-    $derived(Object.entries(matchupData?.moves || SAMPLE_DYNAMIC_DATA?.moves).map(([moveName, koPercent]) => {
+    $derived(Object.entries(matchupData?.moves || {}).map(([moveName, koPercent]) => {
       const isHighlighted = checkHighlighted(currentPercent, koPercent);
       const calculatedWidth = calcWidth(currentPercent, koPercent);
 
@@ -89,6 +103,7 @@
       };
     }));
 </script>
+<Toaster {toaster}></Toaster>
 <div class="space-y-4">
   <div class="text-3xl font-bold">
     The Lab
@@ -106,7 +121,7 @@
     <select id="opponentChar" bind:value={opponentChar} class="select w-full p-2 border rounded">
       {#each CHARACTER_SHORT_NAMES as short_name}
         <option value={short_name}>{short_name}</option>
-      {/each} 
+      {/each}
     </select>
     <div>on</div>
     <select class="select w-full p-2 border rounded">
@@ -120,11 +135,12 @@
     <div>
       File Path: {filePath}
     </div>
+    <div>{status}</div>
     <button 
         class="bg-orange-300 text-white font-semibold py-2 px-4 border border-orange-100 rounded shadow"
         type="button" 
-        onclick={() => loadMatchupData() }
-      >
+        onclick={loadFile}
+    >
         Fetch Loadout File
     </button>
     {#if false}
