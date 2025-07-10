@@ -1,6 +1,8 @@
 <style>
 </style>
 <script lang="ts">
+  import Bars from '../csdisplay/Bars.svelte';
+
   const CHARACTER_SHORT_NAMES = [
   'fox', 'falco', 'marth', 'sheik', 'jigglypuff', 'peach', 'iceclimbers',
   'captainfalcon', 'pikachu', 'samus', 'drmario', 'luigi', 'ganondorf',
@@ -29,6 +31,10 @@
 
   let myChar = $state('fox'), opponentChar = $state('falco'), selectedStage = $state("YS"), matchupData;
 
+  let currentPercent = $state(0);
+
+  let filePath = $derived(`/data/${myChar}/vs_${opponentChar}.json`);
+
   $effect(() => {
     console.log(myChar)
     console.log(opponentChar)
@@ -37,9 +43,8 @@
 
   async function loadMatchupData() {
     try {
-      const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
-      console.log('matchupPath', matchupPath)
-      const response = await fetch(matchupPath);
+      console.log('filePath', filePath)
+      const response = await fetch(filePath);
       const allStagesKOData = await response.json();
       console.log("loaded lab data here", allStagesKOData);
       const currentStageData = allStagesKOData.find(isCurrentStage);
@@ -98,7 +103,7 @@
       {/each} 
     </select>
     <div>vs</div>
-    <select class="select w-full p-2 border rounded">
+    <select id="opponentChar" bind:value={opponentChar} class="select w-full p-2 border rounded">
       {#each CHARACTER_SHORT_NAMES as short_name}
         <option value={short_name}>{short_name}</option>
       {/each} 
@@ -112,6 +117,9 @@
         <option value="BF">Battlefield</option>
         <option value="PS">Pokemon Stadium</option>
     </select>
+    <div>
+      File Path: {filePath}
+    </div>
     <button 
         class="bg-orange-300 text-white font-semibold py-2 px-4 border border-orange-100 rounded shadow"
         type="button" 
@@ -125,6 +133,8 @@
       <input type="number" class="input" placeholder="Enter Percent" />
     </label>
     {/if}
-    <Bars dynamicBars={dynamicBars} />
+    <div>
+      <Bars dynamicBars={dynamicBars} />
+    </div>
   </form>
 </div>
