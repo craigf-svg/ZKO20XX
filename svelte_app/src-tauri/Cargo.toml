@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.0"
+version = "0.1.1-alpha"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -23,3 +23,7 @@ serde = { version = "1.0", features = ["derive"] }
 log = "0.4"
 tauri = { version = "2.6.2", features = [] }
 tauri-plugin-log = "2"
+tauri-plugin-aptabase = "1.0.0"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+dotenvy_macro = "0.15"
+dotenv = "0.15"
