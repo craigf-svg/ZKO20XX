@@ -10,7 +10,7 @@
   	font-weight: 400;
   	src: url('/fonts/Playfair_Display/PlayfairDisplay-Regular.ttf') format('truetype');
 	}
-	:global(:root) {  
+	:global(:root) {
   	--color-text-main: #f0f0f0;
   	--color-text-heading: #ffffff;
   	--color-orange-main: #ff3e00;

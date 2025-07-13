@@ -4,16 +4,20 @@
 
   let connectCode = $state("");
   let slippiPath = $state("");
+  let pollingRate = $state(500);
   let loading = false;
 
-  function saveConnectCode(code) {
-    if(validConnectCode(code)){
+  function saveConnectCode(newCode) {
+    if(validConnectCode(newCode)){
       alert(`Connect code saved: ${connectCode}`);
     }
   }
-  function saveSlippiPath() {
+  function saveSlippiPath(newPath) {
     alert(`Slippi folder path saved: ${slippiPath}`);
   }
+ function savePollingRate(newRate) {
+    alert(`Polling Rate Saved`)
+ }
   function validConnectCode(code:string) {
     if(code.length != 7) {
       alert(`Error: code length is not 7 characters long`) 
@@ -59,6 +63,22 @@
       </label>
     </div>
     
+    <div class="form-group">
+      <label class="form-label">
+        Polling rate
+        {#if loading}
+          <div class="skeleton-input"></div>
+          <div class="skeleton-button"></div>
+        {:else}
+          <div class="input-group">
+            <input type="number" bind:value={pollingRate} placeholder={500} />
+            <button onclick={savePollingRate}>Save</button>
+          </div>
+        {/if}
+      </label>
+    </div>
+
+
     <div class="form-group">
       {#if loading}
         <div class="skeleton-text"></div>
