@@ -16,7 +16,7 @@ async fn main() {
     println!(".env APTABASE_KEY={}", dotenv!("APTABASE_KEY"));
 
     let cpu_usage = get_cpu_usage();
-    println!("cpu_usage is {}", cpu_number);
+    println!("cpu_usage is {}", cpu_usage);
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![get_cpu_usage])
