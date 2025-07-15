@@ -6,6 +6,8 @@ use tauri_plugin_aptabase::Builder as AptabaseBuilder;
 use dotenvy_macro::dotenv;
 use serde_json::json;
 mod version;
+mod system_info;
+use system_info::get_cpu_usage;
 
 #[tokio::main]
 async fn main() {
@@ -13,7 +15,11 @@ async fn main() {
     println!("app_version={}", app_version);
     println!(".env APTABASE_KEY={}", dotenv!("APTABASE_KEY"));
 
+    let cpu_usage = get_cpu_usage();
+    println!("cpu_usage is {}", cpu_number);
+
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![get_cpu_usage])
         .plugin(
           tauri_plugin_aptabase::Builder::new(dotenv!("APTABASE_KEY")).build()
         )
