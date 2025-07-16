@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
   import { onMount } from 'svelte';
   import { io, type Socket } from "socket.io-client";
-  import type { MatchupEntry } from '../data/MatchupEntry';
-  import WaitingForGame from './WaitingForGame.svelte';
+  import type { MatchupEntry } from '../../../static/data/MatchupEntry';
+  // import WaitingForGame from './WaitingForGame.svelte';
   import Bars from './Bars.svelte';
-  import Bar from './Bar.svelte';
   import { env } from '$env/dynamic/public';
 
   interface KODatum {
@@ -35,11 +33,9 @@
     return stageNames[initials] || "Battlefield";
   }
 
-  function isCurrentStage(matchupEntry) {
+  function isCurrentStage(matchupEntry: MatchupEntry, stageName: string) {
     const fullStageName = stageInitialsToName(matchupEntry.stage);
-    console.log("testing matchup.stage", matchupEntry.stage);
-    console.log("settings.stageName", settings.stageName);
-    return fullStageName === settings.stageName;
+    return fullStageName === stageName;
   }
  
   let matchupData: MatchupEntry[] | undefined = $state(); 
@@ -51,8 +47,6 @@
   let displayStageName: string | undefined = $state();
 
   let red: number = $state(255);
-  let green: number = $state();
-  let blue: number = $state();
   let color: string;
   let bars: Array<{ width: string; class: string }>;
 
@@ -96,12 +90,12 @@
         const response = await fetch(matchupPath);
         const allStagesKOData = await response.json();
         console.log("Loaded perspective matchup data:", allStagesKOData);
-       const currentStageData = allStagesKOData.find(isCurrentStage);
+        const currentStageData = allStagesKOData.find(entry => isCurrentStage(entry, settings.stageName));
         console.log("stageMatchupData", currentStageData);
         matchupData = currentStageData
       } catch (e) {
-        console.error("Could not load matchup data for", matchupPath, e);
-        matchupData = null;
+        console.error("Could not load matchup data for", `/data/${myChar}/vs_${opponentChar}.json`, e);
+        matchupData = undefined;
       }
     });
 

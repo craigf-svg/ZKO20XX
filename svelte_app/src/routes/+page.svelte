@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CombatSystemDisplay from './CSDisplay/CombatSystemDisplay.svelte';
+	import CombatSystemDisplay from './csdisplay/CombatSystemDisplay.svelte';
 	import DisplaySlippi from './DisplaySlippi.svelte';
 	let showSlippi = false; 
 </script>
