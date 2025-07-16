@@ -1,4 +1,5 @@
 export interface MatchupEntry {
+  "fileDone?"?: boolean;
   attacker: string;
   defender: string;
   stage: string;
