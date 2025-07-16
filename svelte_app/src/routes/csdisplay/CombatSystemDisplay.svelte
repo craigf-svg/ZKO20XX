@@ -5,6 +5,8 @@
   // import WaitingForGame from './WaitingForGame.svelte';
   import Bars from "./Bars.svelte";
   import { env } from "$env/dynamic/public";
+  import type { MoveBar } from "./types";
+  import type { TrimmedSettings, PlayerWithShortName } from "./types";
 
   interface PlayerStats {
     character?: string;
@@ -45,9 +47,9 @@
 
   onMount(() => {
     // Add typing to this
-    socket.on("game_start", async (settings: any) => {
+    socket.on("game_start", async (settings: TrimmedSettings) => {
       displayStageName = settings.stageName;
-      let players: any = settings.players;
+      let players: PlayerWithShortName[] = settings.players;
 
       if (players.length != 2) {
         console.error("Player length is not 2");
@@ -65,10 +67,10 @@
 
       // Find player+opponent index to display correct right data from socket
       let myPlayerIdx = players.findIndex(
-        (p: any) => p?.connectCode === MY_CONNECT_CODE,
+        (p: PlayerWithShortName) => p?.connectCode === MY_CONNECT_CODE,
       );
       opponentPlayerIdx = players.findIndex(
-        (p: any) => p?.connectCode !== MY_CONNECT_CODE,
+        (p: PlayerWithShortName) => p?.connectCode !== MY_CONNECT_CODE,
       );
 
       const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
@@ -142,20 +144,26 @@
       ? `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%`
       : "0%";
 
-  let dynamicBars = $derived(
-    Object.entries(matchupData?.moves || SAMPLE_DYNAMIC_DATA?.moves).map(
-      ([moveName, koPercent]) => {
-        const isHighlighted = checkHighlighted(currentPercent || 0, koPercent);
-        const calculatedWidth = calcWidth(currentPercent || 0, koPercent);
+  const movesSource = $derived.by(() => {
+    if (!matchupData?.moves) {
+      console.warn("using sample_dynamic_data for moves");
+      return SAMPLE_DYNAMIC_DATA.moves;
+    }
+    return matchupData.moves;
+  });
 
-        return {
-          moveName: moveName,
-          koPercent: koPercent,
-          width: calculatedWidth,
-          isHighlighted: isHighlighted,
-        };
-      },
-    ),
+  let dynamicBars: MoveBar[] = $derived(
+    Object.entries(movesSource).map(([moveName, koPercent]) => {
+      const isHighlighted = checkHighlighted(currentPercent || 0, koPercent);
+      const calculatedWidth = calcWidth(currentPercent || 0, koPercent);
+
+      return {
+        moveName,
+        koPercent,
+        width: calculatedWidth,
+        isHighlighted,
+      };
+    }),
   );
 
   $effect(() => {

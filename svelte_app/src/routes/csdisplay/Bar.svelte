@@ -1,17 +1,11 @@
 <script lang="ts">
-  interface Props {
-    moveName: string;
-    koPercent: number;
-    width: string;
-    isActive: boolean;
-  }
-
+  import type { MoveBar } from './types';
   let {
     moveName,
     koPercent,
     width,
     isHighlighted
-  }: Props = $props();
+  }: MoveBar = $props();
 </script>
 
 <div class="card">

@@ -1,6 +1,7 @@
-<script>
-  import Bar from './Bar.svelte';
-  export let dynamicBars = [];
+<script lang="ts">
+  import Bar from './Bar.svelte'
+  import type { MoveBar } from './types';
+  export let dynamicBars: MoveBar[] = [];
   // console.log('bars dynamicBars', dynamicBars)
 </script>
 
