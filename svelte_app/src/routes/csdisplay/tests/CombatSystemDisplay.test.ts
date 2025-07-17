@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
 describe('stageInitialsToName', () => {
-  function stageInitialsToName(initials) {
-    const stageNames = {
+  function stageInitialsToName(initials: string) {
+    const stageNames: { [key: string]: string } = {
       DL: "Dream Land N64",
       YS: "Yoshi's Story", 
       PS: "Pokémon Stadium",
@@ -24,7 +24,7 @@ describe('stageInitialsToName', () => {
 })
 
 describe('checkHighlighted', () => {
-  function checkHighlighted(currentPercent, koPercent) {
+  function checkHighlighted(currentPercent: number, koPercent: number) {
     return currentPercent >= koPercent;
   }
 
@@ -39,7 +39,7 @@ describe('checkHighlighted', () => {
 })
 
 describe('calcWidth', () => {
-  const calcWidth = (currentPercent, koPercent) =>
+  const calcWidth = (currentPercent: number, koPercent: number) =>
     (currentPercent && koPercent) ? 
       `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%` : '0%'
 
@@ -50,8 +50,7 @@ describe('calcWidth', () => {
   })
 
   it('should return 0% for invalid inputs', () => {
-    expect(calcWidth(null, 100)).toBe('0%')
-    expect(calcWidth(undefined, 100)).toBe('0%')
+    expect(calcWidth(0, 100)).toBe('0%')
     expect(calcWidth(NaN, 100)).toBe('0%')
   })
 })

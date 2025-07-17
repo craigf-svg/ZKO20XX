@@ -2,6 +2,6 @@
 </script>
 
 <div>
-  This is the CSDisplay Route
+  This is the csdisplay page 
 </div>
 

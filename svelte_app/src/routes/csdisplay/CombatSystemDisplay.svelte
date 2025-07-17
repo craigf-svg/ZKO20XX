@@ -166,6 +166,7 @@
     }),
   );
 
+  // For dev use
   $effect(() => {
     console.log("dynamicBars", dynamicBars);
   });
@@ -189,7 +190,6 @@
         class="btn preset-filled"
         onclick={() => (currentPercent = 0)}>Reset</button
       >
-      <!-- -->
     </div>
   {/if}
   <div class="current_percent">

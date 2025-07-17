@@ -16,6 +16,7 @@
   	--color-orange-main: #ff3e00;
   	--color-orange-main-faint: rgba(255, 62, 0, 0.2);
   	--color-orange-logo: #ff6836;
+	--color-orange-logo-secondary: orange;
   	--color-orange-secondary: #ffa500;
   	--color-purple-flair: #7c4dff;
   	--color-bg-body: #2b2b2b;
