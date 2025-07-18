@@ -23,165 +23,253 @@
   let slippiPath = $state(settings.slippiPath);
   let pollingRate = $state(settings.pollingRate);
 </script>
-<div>Hi</div>
-<div id="body">
-  <div class="form-container">
-    <h2>Settings</h2>
+<div class="settings-container">
+  <div class="settings-card">
+    <header>
+      <h1>Settings</h1>
+      <p class="subtitle">Configure your application preferences</p>
+    </header>
     
-    <div class="form-group">
-      <label class="form-label">
-        Connect Code
-          <div class="input-group">
-            <input type="text" id="codeInput" bind:value={connectCode} placeholder="BLU#007" />
-            <button onclick={() => saveConnectCode(connectCode)}>Save</button>
-          </div>
-      </label>
-    </div>
-    
-    <div class="form-group">
-      <label class="form-label">
-        Slippi Folder Path
-          <div class="input-group">
-            <input type="text" bind:value={slippiPath} placeholder="C:\Users\Username\Documents\Slippi" />
-            <button onclick={() => saveSlippiPath(slippiPath)}>Save</button>
-          </div>
-      </label>
-    </div>
-    
-    <div class="form-group">
-      <label class="form-label">
-        Polling rate
-          <div class="input-group">
-            <input type="number" bind:value={pollingRate} placeholder="500" />
-            <button onclick={() => savePollingRate(pollingRate)}>Save</button>
-          </div>
-      </label>
-    </div>
+    <form onsubmit={() => {
+      saveConnectCode(connectCode);
+      saveSlippiPath(slippiPath);
+      savePollingRate(pollingRate);
+    }}>
+      <div class="form-group">
+        <label for="codeInput">Connect Code</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="codeInput" 
+            bind:value={connectCode} 
+            placeholder="BLU#007" 
+            aria-label="Connect Code"
+          />
+          <span class="input-icon">#</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="slippiPath">Slippi Folder Path</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="slippiPath" 
+            bind:value={slippiPath} 
+            placeholder="C:\\Users\\Username\\Documents\\Slippi" 
+            aria-label="Slippi Folder Path"
+          />
+          <span class="input-icon">📁</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="pollingRate">Polling Rate (ms)</label>
+        <div class="input-wrapper">
+          <input 
+            type="number" 
+            id="pollingRate" 
+            bind:value={pollingRate} 
+            placeholder="500" 
+            min="100"
+            step="100"
+            aria-label="Polling Rate"
+          />
+          <span class="input-icon">⏱️</span>
+        </div>
+      </div>
 
-
-    <div class="form-group">
-      <button class="restore-button">Restore Defaults</button>
-    </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary">
+          Restore Defaults
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Save All Changes
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
 <style>
-  #body {
-    padding: 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-  
-  .form-container {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e1e5e9;
-  }
-  
-  h2 {
-    margin: 0 0 1.5rem 0;
-    color: #2d3748;
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-label {
-    display: block;
-    font-weight: 500;
-    color: #4a5568;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-  }
-  
-  .input-group {
+  .settings-container {
+    min-height: 100vh;
+    /* background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);      */
+    padding: 2rem 1rem;
     display: flex;
-    gap: 0.5rem;
-    align-items: center;
+    justify-content: center;
+    align-items: flex-start;
+    /*font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;*/
   }
-  
-  input {
-    flex: 1;
-    padding: 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
+
+  .settings-card {
     background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    padding: 2.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  
+
+  .settings-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  h1 {
+    color: #1e293b;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    color: #64748b;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.75rem;
+  }
+
+  label {
+    display: block;
+    color: #334155;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .input-wrapper .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    font-size: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+    color: #1e293b;
+    box-sizing: border-box;
+  }
+
   input:focus {
     outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    border-color: #3b82f6;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   }
-  
+
   input::placeholder {
-    color: #a0aec0;
+    color: #94a3b8;
   }
-  
-  button {
-    padding: 0.75rem 1rem;
-    background: #4299e1;
-    color: white;
-    border: none;
-    border-radius: 6px;
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .btn {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
     transition: all 0.2s ease;
-    white-space: nowrap;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
-  
-  button:hover {
-    background: #3182ce;
+
+  .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #2563eb;
     transform: translateY(-1px);
   }
-  
-  button:active {
+
+  .btn-primary:active {
     transform: translateY(0);
   }
-  
-  .restore-button {
-    background: #e53e3e;
-    padding: 0.75rem 1.5rem;
+
+  .btn-secondary {
+    background-color: #f1f5f9;
+    color: #334155;
   }
-  
-  .restore-button:hover {
-    background: #c53030;
+
+  .btn-secondary:hover {
+    background-color: #e2e8f0;
+    transform: translateY(-1px);
   }
-  
-  @keyframes loading {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
+
+  .btn-secondary:active {
+    transform: translateY(0);
   }
-  
+
   @media (max-width: 640px) {
-    #body {
+    .settings-container {
       padding: 1rem;
     }
-    
-    .form-container {
+
+    .settings-card {
       padding: 1.5rem;
     }
-    
-    .input-group {
+
+    .form-actions {
       flex-direction: column;
-      align-items: stretch;
+      gap: 0.75rem;
     }
-    
-    .input-group button {
-      margin-top: 0.5rem;
+
+    .btn {
+      width: 100%;
+    }
+  }
+
+  /* Animation for form elements */
+  .form-group {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+
+  .form-group:nth-child(1) { animation-delay: 0.1s; }
+  .form-group:nth-child(2) { animation-delay: 0.2s; }
+  .form-group:nth-child(3) { animation-delay: 0.3s; }
+  .form-actions { animation-delay: 0.4s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 </style>

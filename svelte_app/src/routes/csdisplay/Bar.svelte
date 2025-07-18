@@ -21,6 +21,7 @@
 <style>
   .card {
     background: #1e1e1e;
+    color: #f0f0f0;
     border-radius: 12px;
     padding: 1rem;
     display: flex;
