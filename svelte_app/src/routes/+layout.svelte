@@ -72,3 +72,8 @@
 		}
 	}
 </style>
+
+<Navbar />
+<main>
+  {@render children()}
+</main>
