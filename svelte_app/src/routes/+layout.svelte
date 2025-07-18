@@ -50,7 +50,7 @@
 		--color-bar-fill: #ff3e00;
 		--color-bar-shadow: rgba(255, 62, 0, 0.1);
 		--color-lab-button: #ffb86a; 
-		--color-lab-button-border: #e67e22;
+		--color-lab-button-border: #ffb86a; 
 	}
 
 	:global([data-theme="dark"]) {
@@ -70,7 +70,7 @@
 		--color-bar-fill: #ff3e00;
 		--color-bar-shadow: rgba(255, 62, 0, 0.2);
 		--color-lab-button: #ffb86a; 
-		--color-lab-button-border: #e67e22;
+		--color-lab-button-border: #ffb86a; 
 	}
 
 	:global([data-theme="catppuccin"]) {
@@ -87,10 +87,10 @@
 		--color-bg-navbar-hover: #313244;
 		--color-muted: #a6adc8;
 		--color-border: #45475a;
-		--color-bar-fill: #f38ba8;
-		--color-bar-shadow: rgba(250, 179, 135, 0.2);
+		--color-bar-fill: #f5c2e7;
+		--color-bar-shadow: rgba(245, 194, 231, 0.2);
 		--color-lab-button: #fab387;
-		--color-lab-button-border: #e67e22;
+		--color-lab-button-border: #313244;
 	}
 	/* TO DO ADD GRADIENT LIKE IN settings thanks*/
 	:global(body) {
