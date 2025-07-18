@@ -1,34 +1,29 @@
 <script lang="ts">
- // import { env } from '$env/dynamic/public';
- // const MY_CONNECT_CODE: string = env.PUBLIC_CONNECT_CODE;
+  import { getContext } from 'svelte';
+  import type { AppSettings } from '$lib/types';
+  const settings = getContext<AppSettings>('app-settings');
+  $effect(() => console.log('Settings from context:', JSON.stringify(settings, null, 2)));
 
-  let connectCode = $state("");
-  let slippiPath = $state("");
-  let pollingRate = $state(500);
-  let loading = false;
+  function saveConnectCode(code: string) {
+    settings.connectCode = code;
+    console.log('Connect code saved:', code);
+  }
 
-  function saveConnectCode(newCode) {
-    if(validConnectCode(newCode)){
-      alert(`Connect code saved: ${connectCode}`);
-    }
+  function saveSlippiPath(path: string) {
+    settings.slippiPath = path;
+    console.log('Slippi path saved:', path);
   }
-  function saveSlippiPath(newPath) {
-    alert(`Slippi folder path saved: ${slippiPath}`);
+
+  function savePollingRate(rate: number) {
+    settings.pollingRate = rate;
+    console.log('Polling rate saved:', rate);
   }
- function savePollingRate(newRate) {
-    alert(`Polling Rate Saved`)
- }
-  function validConnectCode(code:string) {
-    if(code.length != 7) {
-      alert(`Error: code length is not 7 characters long`) 
-      return false
-    } else {
-      alert(`Valid code, well done`);
-      return true
-    }
-  }
+
+  let connectCode = $state(settings.connectCode);
+  let slippiPath = $state(settings.slippiPath);
+  let pollingRate = $state(settings.pollingRate);
 </script>
-
+<div>Hi</div>
 <div id="body">
   <div class="form-container">
     <h2>Settings</h2>
@@ -36,55 +31,36 @@
     <div class="form-group">
       <label class="form-label">
         Connect Code
-        {#if loading}
-          <div class="skeleton-input"></div>
-          <div class="skeleton-button"></div>
-        {:else}
           <div class="input-group">
             <input type="text" id="codeInput" bind:value={connectCode} placeholder="BLU#007" />
             <button onclick={() => saveConnectCode(connectCode)}>Save</button>
           </div>
-        {/if}
       </label>
     </div>
     
     <div class="form-group">
       <label class="form-label">
         Slippi Folder Path
-        {#if loading}
-          <div class="skeleton-input"></div>
-          <div class="skeleton-button"></div>
-        {:else}
           <div class="input-group">
             <input type="text" bind:value={slippiPath} placeholder="C:\Users\Username\Documents\Slippi" />
-            <button onclick={saveSlippiPath}>Save</button>
+            <button onclick={() => saveSlippiPath(slippiPath)}>Save</button>
           </div>
-        {/if}
       </label>
     </div>
     
     <div class="form-group">
       <label class="form-label">
         Polling rate
-        {#if loading}
-          <div class="skeleton-input"></div>
-          <div class="skeleton-button"></div>
-        {:else}
           <div class="input-group">
-            <input type="number" bind:value={pollingRate} placeholder={500} />
-            <button onclick={savePollingRate}>Save</button>
+            <input type="number" bind:value={pollingRate} placeholder="500" />
+            <button onclick={() => savePollingRate(pollingRate)}>Save</button>
           </div>
-        {/if}
       </label>
     </div>
 
 
     <div class="form-group">
-      {#if loading}
-        <div class="skeleton-text"></div>
-      {:else}
-        <button class="restore-button">Restore Defaults</button>
-      {/if}
+      <button class="restore-button">Restore Defaults</button>
     </div>
   </div>
 </div>
@@ -179,36 +155,6 @@
   
   .restore-button:hover {
     background: #c53030;
-  }
-  
-  .skeleton-input {
-    width: 100%;
-    height: 42px;
-    background: linear-gradient(90deg, #f7fafc 25%, #edf2f7 50%, #f7fafc 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 6px;
-    margin-bottom: 0.5rem;
-  }
-  
-  .skeleton-button {
-    width: 60px;
-    height: 42px;
-    background: linear-gradient(90deg, #f7fafc 25%, #edf2f7 50%, #f7fafc 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 6px;
-    margin-left: 0.5rem;
-    display: inline-block;
-  }
-  
-  .skeleton-text {
-    width: 120px;
-    height: 42px;
-    background: linear-gradient(90deg, #f7fafc 25%, #edf2f7 50%, #f7fafc 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 6px;
   }
   
   @keyframes loading {

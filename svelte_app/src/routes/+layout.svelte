@@ -1,6 +1,18 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import Navbar from '$lib/Navbar.svelte';
+	import { setContext } from 'svelte';
+	import type { AppSettings } from '$lib/types';
+	const { children } = $props();
+
+	// Create reactive state with runes and proper typing
+	const settings = $state<AppSettings>({
+		connectCode: "",
+		slippiPath: "",
+		pollingRate: 700
+	});
+
+	setContext<AppSettings>('app-settings', settings);
 </script>
 
 <style>
@@ -60,5 +72,5 @@
 
 <Navbar />
 <main>
-  <slot />
+  {@render children()}
 </main>

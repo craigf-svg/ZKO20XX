@@ -23,6 +23,9 @@ async fn main() {
         .plugin(
           tauri_plugin_aptabase::Builder::new(dotenv!("APTABASE_KEY")).build()
         )
+        .plugin(
+          tauri_plugin_store::Builder::new().build()
+        )
         .setup(move |app| {
             app.track_event(
                 "app_test",

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CombatSystemDisplay from './csdisplay/CombatSystemDisplay.svelte';
 	import DisplaySlippi from './DisplaySlippi.svelte';
-	let showSlippi = false; 
+	let showSlippi = false;
 </script>
 
 <main>
@@ -13,6 +13,8 @@
 {#if false}
 	<DisplaySlippi />
 {/if}
+
+<!-- Slot removed - page components don't need to render slots -->
 </main>
 
 <style>

@@ -41,6 +41,7 @@
 	"dependencies": {
 		"@aptabase/tauri": "github:aptabase/tauri-plugin-aptabase",
 		"@skeletonlabs/tw-plugin": "^0.4.1",
+		"@tauri-apps/plugin-store": "^2.3.0",
 		"socket.io-client": "^4.8.1"
 	}
 }
