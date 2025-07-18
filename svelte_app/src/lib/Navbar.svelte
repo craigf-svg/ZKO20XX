@@ -1,11 +1,11 @@
 <script lang="ts">
   import Logo from "$lib/Logo.svelte";
 
-  type Theme = "light" | "dark";
+  type Theme = "light" | "dark" | "catppuccin";
 
-  const { theme, onToggleTheme } = $props<{
+  const { theme, cycleTheme } = $props<{
     theme: Theme;
-    onToggleTheme: () => void;
+    cycleTheme: () => void;
   }>();
 </script>
 
@@ -13,8 +13,8 @@
   <ul>
     <li><a href="/" class="link"><Logo /></a></li>
     <li>
-      <button type="button" class="link" onclick={onToggleTheme}
-        >{theme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}</button
+      <button type="button" class="link" onclick={cycleTheme}
+        >{theme === "dark" ? "🌙 Dark Mode" : theme === "catppuccin" ? "☕ Catppuccin" : "☀️ Light Mode"}</button
       >
     </li>
     <li>

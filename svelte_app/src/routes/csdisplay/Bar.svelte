@@ -27,7 +27,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 0 8px var(--color-orange-main-faint); 
+    box-shadow: 0 0 8px var(--color-bar-shadow); 
   }
   .card-header {
     display: flex;
@@ -48,7 +48,7 @@
   }
   .bar-fill {
     height: 100%;
-    background: var(--color-orange-main);
+    background: var(--color-bar-fill);
     transition: width 0.3s ease;
   }
   .bar-fill.inactive {

@@ -5,16 +5,15 @@
 	import type { AppSettings } from "$lib/types";
 	const { children } = $props();
 
-	type Theme = 'light' | 'dark';
+	type Theme = 'light' | 'dark' | 'catppuccin';
 	let theme = $state<Theme>('dark');
 	document.documentElement.setAttribute('data-theme', 'dark');
 
-	function toggleTheme() {
-		theme = theme === 'dark' ? 'light' : 'dark';
+	function cycleTheme() {
+		theme = theme === 'dark' ? 'light' : theme === 'light' ? 'catppuccin' : 'dark';
 		document.documentElement.setAttribute('data-theme', theme);
 	}
 
-	// Create reactive state with runes and proper typing
 	const settings = $state<AppSettings>({
 		connectCode: "",
 		slippiPath: "",
@@ -33,11 +32,10 @@
 			format("truetype");
 	}
 	:global(:root) {
-		/* Light theme colors (default) */
+		/* Light theme colors */
 		--color-text-main: #333333;
 		--color-text-heading: #000000;
 		--color-orange-main: #ff3e00;
-		--color-orange-main-faint: rgba(255, 62, 0, 0.1);
 		--color-orange-logo: #ff6836;
 		--color-orange-logo-secondary: orange;
 		--color-orange-secondary: #ff8c00;
@@ -49,6 +47,10 @@
 		--color-border: #e0e0e0;
 		--background-color: #ff4444;
 		--transition: 250ms ease-out;
+		--color-bar-fill: #ff3e00;
+		--color-bar-shadow: rgba(255, 62, 0, 0.1);
+		--color-lab-button: #ffb86a; 
+		--color-lab-button-border: #e67e22;
 	}
 
 	:global([data-theme="dark"]) {
@@ -56,7 +58,6 @@
 		--color-text-main: #f0f0f0;
 		--color-text-heading: #ffffff;
 		--color-orange-main: #ff3e00;
-		--color-orange-main-faint: rgba(255, 62, 0, 0.2);
 		--color-orange-logo: #ff6836;
 		--color-orange-logo-secondary: orange;
 		--color-orange-secondary: #ffa500;
@@ -66,6 +67,30 @@
 		--color-bg-navbar-hover: #444444;
 		--color-muted: #888888;
 		--color-border: #444444;
+		--color-bar-fill: #ff3e00;
+		--color-bar-shadow: rgba(255, 62, 0, 0.2);
+		--color-lab-button: #ffb86a; 
+		--color-lab-button-border: #e67e22;
+	}
+
+	:global([data-theme="catppuccin"]) {
+		/* Catppuccin Mocha theme colors */
+		--color-text-main: #cdd6f4;
+		--color-text-heading: #f5e0dc;
+		--color-orange-main: #fab387;
+		--color-orange-logo: #f38ba8;
+		--color-orange-logo-secondary: #f5c2e7;
+		--color-orange-secondary: #f9e2af;
+		--color-purple-flair: #cba6f7;
+		--color-bg-body: #1e1e2e;
+		--color-bg-navbar: #181825;
+		--color-bg-navbar-hover: #313244;
+		--color-muted: #a6adc8;
+		--color-border: #45475a;
+		--color-bar-fill: #f38ba8;
+		--color-bar-shadow: rgba(250, 179, 135, 0.2);
+		--color-lab-button: #fab387;
+		--color-lab-button-border: #e67e22;
 	}
 	/* TO DO ADD GRADIENT LIKE IN settings thanks*/
 	:global(body) {
@@ -92,7 +117,7 @@
 	}
 </style>
 
-<Navbar theme={theme} onToggleTheme={toggleTheme} />
+<Navbar theme={theme} cycleTheme={cycleTheme} />
 <main data-theme={theme}>
   {@render children()}
 </main>

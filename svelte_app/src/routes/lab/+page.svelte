@@ -192,7 +192,7 @@
       File Path: {filePath}
     </div>
     <button
-      class="bg-orange-300 text-white font-semibold py-2 px-4 border border-orange-100 rounded shadow"
+      class="bg-[var(--color-lab-button)] text-white font-semibold py-2 px-4 border border-[var(--color-lab-button-border)] rounded shadow"
       type="button"
       onclick={loadFile}
     >

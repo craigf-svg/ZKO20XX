@@ -14,7 +14,6 @@
 	<DisplaySlippi />
 {/if}
 
-<!-- Slot removed - page components don't need to render slots -->
 </main>
 
 <style>
