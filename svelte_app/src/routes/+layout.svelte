@@ -1,6 +1,7 @@
 <script lang="ts">
 	import "../app.css";
 	import Navbar from "$lib/Navbar.svelte";
+	import UpdateManager from "$lib/UpdateManager.svelte";
 	import { setContext } from "svelte";
 	import type { AppSettings } from "$lib/types";
 	const { children } = $props();
@@ -121,3 +122,4 @@
 <main data-theme={theme}>
   {@render children()}
 </main>
+<UpdateManager />

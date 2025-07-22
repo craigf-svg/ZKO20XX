@@ -1,12 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri_plugin_aptabase::EventTracker;
-use tauri_plugin_aptabase::Builder as AptabaseBuilder;
 use dotenvy_macro::dotenv;
 use serde_json::json;
-mod version;
+use tauri_plugin_aptabase::Builder as AptabaseBuilder;
+use tauri_plugin_aptabase::EventTracker;
 mod system_info;
+mod version;
 use system_info::get_cpu_usage;
 
 #[tokio::main]
@@ -19,20 +19,16 @@ async fn main() {
     println!("cpu_usage is {}", cpu_usage);
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(tauri::generate_handler![get_cpu_usage])
-        .plugin(
-          tauri_plugin_aptabase::Builder::new(dotenv!("APTABASE_KEY")).build()
-        )
-        .plugin(
-          tauri_plugin_store::Builder::new().build()
-        )
+        .plugin(tauri_plugin_aptabase::Builder::new(dotenv!("APTABASE_KEY")).build())
+        .plugin(tauri_plugin_store::Builder::new().build())
         .setup(move |app| {
             app.track_event(
                 "app_test",
-                None
-                // If passing properties
-                // Some(json!({ "test_value": "Testing"}))
-              );
+                None, // If passing properties
+                     // Some(json!({ "test_value": "Testing"}))
+            );
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()

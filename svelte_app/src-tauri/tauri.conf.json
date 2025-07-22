@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "svelte-app",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.craigf.zko20xx",
   "build": {
     "frontendDist": "../build",
     "devUrl": "http://localhost:5173",
@@ -24,6 +24,7 @@
     }
   },
   "bundle": {
+    "createUpdaterArtifacts": true,
     "active": true,
     "targets": "all",
     "icon": [
@@ -33,5 +34,16 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+ "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGNDBERDZDNkUxRUJFQjEKUldTeHZoNXViTjFBejJDT1BTTWFTbldsbjNSaU9EMzlLOUpFa3JYN0UxNXJwbHAwb0Uxc3dtci8K",
+      "endpoints": [
+        "https://github.com/craigf-svg/ZKO20XX/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "basicUi"
+      }
+    }
   }
 }
