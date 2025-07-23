@@ -1,28 +1,51 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { AppSettings } from '$lib/types';
-  const settings = getContext<AppSettings>('app-settings');
-  $effect(() => console.log('Settings from context:', JSON.stringify(settings, null, 2)));
+  import { settings } from '$lib/state/settings.svelte';
+  import { Toaster, createToaster } from "@skeletonlabs/skeleton-svelte";
+  const toaster = createToaster({ placement: "bottom-start" });
 
   function saveConnectCode(code: string) {
+    if (code.trim().length <= 0) {
+      console.error('Connect code must be at least 1 character long');
+      toaster.error({ title: 'Connect code must be at least 1 character long' });
+      return;
+    }
     settings.connectCode = code;
-    console.log('Connect code saved:', code);
+    let message = `Connect code saved: ${code}`;
+    console.log(message);
+    toaster.success({ title: message });
   }
 
   function saveSlippiPath(path: string) {
+    if (path.trim().length <= 0) {
+      console.error('Slippi path must be at least 1 character long');
+      toaster.error({ title: 'Slippi path must be at least 1 character long' });
+      return;
+    }
     settings.slippiPath = path;
-    console.log('Slippi path saved:', path);
+    let message = `Slippi path saved: ${path}`;
+    console.log(message);
+    toaster.success({ title: message });
   }
 
-  function savePollingRate(rate: number) {
-    settings.pollingRate = rate;
-    console.log('Polling rate saved:', rate);
+  function savePollingRate(rateInSeconds: number) {
+    if (rateInSeconds < 0.1 || rateInSeconds > 10) {
+      console.error('Polling rate must be between 0.1 and 10 seconds');
+      toaster.error({ title: 'Polling rate must be between 0.1 and 10 seconds' });
+      return;
+    }
+    const rateInMs = rateInSeconds * 1000;
+    settings.pollingRate = rateInMs;
+    let message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
+    console.log(message);
+    toaster.success({ title: message });
   }
 
   let connectCode = $state(settings.connectCode);
   let slippiPath = $state(settings.slippiPath);
-  let pollingRate = $state(settings.pollingRate);
+  let pollingRate = $state(settings.pollingRate / 1000);
 </script>
+
+<Toaster classes="background" {toaster}></Toaster>
 <div class="settings-container">
   <div class="settings-card">
     <header>
@@ -64,15 +87,16 @@
       </div>
       
       <div class="form-group">
-        <label for="pollingRate">Polling Rate (ms)</label>
+        <label for="pollingRate">Polling Rate (seconds)</label>
         <div class="input-wrapper">
           <input 
             type="number" 
             id="pollingRate" 
             bind:value={pollingRate} 
-            placeholder="500" 
-            min="100"
-            step="100"
+            placeholder="0.5" 
+            min="0.1"
+            max="10"
+            step="0.1"
             aria-label="Polling Rate"
           />
           <span class="input-icon">⏱️</span>

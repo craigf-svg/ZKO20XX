@@ -2,8 +2,6 @@
 	import "../app.css";
 	import Navbar from "$lib/Navbar.svelte";
 	import UpdateManager from "$lib/UpdateManager.svelte";
-	import { setContext } from "svelte";
-	import type { AppSettings } from "$lib/types";
 	const { children } = $props();
 
 	type Theme = 'light' | 'dark' | 'catppuccin';
@@ -14,14 +12,6 @@
 		theme = theme === 'dark' ? 'light' : theme === 'light' ? 'catppuccin' : 'dark';
 		document.documentElement.setAttribute('data-theme', theme);
 	}
-
-	const settings = $state<AppSettings>({
-		connectCode: "",
-		slippiPath: "",
-		pollingRate: 700,
-	});
-
-	setContext<AppSettings>("app-settings", settings);
 </script>
 
 <style>
@@ -103,6 +93,20 @@
 		margin: 0;
 		min-height: 100vh;
 	}
+
+  /* Toaster Colors */
+  :global(.preset-filled-success-500) {
+    background-color: #10b981; 
+    color: white;
+  }
+  :global(.preset-filled-error-500) {
+    background-color: #ef4444; 
+    color: white;
+  }
+  :global(.preset-filled-warning-500) {
+    background-color: #f59e0b;
+    color: white;
+  }
 
 	main {
 		text-align: center;
