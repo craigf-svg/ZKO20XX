@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { io, type Socket } from "socket.io-client";
   import type { MatchupEntry } from "../../../static/data/MatchupEntry";
-  // import WaitingForGame from './WaitingForGame.svelte';
+  import WaitingForGame from './WaitingForGame.svelte';
   import Bars from "./Bars.svelte";
   import type { MoveBar } from "./types";
   import type { TrimmedSettings, PlayerWithShortName } from "./types";
@@ -28,8 +28,7 @@
   }
 
   function isCurrentStage(matchupEntry: MatchupEntry, stageName: string) {
-    const fullStageName = stageInitialsToName(matchupEntry.stage);
-    return fullStageName === stageName;
+    return stageInitialsToName(matchupEntry.stage) === stageName;
   }
 
   let matchupData: MatchupEntry | undefined = $state();
@@ -144,13 +143,16 @@
     {displayStageName || "Battlefield"} - {opponentChar}'s current percent is
     {currentPercent || -1}%
   </div>
+  {#if !matchupData}
+    <WaitingForGame />
+  {/if}
   <Bars {dynamicBars} />
 </div>
 
 <style>
   .status {
     color: var(--color-text-main);
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: normal;
     display: flex;  
     justify-content: left;
