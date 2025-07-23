@@ -7,14 +7,12 @@
   import { env } from "$env/dynamic/public";
   import type { MoveBar } from "./types";
   import type { TrimmedSettings, PlayerWithShortName } from "./types";
+  import { settings } from '$lib/state/settings.svelte';
 
   interface PlayerStats {
     character?: string;
     percent?: number;
   }
-
-  const MY_CONNECT_CODE: string = env.PUBLIC_CONNECT_CODE;
-  console.log("MY_CONNECT_CODE", MY_CONNECT_CODE);
 
   function stageInitialsToName(initials: string): string {
     const stageNames: { [key: string]: string } = {
@@ -40,7 +38,10 @@
   let currentPercent: number | undefined = $state();
   let displayStageName: string | undefined = $state();
 
-  let opponentChar: string = $state("Test");
+  let myConnectCode: string = $state(settings.connectCode);
+  let opponentConnectCode: string = $state("OPPS#111");
+  let myChar: string = $state("Fox");
+  let opponentChar: string = $state("Marth");
   let opponentPlayerIdx: number = 1;
 
   const socket: Socket = io("http://localhost:8090");
@@ -67,13 +68,13 @@
 
       // Find player+opponent index to display correct right data from socket
       let myPlayerIdx = players.findIndex(
-        (p: PlayerWithShortName) => p?.connectCode === MY_CONNECT_CODE,
+        (p: PlayerWithShortName) => p?.connectCode === myConnectCode,
       );
       opponentPlayerIdx = players.findIndex(
-        (p: PlayerWithShortName) => p?.connectCode !== MY_CONNECT_CODE,
+        (p: PlayerWithShortName) => p?.connectCode !== myConnectCode,
       );
 
-      const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
+      myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
       opponentChar =
         players[opponentPlayerIdx]?.characterShortName.toLowerCase();
 
@@ -172,7 +173,7 @@
   });
 </script>
 
-<div class="dashboard">
+<div class="flex flex-col gap-y-2">
   {#if true}
     <div class="dev">
       <span>Combat System Display Test</span>
@@ -192,46 +193,43 @@
       >
     </div>
   {/if}
-  <div class="current_percent">
-    <div>
-      {#if typeof currentPercent == "number"}
-        <span>{opponentChar}'s current percent is {currentPercent}%</span>
-      {:else}
-        <p>_fox vs marth</p>
-      {/if}
+  <div class="flex flex-row gap-x-2 space-y-8">
+    <div class="status">
+      <p>{myConnectCode}'s {myChar} vs {opponentConnectCode}'s {opponentChar}</p>
+      <span class="current_stage">on {displayStageName || "Battlefield"}</span>
     </div>
-    <h3 class="current_stage">
-      {#if typeof displayStageName == "string"}
-        <span>{displayStageName}</span>
-      {:else}
-        <p>_ys</p>
-      {/if}
-    </h3>
+    <div class="percent">
+      <span>{opponentChar}'s current percent is {currentPercent || -1}%</span>
+    </div>
   </div>
-
-  <h1 class="box-title">KO Moves</h1>
   <Bars {dynamicBars} />
 </div>
 
 <style>
-  .dashboard {
-    padding: 0.75em;
+  .status {
+    color: var(--color-text-main);
+    font-size: 1.5rem;
+    font-weight: normal;
+    display: flex;  
+    justify-content: left;
+    gap: 0.5rem;
   }
-  .current_percent {
-    color: var(--color-orange-main);
-    font-weight: bold;
+  .percent {
+    color: var(--color-text-main);
+    font-size: 1.5rem;
+    font-weight: normal;
     display: flex;
-    justify-content: space-between;
-  }
-  .box-title {
-    color: var(--color-text-heading);
-    text-align: left;
+    justify-content: left;
   }
   .current_stage {
-    color: var(--color-purple-flair);
+    color: var(--color-text-main);
+    font-weight: normal;
   }
   .dev {
     padding: 1rem;
     text-align: left;
+    position:absolute;
+    bottom:0;
+    left:0;
   }
 </style>
