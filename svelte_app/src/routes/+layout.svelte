@@ -3,6 +3,7 @@
 	import Navbar from "$lib/Navbar.svelte";
 	import UpdateManager from "$lib/UpdateManager.svelte";
 	const { children } = $props();
+	import { loadSettings } from "$lib/state/settings.svelte";
 
 	type Theme = 'light' | 'dark' | 'catppuccin';
 	let theme = $state<Theme>('dark');
@@ -12,6 +13,10 @@
 		theme = theme === 'dark' ? 'light' : theme === 'light' ? 'catppuccin' : 'dark';
 		document.documentElement.setAttribute('data-theme', theme);
 	}
+
+	$effect(() => {
+		loadSettings();
+	});
 </script>
 
 <style>

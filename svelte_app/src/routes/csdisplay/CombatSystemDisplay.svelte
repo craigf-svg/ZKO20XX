@@ -8,27 +8,16 @@
   import type { TrimmedSettings, PlayerWithShortName } from "./types";
   import { settings } from '$lib/state/settings.svelte';
   import { SAMPLE_DYNAMIC_DATA, isKoPercentReached, calculateKoProgressWidth } from './koUtils';
+  import { handleGameStart, handleSlippiUpdate } from './gameHandlers';
+  import { printSettings } from '$lib/state/settings.svelte';
+
+  $effect(() => {
+    printSettings();
+  });
 
   interface PlayerStats {
     character?: string;
     percent?: number;
-  }
-
-  function stageInitialsToName(initials: string): string {
-    const stageNames: { [key: string]: string } = {
-      DL: "Dream Land N64",
-      YS: "Yoshi's Story",
-      PS: "Pokémon Stadium",
-      FD: "Final Destination",
-      FoD: "Fountain of Dreams",
-      BF: "Battlefield",
-    };
-
-    return stageNames[initials] || "Battlefield";
-  }
-
-  function isCurrentStage(matchupEntry: MatchupEntry, stageName: string) {
-    return stageInitialsToName(matchupEntry.stage) === stageName;
   }
 
   let matchupData: MatchupEntry | undefined = $state();
@@ -46,51 +35,24 @@
 
   onMount(() => {
     socket.on("game_start", async (settings: TrimmedSettings) => {
-      displayStageName = settings.stageName;
-      let players: PlayerWithShortName[] = settings.players;
-
-      let myPlayerIdx = players.findIndex(
-        (p: PlayerWithShortName) => p?.connectCode === myConnectCode,
-      );
-      opponentPlayerIdx = players.findIndex(
-        (p: PlayerWithShortName) => p?.connectCode !== myConnectCode,
-      );
-
-      myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
-      opponentChar =
-        players[opponentPlayerIdx]?.characterShortName.toLowerCase();
-
-      const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
-      try {
-        const response = await fetch(matchupPath);
-        const allStagesKOData: MatchupEntry[] = await response.json();
-        console.log("Loaded perspective matchup data:", allStagesKOData);
-        const currentStageData: MatchupEntry | undefined = allStagesKOData.find(
-          (entry: MatchupEntry) => isCurrentStage(entry, settings.stageName),
-        );
-        console.log("currentStageData", currentStageData);
-        matchupData = currentStageData;
-      } catch (e) {
-        console.error("Could not load matchup data for", matchupPath, e);
-        matchupData = undefined;
-      }
+      const gameState = await handleGameStart(settings, myConnectCode);
+      myChar = gameState.myChar;
+      opponentChar = gameState.opponentChar;
+      opponentPlayerIdx = gameState.opponentPlayerIdx;
+      matchupData = gameState.matchupData;
+      displayStageName = gameState.displayStageName;
     });
 
-    // TODO: Round percent in nodejs before passing
     socket.on("slippi_update", (players: PlayerStats[]) => {
-      console.log("Received an event with info ", JSON.stringify(players));
-      if (
-        players &&
-        players[opponentPlayerIdx] &&
-        typeof players[opponentPlayerIdx].percent === "number"
-      ) {
-        currentPercent = players[opponentPlayerIdx].percent;
-        console.log("currentPercent:", currentPercent);
-      } else {
-        console.log("Invalid data received.");
-      }
+      currentPercent = handleSlippiUpdate(players, opponentPlayerIdx);
     });
 
+    socket.on("game_end", () => {
+      console.log("Game ended");
+      matchupData = undefined;
+      currentPercent = undefined;
+      displayStageName = undefined;
+    });
     return () => socket.disconnect();
   });
 
