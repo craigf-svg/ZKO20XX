@@ -4,10 +4,10 @@
   import type { MatchupEntry } from "../../../static/data/MatchupEntry";
   // import WaitingForGame from './WaitingForGame.svelte';
   import Bars from "./Bars.svelte";
-  import { env } from "$env/dynamic/public";
   import type { MoveBar } from "./types";
   import type { TrimmedSettings, PlayerWithShortName } from "./types";
   import { settings } from '$lib/state/settings.svelte';
+  import { SAMPLE_DYNAMIC_DATA, isKoPercentReached, calculateKoProgressWidth } from './koUtils';
 
   interface PlayerStats {
     character?: string;
@@ -34,7 +34,6 @@
 
   let matchupData: MatchupEntry | undefined = $state();
 
-  // TODO: Round percent in nodejs before passing
   let currentPercent: number | undefined = $state();
   let displayStageName: string | undefined = $state();
 
@@ -47,26 +46,10 @@
   const socket: Socket = io("http://localhost:8090");
 
   onMount(() => {
-    // Add typing to this
     socket.on("game_start", async (settings: TrimmedSettings) => {
       displayStageName = settings.stageName;
       let players: PlayerWithShortName[] = settings.players;
 
-      if (players.length != 2) {
-        console.error("Player length is not 2");
-      }
-
-      // Test Output
-      console.log(
-        "players[0].characterShortName",
-        players[0].characterShortName,
-      );
-      console.log(
-        "players[1].characterShortName",
-        players[1].characterShortName,
-      );
-
-      // Find player+opponent index to display correct right data from socket
       let myPlayerIdx = players.findIndex(
         (p: PlayerWithShortName) => p?.connectCode === myConnectCode,
       );
@@ -78,16 +61,8 @@
       opponentChar =
         players[opponentPlayerIdx]?.characterShortName.toLowerCase();
 
-      console.log(
-        `My connect code: ${players[myPlayerIdx]?.connectCode}, opponent's connect code: ${players[opponentPlayerIdx]?.connectCode}`,
-      );
-      console.log(
-        `myPlayerIdx: ${myPlayerIdx}, opponentPlayerIdx: ${opponentPlayerIdx}`,
-      );
-
-      // Load matchup data
+      const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
       try {
-        const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
         const response = await fetch(matchupPath);
         const allStagesKOData: MatchupEntry[] = await response.json();
         console.log("Loaded perspective matchup data:", allStagesKOData);
@@ -97,15 +72,12 @@
         console.log("currentStageData", currentStageData);
         matchupData = currentStageData;
       } catch (e) {
-        console.error(
-          "Could not load matchup data for",
-          `/data/${myChar}/vs_${opponentChar}.json`,
-          e,
-        );
+        console.error("Could not load matchup data for", matchupPath, e);
         matchupData = undefined;
       }
     });
 
+    // TODO: Round percent in nodejs before passing
     socket.on("slippi_update", (players: PlayerStats[]) => {
       console.log("Received an event with info ", JSON.stringify(players));
       if (
@@ -123,46 +95,20 @@
     return () => socket.disconnect();
   });
 
-  const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
-    "fileDone?": false,
-    attacker: "Fox",
-    defender: "Marth",
-    stage: "YS",
-    moves: {
-      upSmash: 83,
-      strongUpTilt: 102,
-      downTilt: 145,
-      bAir: 124,
-      shuAir: 105,
-    },
-  };
-
-  function checkHighlighted(currentPercent: number, koPercent: any): boolean {
-    return currentPercent >= koPercent;
-  }
-  const calcWidth = (currentPercent: number, koPercent: number): string =>
-    currentPercent && koPercent
-      ? `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%`
-      : "0%";
-
   const movesSource = $derived.by(() => {
-    if (!matchupData?.moves) {
-      console.warn("using sample_dynamic_data for moves");
-      return SAMPLE_DYNAMIC_DATA.moves;
-    }
-    return matchupData.moves;
+    return (matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves);
   });
 
   let dynamicBars: MoveBar[] = $derived(
     Object.entries(movesSource).map(([moveName, koPercent]) => {
-      const isHighlighted = checkHighlighted(currentPercent || 0, koPercent);
-      const calculatedWidth = calcWidth(currentPercent || 0, koPercent);
+      const koPercentReached = isKoPercentReached(currentPercent || 0, koPercent);
+      const koProgressWidth = calculateKoProgressWidth(currentPercent || 0, koPercent);
 
       return {
         moveName,
         koPercent,
-        width: calculatedWidth,
-        isHighlighted,
+        width: koProgressWidth,
+        isHighlighted: koPercentReached,
       };
     }),
   );
@@ -193,14 +139,10 @@
       >
     </div>
   {/if}
-  <div class="flex flex-row gap-x-2 space-y-8">
-    <div class="status">
-      <p>{myConnectCode}'s {myChar} vs {opponentConnectCode}'s {opponentChar}</p>
-      <span class="current_stage">on {displayStageName || "Battlefield"}</span>
-    </div>
-    <div class="percent">
-      <span>{opponentChar}'s current percent is {currentPercent || -1}%</span>
-    </div>
+  <div class="status">
+    {myConnectCode}'s {myChar} vs {opponentConnectCode}'s {opponentChar} on
+    {displayStageName || "Battlefield"} - {opponentChar}'s current percent is
+    {currentPercent || -1}%
   </div>
   <Bars {dynamicBars} />
 </div>
@@ -213,17 +155,6 @@
     display: flex;  
     justify-content: left;
     gap: 0.5rem;
-  }
-  .percent {
-    color: var(--color-text-main);
-    font-size: 1.5rem;
-    font-weight: normal;
-    display: flex;
-    justify-content: left;
-  }
-  .current_stage {
-    color: var(--color-text-main);
-    font-weight: normal;
   }
   .dev {
     padding: 1rem;
