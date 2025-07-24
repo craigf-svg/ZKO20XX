@@ -8,6 +8,7 @@ use tauri_plugin_aptabase::EventTracker;
 mod system_info;
 mod version;
 use system_info::get_cpu_usage;
+mod commands;
 
 #[tokio::main]
 async fn main() {
@@ -20,7 +21,8 @@ async fn main() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![get_cpu_usage])
+        .plugin(tauri_plugin_shell::init())
+        .invoke_handler(tauri::generate_handler![commands::ping::ping, get_cpu_usage])
         .plugin(tauri_plugin_aptabase::Builder::new(dotenv!("APTABASE_KEY")).build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .setup(move |app| {

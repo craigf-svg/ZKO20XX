@@ -17,6 +17,17 @@
 	$effect(() => {
 		loadSettings();
 	});
+	// Temporary test for sample sidecar
+	import { Command } from '@tauri-apps/plugin-shell';
+    import { onMount } from "svelte";
+	onMount(async () => {
+		console.log('onMount');
+		const message = 'Tauri';
+		const command = Command.sidecar('binaries/app', ['ping', message]);
+		const output = await command.execute();
+		const response = output.stdout;
+		console.log(response);
+	});
 </script>
 
 <style>

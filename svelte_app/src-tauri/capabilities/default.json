@@ -8,6 +8,16 @@
   "permissions": [
     "core:default",
     "updater:default",
-    "store:default"
+    "store:default",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "binaries/app",
+          "sidecar": true
+        }
+      ]
+    },
+    "shell:allow-open"
   ]
 }
