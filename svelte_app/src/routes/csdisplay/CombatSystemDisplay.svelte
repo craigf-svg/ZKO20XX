@@ -103,7 +103,7 @@
   <div class="status">
     {myConnectCode}'s {myChar} vs {opponentConnectCode}'s {opponentChar} on
     {displayStageName || "Battlefield"} - {opponentChar}'s current percent is
-    {currentPercent || -1}%
+    {currentPercent || 0}%
   </div>
   {#if !matchupData}
     <WaitingForGame />

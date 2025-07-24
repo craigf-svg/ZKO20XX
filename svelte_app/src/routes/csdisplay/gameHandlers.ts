@@ -71,6 +71,7 @@ export async function handleGameStart(
     console.log("currentStageData", matchupData);
   } catch (e) {
     console.error("Could not load matchup data for", matchupPath, e);
+    console.log(`Make sure your file path "${matchupPath}" and your connect code "${myConnectCode}" are set correctly in settings!`);
     matchupData = undefined;
   }
 
