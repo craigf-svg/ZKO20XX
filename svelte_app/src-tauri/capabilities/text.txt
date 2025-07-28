@@ -1,0 +1,13 @@
+{
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "args": [
+            "ping",
+            "Tauri"
+          ],
+          "name": "binaries/app",
+          "sidecar": true
+        }
+      ]
+    }

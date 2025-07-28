@@ -1,3 +1,4 @@
+// @ts-nocheck
 <script lang="ts">
 	import "../app.css";
 	import Navbar from "$lib/Navbar.svelte";
@@ -17,17 +18,24 @@
 	$effect(() => {
 		loadSettings();
 	});
-	// Temporary test for sample sidecar
+
 	import { Command } from '@tauri-apps/plugin-shell';
-    import { onMount } from "svelte";
-	onMount(async () => {
-		console.log('onMount');
-		const message = 'Tauri';
-		const command = Command.sidecar('binaries/app', ['ping', message]);
-		const output = await command.execute();
-		const response = output.stdout;
-		console.log(response);
-	});
+	
+	let commandOutput = '';
+	let commandError = '';
+
+	async function testSidecarPing() {
+		try {
+			const command = Command.sidecar('binaries/app', ['ping', 'Tauri']);
+			console.log('Command created:', command);
+			const output = await command.execute();
+			commandOutput = output.stdout;
+			console.log('Command output:', commandOutput);
+		} catch (error) {
+			console.error('Error in testSidecarPing:', error as Error);
+			commandError = `Error: ${(error as Error).message}`;
+		}
+	}
 </script>
 
 <style>
@@ -138,7 +146,7 @@
 	}
 </style>
 
-<Navbar theme={theme} cycleTheme={cycleTheme} />
+<Navbar theme={theme} cycleTheme={cycleTheme} testSidecarPing={testSidecarPing} />
 <main data-theme={theme}>
   {@render children()}
 </main>

@@ -1,0 +1,16 @@
+{
+  "name": "sidecar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pkg index.js --output app"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.6.0"
+  }
+}

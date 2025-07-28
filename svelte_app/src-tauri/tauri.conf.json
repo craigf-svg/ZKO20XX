@@ -34,9 +34,11 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "externalBin": ["binaries/app"]
+    "externalBin": [
+      "binaries/app"
+    ] 
   },
- "plugins": {
+  "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGNDBERDZDNkUxRUJFQjEKUldTeHZoNXViTjFBejJDT1BTTWFTbldsbjNSaU9EMzlLOUpFa3JYN0UxNXJwbHAwb0Uxc3dtci8K",
       "endpoints": [
