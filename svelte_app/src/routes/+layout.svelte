@@ -1,4 +1,3 @@
-// @ts-nocheck
 <script lang="ts">
 	import "../app.css";
 	import Navbar from "$lib/Navbar.svelte";
@@ -6,40 +5,73 @@
 	const { children } = $props();
 	import { loadSettings } from "$lib/state/settings.svelte";
 
-	type Theme = 'light' | 'dark' | 'catppuccin';
-	let theme = $state<Theme>('dark');
-	document.documentElement.setAttribute('data-theme', 'dark');
+	type Theme = "light" | "dark" | "catppuccin";
+	let theme = $state<Theme>("dark");
+	document.documentElement.setAttribute("data-theme", "dark");
 
 	function cycleTheme() {
-		theme = theme === 'dark' ? 'light' : theme === 'light' ? 'catppuccin' : 'dark';
-		document.documentElement.setAttribute('data-theme', theme);
+		theme =
+			theme === "dark"
+				? "light"
+				: theme === "light"
+					? "catppuccin"
+					: "dark";
+		document.documentElement.setAttribute("data-theme", theme);
 	}
 
 	$effect(() => {
 		loadSettings();
 	});
 
-	import { Command } from '@tauri-apps/plugin-shell';
-	
-	let commandOutput = '';
-	let commandErrorOutput = '';
-	async function testSidecarPing() {
+	import { Command, type Child } from "@tauri-apps/plugin-shell";
+
+	let commandOutput = "";
+	let commandErrorOutput = "";
+	let isWaiting: boolean = false;
+	let commandChild: Child | null = null;
+
+	async function testSidecarPing(): Promise<void> {
 		try {
-			console.log('Testing sidecar ping...');
-			const command = Command.sidecar('binaries/my-sidecar');
-			console.log('Command created:', command);
-			const output = await command.execute();
-			console.log('Command executed:', output);
-			commandOutput = output.stdout;
-			console.log('Command output:', commandOutput);
-			commandErrorOutput = output.stderr;
-			console.log('Command error output:', commandErrorOutput);
-			console.log('Command exit code:', output.code);
+			const command = Command.sidecar("binaries/my-sidecar");
+			commandChild = await command.spawn();
+
+			// Listen to stdout stream
+			// @ts-ignore
+			commandChild.stdout.on("data", (data: Uint8Array) => {
+				const output = new TextDecoder().decode(data);
+				console.log("Sidecar output:", output);
+			});
+
+			// Handle stderr
+			// @ts-ignore
+			commandChild.stderr.on("data", (data: Uint8Array) => {
+				const error = new TextDecoder().decode(data);
+				console.error("Sidecar error:", error);
+			});
+
+			// Handle process exit
+			// @ts-ignore
+			const status = await commandChild.wait();
+			console.log("Sidecar exited with status:", status);
 		} catch (error) {
-			console.error('Error in testSidecarPing:', error as Error);
+			console.error("Error starting sidecar:", error as Error);
+		}
+	}
+
+	function stopSidecar(): void {
+		if (commandChild) {
+			commandChild.kill();
+			commandChild = null;
 		}
 	}
 </script>
+
+// @ts-nocheck
+<Navbar {theme} {cycleTheme} {testSidecarPing} />
+<main data-theme={theme}>
+	{@render children()}
+</main>
+<UpdateManager />
 
 <style>
 	@font-face {
@@ -67,8 +99,8 @@
 		--transition: 250ms ease-out;
 		--color-bar-fill: #ff3e00;
 		--color-bar-shadow: rgba(255, 62, 0, 0.1);
-		--color-lab-button: #ffb86a; 
-		--color-lab-button-border: #ffb86a; 
+		--color-lab-button: #ffb86a;
+		--color-lab-button-border: #ffb86a;
 	}
 
 	:global([data-theme="dark"]) {
@@ -87,8 +119,8 @@
 		--color-border: #444444;
 		--color-bar-fill: #ff3e00;
 		--color-bar-shadow: rgba(255, 62, 0, 0.2);
-		--color-lab-button: #ffb86a; 
-		--color-lab-button-border: #ffb86a; 
+		--color-lab-button: #ffb86a;
+		--color-lab-button-border: #ffb86a;
 	}
 
 	:global([data-theme="catppuccin"]) {
@@ -113,7 +145,9 @@
 	/* TO DO ADD GRADIENT LIKE IN settings thanks*/
 	:global(body) {
 		font-family: system-ui;
-		transition: background-color 0.3s, color 0.3s;
+		transition:
+			background-color 0.3s,
+			color 0.3s;
 		/* font-family: 'Playfair Display'; */
 		background-color: var(--color-bg-body);
 		color: var(--color-text-main);
@@ -121,19 +155,19 @@
 		min-height: 100vh;
 	}
 
-  /* Toaster Colors */
-  :global(.preset-filled-success-500) {
-    background-color: #10b981; 
-    color: white;
-  }
-  :global(.preset-filled-error-500) {
-    background-color: #ef4444; 
-    color: white;
-  }
-  :global(.preset-filled-warning-500) {
-    background-color: #f59e0b;
-    color: white;
-  }
+	/* Toaster Colors */
+	:global(.preset-filled-success-500) {
+		background-color: #10b981;
+		color: white;
+	}
+	:global(.preset-filled-error-500) {
+		background-color: #ef4444;
+		color: white;
+	}
+	:global(.preset-filled-warning-500) {
+		background-color: #f59e0b;
+		color: white;
+	}
 
 	main {
 		text-align: center;
@@ -148,9 +182,3 @@
 		}
 	}
 </style>
-
-<Navbar theme={theme} cycleTheme={cycleTheme} testSidecarPing={testSidecarPing} />
-<main data-theme={theme}>
-  {@render children()}
-</main>
-<UpdateManager />
