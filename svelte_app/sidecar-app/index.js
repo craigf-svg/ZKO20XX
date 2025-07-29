@@ -1,2 +1,2 @@
 console.log('Sidecar process started.');
-console.log('Sidecar ended.')
+setTimeout(() => console.error('Sidecar process ended.'), 10000);

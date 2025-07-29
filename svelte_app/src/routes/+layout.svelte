@@ -22,18 +22,21 @@
 	import { Command } from '@tauri-apps/plugin-shell';
 	
 	let commandOutput = '';
-	let commandError = '';
-
+	let commandErrorOutput = '';
 	async function testSidecarPing() {
 		try {
-			const command = Command.sidecar('binaries/app', ['ping', 'Tauri']);
+			console.log('Testing sidecar ping...');
+			const command = Command.sidecar('binaries/my-sidecar');
 			console.log('Command created:', command);
 			const output = await command.execute();
+			console.log('Command executed:', output);
 			commandOutput = output.stdout;
 			console.log('Command output:', commandOutput);
+			commandErrorOutput = output.stderr;
+			console.log('Command error output:', commandErrorOutput);
+			console.log('Command exit code:', output.code);
 		} catch (error) {
 			console.error('Error in testSidecarPing:', error as Error);
-			commandError = `Error: ${(error as Error).message}`;
 		}
 	}
 </script>

@@ -9,7 +9,15 @@
     "core:default",
     "updater:default",
     "store:default",
-    "shell:allow-execute",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "binaries/my-sidecar",
+          "sidecar": true
+        }
+      ]
+    },
     "shell:allow-open"
   ]
 }

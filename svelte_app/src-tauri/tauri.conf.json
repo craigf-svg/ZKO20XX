@@ -35,7 +35,7 @@
       "icons/icon.ico"
     ],
     "externalBin": [
-      "binaries/app"
+      "binaries/my-sidecar"
     ] 
   },
   "plugins": {
