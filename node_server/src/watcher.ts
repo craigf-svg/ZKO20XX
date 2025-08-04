@@ -14,6 +14,16 @@ const io = new SocketIOServer(8090, {
 });
 
 console.log("WebSocket server running on http://localhost:8090");
+
+io.on("connection", (socket) => {
+  console.log(`[Socket.IO] New client connected: ${socket.id}`);
+  socket.emit("server_ready", {
+    status: "ready",
+    message: "Slippi watcher is live",
+    time: new Date().toISOString(),
+  });
+});
+
 interface PlayerWithShortName extends PlayerType {
   characterShortName: string;
 }

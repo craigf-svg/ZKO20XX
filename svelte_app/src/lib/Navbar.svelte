@@ -8,22 +8,14 @@
         cycleTheme: () => void;
         testSidecarPing: () => void;
     }>();
-
-    let show = $state(true);
-    $effect(() => console.log("show", show));
 </script>
 
 <nav>
     <ul>
         <li>
             <a href="/" class="link">
-                <Logo {show} />
+                <Logo />
             </a>
-        </li>
-        <li>
-            <button type="button" class="link" onclick={() => (show = !show)}>
-                Switch
-            </button>
         </li>
         <li>
             <button type="button" class="link" onclick={testSidecarPing}

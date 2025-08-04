@@ -9,5 +9,7 @@
     "outDir": "./dist",
     "resolveJsonModule": true,
     "moduleResolution": "node"
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
