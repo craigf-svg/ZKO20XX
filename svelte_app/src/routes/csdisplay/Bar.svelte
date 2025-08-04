@@ -1,57 +1,63 @@
 <script lang="ts">
-  import type { MoveBar } from './types';
-  let {
-    moveName,
-    koPercent,
-    width,
-    isHighlighted
-  }: MoveBar = $props();
+    import type { MoveBar } from "./types";
+    let { moveName, koPercent, width, highlight }: MoveBar = $props();
+    let noneOrDimClass = $derived(
+        highlight === "full" ? "full" : highlight === "dim" ? "dim" : "none",
+    );
+    let displayPercent = Array.isArray(koPercent)
+        ? koPercent.join(" · ") // maybe a small x
+        : koPercent;
 </script>
 
 <div class="card">
-  <div class="card-header">
-    <span>{moveName}</span>
-    <span class="value">{koPercent}%</span>
-  </div>
-  <div class="bar">
-    <div class="bar-fill {isHighlighted ? '' : 'inactive'}" style:width={width}></div>
-  </div>
+    <div class="card-header">
+        <span>{moveName}</span>
+        <span class="value">{displayPercent}%</span>
+    </div>
+    <div class="bar">
+        <div class="bar-fill {noneOrDimClass}" style:width></div>
+    </div>
 </div>
 
 <style>
-  .card {
-    background: #1e1e1e;
-    color: #f0f0f0;
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 0 8px var(--color-bar-shadow); 
-  }
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-  }
-  .value {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-  .bar {
-    background: #333;
-    height: 8px;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .bar-fill {
-    height: 100%;
-    background: var(--color-bar-fill);
-    transition: width 0.3s ease;
-  }
-  .bar-fill.inactive {
-    background: #444;
-  }
+    .card {
+        background: #1e1e1e;
+        color: #f0f0f0;
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 0 8px var(--color-bar-shadow);
+    }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .value {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    .bar {
+        background: #333;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .bar-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+    .full {
+        background: var(--color-bar-fill);
+    }
+    .dim {
+        background: var(--color-bar-fill-partial);
+    }
+    .none {
+        background: #444;
+    }
 </style>

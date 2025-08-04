@@ -41,7 +41,7 @@
     "defender": "Marth",
     "stage": "BF",
     "moves": {
-      "upSmash": 91.0,
+      "upSmash": [81, 82, 91],
       "strongUpTilt": 127.0,
       "downTilt": 168.0,
       "bAir": 143.0,

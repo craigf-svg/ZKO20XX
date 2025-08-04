@@ -1,5 +1,4 @@
 <script>
-    console.log("hello?");
     let { show } = $props();
     $effect(() => console.log("show logo", show));
 </script>
@@ -21,14 +20,15 @@
     </p>
 {:else}
     <p id="zko" class="flex justify-between">
-        ZK<span>0_2</span>0XX
+        ZK<span>0_2</span>
         <img
             src="/logo.svg"
             alt="logo"
+            id="shine2"
             height="28px"
             width="28px"
-            style="margin-left: -2.5px"
         />
+        XX
     </p>
 {/if}
 
@@ -46,5 +46,10 @@
     #shine {
         margin-left: -4.5px;
         margin-right: -3.5px;
+    }
+    #shine2 {
+        margin-left: -3.5px;
+        margin-right: -4.5px;
+        color: var(--color-orange-logo);
     }
 </style>

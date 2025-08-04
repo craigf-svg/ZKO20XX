@@ -1,299 +1,324 @@
 <script lang="ts">
-  import { settings } from '$lib/state/settings.svelte';
-  import { Toaster, createToaster } from "@skeletonlabs/skeleton-svelte";
-  const toaster = createToaster({ placement: "bottom-start" });
+    import { settings } from "$lib/state/settings.svelte";
+    import { Toaster, createToaster } from "@skeletonlabs/skeleton-svelte";
+    const toaster = createToaster({ placement: "bottom-start" });
 
-  function saveConnectCode(code: string) {
-    if (code.trim().length <= 0) {
-      console.error('Connect code must be at least 1 character long');
-      toaster.error({ title: 'Connect code must be at least 1 character long' });
-      return;
+    function saveConnectCode(code: string) {
+        if (code.trim().length <= 0) {
+            console.error("Connect code must be at least 1 character long");
+            toaster.error({
+                title: "Connect code must be at least 1 character long",
+            });
+            return;
+        }
+        settings.connectCode = code;
+        let message = `Connect code saved: ${code}`;
+        console.log(message);
+        toaster.success({ title: message });
     }
-    settings.connectCode = code;
-    let message = `Connect code saved: ${code}`;
-    console.log(message);
-    toaster.success({ title: message });
-  }
 
-  function saveSlippiPath(path: string) {
-    if (path.trim().length <= 0) {
-      console.error('Slippi path must be at least 1 character long');
-      toaster.error({ title: 'Slippi path must be at least 1 character long' });
-      return;
+    function saveSlippiPath(path: string) {
+        if (path.trim().length <= 0) {
+            console.error("Slippi path must be at least 1 character long");
+            toaster.error({
+                title: "Slippi path must be at least 1 character long",
+            });
+            return;
+        }
+        settings.slippiPath = path;
+        let message = `Slippi path saved: ${path}`;
+        console.log(message);
+        toaster.success({ title: message });
     }
-    settings.slippiPath = path;
-    let message = `Slippi path saved: ${path}`;
-    console.log(message);
-    toaster.success({ title: message });
-  }
 
-  function savePollingRate(rateInSeconds: number) {
-    if (rateInSeconds < 0.1 || rateInSeconds > 10) {
-      console.error('Polling rate must be between 0.1 and 10 seconds');
-      toaster.error({ title: 'Polling rate must be between 0.1 and 10 seconds' });
-      return;
+    function savePollingRate(rateInSeconds: number) {
+        if (rateInSeconds < 0.1 || rateInSeconds > 10) {
+            console.error("Polling rate must be between 0.1 and 10 seconds");
+            toaster.error({
+                title: "Polling rate must be between 0.1 and 10 seconds",
+            });
+            return;
+        }
+        const rateInMs = rateInSeconds * 1000;
+        settings.pollingRate = rateInMs;
+        let message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
+        console.log(message);
+        toaster.success({ title: message });
     }
-    const rateInMs = rateInSeconds * 1000;
-    settings.pollingRate = rateInMs;
-    let message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
-    console.log(message);
-    toaster.success({ title: message });
-  }
 
-  let connectCode = $state(settings.connectCode);
-  let slippiPath = $state(settings.slippiPath);
-  let pollingRate = $state(settings.pollingRate / 1000);
+    let connectCode = $state(settings.connectCode);
+    let slippiPath = $state(settings.slippiPath);
+    let pollingRate = $state(settings.pollingRate / 1000);
 </script>
 
 <Toaster classes="background" {toaster}></Toaster>
 <div class="settings-container">
-  <div class="settings-card">
-    <header>
-      <h1>Settings</h1>
-      <p class="subtitle">Configure your application preferences</p>
-    </header>
-    
-    <form onsubmit={() => {
-      saveConnectCode(connectCode);
-      saveSlippiPath(slippiPath);
-      savePollingRate(pollingRate);
-    }}>
-      <div class="form-group">
-        <label for="codeInput">Connect Code</label>
-        <div class="input-wrapper">
-          <input 
-            type="text" 
-            id="codeInput" 
-            bind:value={connectCode} 
-            placeholder="BLU#007" 
-            aria-label="Connect Code"
-          />
-          <span class="input-icon">#</span>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label for="slippiPath">Slippi Folder Path</label>
-        <div class="input-wrapper">
-          <input 
-            type="text" 
-            id="slippiPath" 
-            bind:value={slippiPath} 
-            placeholder="C:\\Users\\Username\\Documents\\Slippi" 
-            aria-label="Slippi Folder Path"
-          />
-          <span class="input-icon">📁</span>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label for="pollingRate">Polling Rate (seconds)</label>
-        <div class="input-wrapper">
-          <input 
-            type="number" 
-            id="pollingRate" 
-            bind:value={pollingRate} 
-            placeholder="0.5" 
-            min="0.1"
-            max="10"
-            step="0.1"
-            aria-label="Polling Rate"
-          />
-          <span class="input-icon">⏱️</span>
-        </div>
-      </div>
+    <div class="settings-card">
+        <header>
+            <h1>Settings</h1>
+            <p class="subtitle">Configure your application preferences</p>
+        </header>
 
-      <div class="form-actions">
-        <button type="button" class="btn btn-secondary">
-          Restore Defaults
-        </button>
-        <button type="submit" class="btn btn-primary">
-          Save All Changes
-        </button>
-      </div>
-    </form>
-  </div>
+        <form
+            onsubmit={() => {
+                saveConnectCode(connectCode);
+                saveSlippiPath(slippiPath);
+                savePollingRate(pollingRate);
+            }}
+        >
+            <div class="form-group">
+                <label for="codeInput">Connect Code</label>
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="codeInput"
+                        bind:value={connectCode}
+                        placeholder="BLU#007"
+                        aria-label="Connect Code"
+                    />
+                    <span class="input-icon">#</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="slippiPath">Slippi Folder Path</label>
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="slippiPath"
+                        bind:value={slippiPath}
+                        placeholder="C:\\Users\\Username\\Documents\\Slippi"
+                        aria-label="Slippi Folder Path"
+                    />
+                    <span class="input-icon">📁</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pollingRate">Polling Rate (seconds)</label>
+                <div class="input-wrapper">
+                    <input
+                        type="number"
+                        id="pollingRate"
+                        bind:value={pollingRate}
+                        placeholder="0.5"
+                        min="0.1"
+                        max="10"
+                        step="0.1"
+                        aria-label="Polling Rate"
+                    />
+                    <span class="input-icon">⏱️</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary">
+                    Restore Defaults
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Save All Changes
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <style>
-  .settings-container {
-    min-height: 100vh;
-    /* background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);      */
-    padding: 2rem 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    /*font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;*/
-  }
-
-  .settings-card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
-    padding: 2.5rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .settings-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-
-  header {
-    margin-bottom: 2.5rem;
-    text-align: center;
-  }
-
-  h1 {
-    color: #1e293b;
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.2;
-  }
-
-  .subtitle {
-    color: #64748b;
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.75rem;
-  }
-
-  label {
-    display: block;
-    color: #334155;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    font-size: 0.9375rem;
-  }
-
-  .input-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
-  .input-wrapper .input-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    pointer-events: none;
-  }
-
-  input {
-    width: 100%;
-    padding: 0.875rem 1rem 0.875rem 2.75rem;
-    font-size: 1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    transition: all 0.2s ease;
-    background-color: #f8fafc;
-    color: #1e293b;
-    box-sizing: border-box;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-  }
-
-  input::placeholder {
-    color: #94a3b8;
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #f1f5f9;
-  }
-
-  .btn {
-    padding: 0.875rem 1.75rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .btn-primary {
-    background-color: #3b82f6;
-    color: white;
-  }
-
-  .btn-primary:hover {
-    background-color: #2563eb;
-    transform: translateY(-1px);
-  }
-
-  .btn-primary:active {
-    transform: translateY(0);
-  }
-
-  .btn-secondary {
-    background-color: #f1f5f9;
-    color: #334155;
-  }
-
-  .btn-secondary:hover {
-    background-color: #e2e8f0;
-    transform: translateY(-1px);
-  }
-
-  .btn-secondary:active {
-    transform: translateY(0);
-  }
-
-  @media (max-width: 640px) {
     .settings-container {
-      padding: 1rem;
+        min-height: 100vh;
+        /* background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);      */
+        padding: 2rem 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        /*font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;*/
     }
 
     .settings-card {
-      padding: 1.5rem;
+        border-radius: 16px;
+        background-color: var(--color-bg-navbar);
+        box-shadow:
+            0 10px 25px -5px rgba(0, 0, 0, 0.1),
+            0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+        padding: 2.5rem;
+        transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
+    }
+
+    .settings-card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 20px 25px -5px rgba(0, 0, 0, 0.1),
+            0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    header {
+        margin-bottom: 2.5rem;
+        text-align: center;
+    }
+
+    h1 {
+        /* color: #1e293b;*/
+        color: var(--color-text-main);
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        line-height: 1.2;
+    }
+
+    .subtitle {
+        /*color: #64748b;*/
+        color: var(--color-text-main);
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
+
+    label {
+        display: block;
+        /* color: #334155; */
+        color: var(--color-text-main);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        font-size: 0.9375rem;
+    }
+
+    .input-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .input-wrapper .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        font-size: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        background-color: #f8fafc;
+        color: #1e293b;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    input::placeholder {
+        color: #94a3b8;
     }
 
     .form-actions {
-      flex-direction: column;
-      gap: 0.75rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f1f5f9;
     }
 
     .btn {
-      width: 100%;
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
-  }
 
-  /* Animation for form elements */
-  .form-group {
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInUp 0.4s ease-out forwards;
-  }
-
-  .form-group:nth-child(1) { animation-delay: 0.1s; }
-  .form-group:nth-child(2) { animation-delay: 0.2s; }
-  .form-group:nth-child(3) { animation-delay: 0.3s; }
-  .form-actions { animation-delay: 0.4s; }
-
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    .btn-primary {
+        background-color: #3b82f6;
+        color: white;
     }
-  }
+
+    .btn-primary:hover {
+        background-color: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background-color: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e8f0;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary:active {
+        transform: translateY(0);
+    }
+
+    @media (max-width: 640px) {
+        .settings-container {
+            padding: 1rem;
+        }
+
+        .settings-card {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    /* Animation for form elements */
+    .form-group {
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInUp 0.4s ease-out forwards;
+    }
+
+    .form-group:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+    .form-group:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    .form-group:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+    .form-actions {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
