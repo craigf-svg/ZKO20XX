@@ -33,26 +33,14 @@
     async function testSidecarPing(): Promise<void> {
         try {
             const command = Command.sidecar("binaries/my-sidecar");
+            // Listen
+            command.on("close", data => {
+                console.log(`command finished with code ${data.code} and signal ${data.signal}`);
+            });
+            command.on("error", error => console.error(`command error: "${error}"`));
+            command.stdout.on("data", line => console.log(`command stdout: "${line}"`));
+            command.stderr.on("data", line => console.log(`command stderr: "${line}"`));
             commandChild = await command.spawn();
-
-            // Listen to stdout stream
-            // @ts-ignore
-            commandChild.stdout.on("data", (data: Uint8Array) => {
-                const output = new TextDecoder().decode(data);
-                console.log("Sidecar output:", output);
-            });
-
-            // Handle stderr
-            // @ts-ignore
-            commandChild.stderr.on("data", (data: Uint8Array) => {
-                const error = new TextDecoder().decode(data);
-                console.error("Sidecar error:", error);
-            });
-
-            // Handle process exit
-            // @ts-ignore
-            const status = await commandChild.wait();
-            console.log("Sidecar exited with status:", status);
         } catch (error) {
             console.error("Error starting sidecar:", error as Error);
         }
@@ -60,6 +48,7 @@
 
     function stopSidecar(): void {
         if (commandChild) {
+            console.log("Kill child process")
             commandChild.kill();
             commandChild = null;
         }

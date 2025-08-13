@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pkg index.js --output app"
+    "sidecar:test": "echo \"Error: no test specified\" && exit 1",
+    "sidecar:build": "pkg index.js --output my-sidecar",
+    "sidecar:prepare": "node prepare-sidecar.js"
   },
   "author": "",
   "license": "ISC",
