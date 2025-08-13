@@ -15,7 +15,7 @@
     import { handleGameStart, handleSlippiUpdate } from "./gameHandlers";
     import { printSettings } from "$lib/state/settings.svelte";
 
-    $effect(() => {
+    $effect(function printGlobalSettings() {
         printSettings();
     });
 
@@ -60,7 +60,7 @@
         return () => socket.disconnect();
     });
 
-    const movesSource = $derived.by(() => {
+    const movesSource = $derived.by(function determineSource() {
         return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
     });
 
@@ -83,8 +83,7 @@
         }),
     );
 
-    // For dev use
-    $effect(() => {
+    $effect(function printBars() {
         console.log("dynamicBars", dynamicBars);
     });
 </script>

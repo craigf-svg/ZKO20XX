@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
     "sidecar:test": "echo \"Error: no test specified\" && exit 1",
-    "sidecar:build": "pkg index.js --output my-sidecar",
+    "sidecar:build": "pkg dist/watcher.js --target node18-win-x64 --output my-sidecar",
+    "sidecar:olderbuildremoveonceready": "pkg index.js --output my-sidecar",
     "sidecar:prepare": "node prepare-sidecar.js"
   },
   "author": "",
