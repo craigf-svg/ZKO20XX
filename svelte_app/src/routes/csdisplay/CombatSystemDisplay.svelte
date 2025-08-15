@@ -38,13 +38,15 @@
     const socket: Socket = io("http://localhost:8090");
 
     onMount(() => {
-        socket.on("game_start", async (settings: TrimmedSettings) => {
+        socket.on("game_start", async function populateValues(settings: TrimmedSettings) {
             const gameState = await handleGameStart(settings, myConnectCode);
-            myChar = gameState.myChar;
-            opponentChar = gameState.opponentChar;
-            opponentPlayerIdx = gameState.opponentPlayerIdx;
-            matchupData = gameState.matchupData;
-            displayStageName = gameState.displayStageName;
+            ({
+                myChar,
+                opponentChar,
+                opponentPlayerIdx,
+                matchupData,
+                displayStageName
+             } = gameState);
         });
 
         socket.on("slippi_update", (players: PlayerStats[]) => {
@@ -64,8 +66,8 @@
         return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
     });
 
-    let dynamicBars: MoveBar[] = $derived(
-        Object.entries(movesSource).map(([moveName, koPercent]) => {
+    let dynamicBars: MoveBar[] = $derived.by(function determineBars() {
+        return Object.entries(movesSource).map(([moveName, koPercent]) => {
             const koProgressWidth = calculateProgress(
                 currentPercent || 0,
                 koPercent,
@@ -80,8 +82,8 @@
                 width: koProgressWidth,
                 highlight: hightlightType,
             };
-        }),
-    );
+        });
+    });
 
     $effect(function printBars() {
         console.log("dynamicBars", dynamicBars);
