@@ -35,6 +35,8 @@ interface PlayerStats {
 
 dotenv.config();
 const SLIPPI_REPLAY_DIR = process.env.DIRECTORY_PATH ?? 'C:\\Users\\Craig\\Documents\\Misc\\Slippi\\slippi-test\\';
+console.log('Slippi Folder Path:', process.env.SlippiFolderPath);
+console.log('Interval Value:', process.env.IntervalValue);
 console.log('Watching directory:', SLIPPI_REPLAY_DIR);
 const watcher = chokidar.watch(SLIPPI_REPLAY_DIR, {
   ignored: /(^|[\/\\])\../, // Ignore dotfiles

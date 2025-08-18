@@ -20,19 +20,23 @@
     }
 
     $effect(() => {
-        loadSettings();
+    (async () => {
+        await loadSettings();
+        await testSidecarPing();
+    })();
     });
 
     import { Command, type Child } from "@tauri-apps/plugin-shell";
-
-    let commandOutput = "";
-    let commandErrorOutput = "";
-    let isWaiting: boolean = false;
     let commandChild: Child | null = null;
 
     async function testSidecarPing(): Promise<void> {
         try {
-            const command = Command.sidecar("binaries/my-sidecar");
+            const command = Command.sidecar("binaries/my-sidecar", [], { 
+                env: {
+                    SlippiFolderPath: "Slippi/Folder/Path",
+                    IntervalValue: "Interval Value"
+                }
+            });
             // Listen
             command.on("close", data => {
                 console.log(`command finished with code ${data.code} and signal ${data.signal}`);
