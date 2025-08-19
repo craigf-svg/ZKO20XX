@@ -33,8 +33,8 @@
         try {
             const command = Command.sidecar("binaries/my-sidecar", [], { 
                 env: {
-                    SlippiFolderPath: "Slippi/Folder/Path",
-                    IntervalValue: "Interval Value"
+                    SLIPPI_FOLDER_PATH: "Slippi/Folder/Path",
+                    INTERVAL_VALUE: "600" 
                 }
             });
             // Listen

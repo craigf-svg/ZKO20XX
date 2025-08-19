@@ -38,16 +38,22 @@
     const socket: Socket = io("http://localhost:8090");
 
     onMount(() => {
-        socket.on("game_start", async function populateValues(settings: TrimmedSettings) {
-            const gameState = await handleGameStart(settings, myConnectCode);
-            ({
-                myChar,
-                opponentChar,
-                opponentPlayerIdx,
-                matchupData,
-                displayStageName
-             } = gameState);
-        });
+        socket.on(
+            "game_start",
+            async function populateValues(settings: TrimmedSettings) {
+                const gameState = await handleGameStart(
+                    settings,
+                    myConnectCode,
+                );
+                ({
+                    myChar,
+                    opponentChar,
+                    opponentPlayerIdx,
+                    matchupData,
+                    displayStageName,
+                } = gameState);
+            },
+        );
 
         socket.on("slippi_update", (players: PlayerStats[]) => {
             currentPercent = handleSlippiUpdate(players, opponentPlayerIdx);
@@ -66,23 +72,18 @@
         return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
     });
 
-    let dynamicBars: MoveBar[] = $derived.by(function determineBars() {
-        return Object.entries(movesSource).map(([moveName, koPercent]) => {
-            const koProgressWidth = calculateProgress(
-                currentPercent || 0,
-                koPercent,
-            );
-            const hightlightType = koPercentReached(
-                currentPercent || 0,
-                koPercent,
-            );
-            return {
+    let limit: number = $state(0);
+    let dynamicBars: MoveBar[] = $derived.by(() => {
+        const allBars = Object.entries(movesSource).map(
+            ([moveName, koPercent]) => ({
                 moveName,
                 koPercent,
-                width: koProgressWidth,
-                highlight: hightlightType,
-            };
-        });
+                width: calculateProgress(currentPercent || 0, koPercent),
+                highlight: koPercentReached(currentPercent || 0, koPercent),
+            }),
+        );
+
+        return allBars.slice(0, allBars.length - limit);
     });
 
     $effect(function printBars() {
@@ -118,6 +119,25 @@
                 class="btn preset-filled"
                 onclick={() => (currentPercent = 0)}>Reset</button
             >
+            {limit}
+            <button
+                type="button"
+                class="btn preset-filled"
+                onclick={function addOne() {
+                        limit = limit + 1;
+                }}
+                >Limit +1
+            </button>
+            <button
+                type="button"
+                class="btn preset-filled"
+                onclick={function subtractOne() {
+                    if (limit > 0) {
+                        limit = limit - 1;
+                    }
+                }}
+                >Limit -1
+            </button>
         </div>
     {/if}
     <div class="status">

@@ -34,11 +34,19 @@ interface PlayerStats {
 }
 
 dotenv.config();
-const SLIPPI_REPLAY_DIR = process.env.DIRECTORY_PATH ?? 'C:\\Users\\Craig\\Documents\\Misc\\Slippi\\slippi-test\\';
-console.log('Slippi Folder Path:', process.env.SlippiFolderPath);
-console.log('Interval Value:', process.env.IntervalValue);
-console.log('Watching directory:', SLIPPI_REPLAY_DIR);
-const watcher = chokidar.watch(SLIPPI_REPLAY_DIR, {
+// const SLIPPI_REPLAY_DIR = process.env.DIRECTORY_PATH ?? 'C:\\Users\\Craig\\Documents\\Misc\\Slippi\\slippi-test\\';
+// console.log('Watching directory:', SLIPPI_REPLAY_DIR);
+
+const SLIPPI_FOLDER_PATH = process.env.SLIPPI_FOLDER_PATH ?? 'C:\\Users\\Craig\\Documents\\Misc\\Slippi\\slippi-test\\';
+const INTERVAL_VALUE = (function determineIntervalValue() {
+  console.log(process.env.INTERVAL_VALUE);
+  if (process.env.INTERVAL_VALUE == undefined) { return 500; }
+  const parsed = parseInt(process.env.INTERVAL_VALUE, 10);
+  return isNaN(parsed) || parsed <= 0 ? 500 : parsed;
+})();
+console.log('Slippi Folder Path:', process.env.SLIPPI_FOLDER_PATH);
+console.log('Interval Value:', INTERVAL_VALUE);
+const watcher = chokidar.watch(SLIPPI_FOLDER_PATH, {
   ignored: /(^|[\/\\])\../, // Ignore dotfiles
   depth: 0,
   persistent: true,
@@ -127,7 +135,7 @@ watcher.on("add", async (filePath: string) => {
           io.emit('game_end');
           cleanupResources();
         }
-      }, POLL_INTERVAL_MS);
+      }, INTERVAL_VALUE);
     } catch (err) {
       console.error('Error processing replay file:', err);
       cleanupResources();
