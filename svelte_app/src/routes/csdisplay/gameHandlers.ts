@@ -59,18 +59,19 @@ export async function handleGameStart(
   const opponentChar = players[opponentPlayerIdx]?.characterShortName.toLowerCase();
 
   let matchupData: MatchupEntry | undefined;
+  // Find matchup file based on characters
   const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
   
   try {
     const response = await fetch(matchupPath);
     const allStagesKOData: MatchupEntry[] = await response.json();
-    console.log("Loaded perspective matchup data:", allStagesKOData);
+    console.log("Loaded character matchup data:", allStagesKOData);
     matchupData = allStagesKOData.find((entry: MatchupEntry) =>
       isCurrentStage(entry, settings.stageName)
     );
     console.log("currentStageData", matchupData);
   } catch (e) {
-    console.error("Could not load matchup data for", matchupPath, e);
+    console.error("Could not load matchup data for ", matchupPath, e);
     console.log(`Make sure your file path "${matchupPath}" and your connect code "${myConnectCode}" are set correctly in settings!`);
     matchupData = undefined;
   }
@@ -101,7 +102,7 @@ export function handleSlippiUpdate(
     typeof players[opponentPlayerIdx].percent === "number"
   ) {
     const currentPercent = players[opponentPlayerIdx].percent;
-    console.log("currentPercent:", currentPercent);
+    // console.log("currentPercent:", currentPercent);
     return currentPercent;
   } else {
     console.log("Invalid data received.");

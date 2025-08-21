@@ -7,8 +7,6 @@ import path from 'path';
 import Spinner from "./Spinner";
 import { Server as SocketIOServer } from "socket.io";
 
-const POLL_INTERVAL_MS = 750;
-
 const io = new SocketIOServer(8090, {
   cors: { origin: "*" }
 });
@@ -34,8 +32,6 @@ interface PlayerStats {
 }
 
 dotenv.config();
-// const SLIPPI_REPLAY_DIR = process.env.DIRECTORY_PATH ?? 'C:\\Users\\Craig\\Documents\\Misc\\Slippi\\slippi-test\\';
-// console.log('Watching directory:', SLIPPI_REPLAY_DIR);
 
 const SLIPPI_FOLDER_PATH = process.env.SLIPPI_FOLDER_PATH ?? 'C:\\Users\\Craig\\Documents\\Misc\\Slippi\\slippi-test\\';
 const INTERVAL_VALUE = (function determineIntervalValue() {
@@ -122,14 +118,14 @@ watcher.on("add", async (filePath: string) => {
   try {
     // Game Events Interval 
     intId = setInterval(() => {
-      const latestFrame = currentGame.getLatestFrame();
-      const gameEnd = currentGame.getGameEnd();
         // Slippi Update
+        const latestFrame = currentGame.getLatestFrame();
         if (latestFrame) {
           const stats = processPlayerStats(settings.players, latestFrame);
           io.emit('slippi_update', stats);
         }
         // Game End
+        const gameEnd = currentGame.getGameEnd();
         if (gameEnd) {
           console.log('[Game End] Game has ended!');
           io.emit('game_end');
@@ -140,9 +136,9 @@ watcher.on("add", async (filePath: string) => {
       console.error('Error processing replay file:', err);
       cleanupResources();
     } finally {
-    if (!intId) {
-      Spinner.start('waiting for new file...', 0.25);
-    }
+      if (!intId) {
+        Spinner.start('waiting for new file...', 0.25);
+      }
   }
 });
 

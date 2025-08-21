@@ -71,11 +71,11 @@ export function calculateProgress(
   koPercent: number | number[],
 ): string {
   koPercent = Array.isArray(koPercent) ? koPercent[2] : koPercent;
-  console.log("to reach", koPercent);
   let progress =
     currentPercent && koPercent
       ? `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%`
       : "0%";
-  console.log("progress ", progress);
+  // console.log("to reach", koPercent);
+  // console.log("progress ", progress);
   return progress;
 }

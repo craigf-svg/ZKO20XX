@@ -3,10 +3,10 @@
 
     type Theme = "light" | "dark" | "catppuccin";
 
-    const { theme, cycleTheme, testSidecarPing } = $props<{
+    const { theme, cycleTheme, testSidecar } = $props<{
         theme: Theme;
         cycleTheme: () => void;
-        testSidecarPing: () => void;
+        testSidecar: () => void;
     }>();
 </script>
 
@@ -18,7 +18,7 @@
             </a>
         </li>
         <li>
-            <button type="button" class="link" onclick={testSidecarPing}
+            <button type="button" class="link" onclick={testSidecar}
                 >Test Sidecar Ping</button
             >
         </li>
@@ -46,6 +46,9 @@
 <style>
     :root {
         --navbar-height: 46px;
+    }
+    nav {
+        font-family: "Segoe UI", "JetBrainsMono NF", Inter, "Hack", "Papyrus";
     }
     ul {
         list-style-type: none;

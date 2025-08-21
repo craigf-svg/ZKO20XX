@@ -7,6 +7,7 @@
 
     type Theme = "light" | "dark" | "catppuccin";
     let theme = $state<Theme>("dark");
+    // TODO: Take into account saved theme value
     document.documentElement.setAttribute("data-theme", "dark");
 
     function cycleTheme() {
@@ -16,20 +17,28 @@
                 : theme === "light"
                   ? "catppuccin"
                   : "dark";
-        document.documentElement.setAttribute("data-theme", theme);
+    }
+    $effect(function reactToTheme() { document.documentElement.setAttribute("data-theme", theme) })
+
+    function stopSidecar(): void {
+        if (commandChild) {
+            console.log("Kill child process")
+            commandChild.kill();
+            commandChild = null;
+        }
     }
 
     $effect(() => {
     (async () => {
         await loadSettings();
-        await testSidecarPing();
+        await testSidecar();
     })();
     });
 
     import { Command, type Child } from "@tauri-apps/plugin-shell";
     let commandChild: Child | null = null;
 
-    async function testSidecarPing(): Promise<void> {
+    async function testSidecar(): Promise<void> {
         try {
             const command = Command.sidecar("binaries/my-sidecar", [], { 
                 env: {
@@ -37,7 +46,7 @@
                     INTERVAL_VALUE: "600" 
                 }
             });
-            // Listen
+            // Listeners
             command.on("close", data => {
                 console.log(`command finished with code ${data.code} and signal ${data.signal}`);
             });
@@ -47,32 +56,21 @@
             commandChild = await command.spawn();
         } catch (error) {
             console.error("Error starting sidecar:", error as Error);
-        }
-    }
-
-    function stopSidecar(): void {
-        if (commandChild) {
-            console.log("Kill child process")
-            commandChild.kill();
-            commandChild = null;
+        } finally {
+            stopSidecar();
         }
     }
 </script>
 
-<Navbar {theme} {cycleTheme} {testSidecarPing} />
+<Navbar {theme} {cycleTheme} {testSidecar} />
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <main data-theme={theme}>
     {@render children()}
 </main>
 <UpdateManager />
 
 <style>
-    @font-face {
-        font-family: "Playfair Display";
-        font-style: normal;
-        font-weight: 400;
-        src: url("/fonts/Playfair_Display/PlayfairDisplay-Regular.ttf")
-            format("truetype");
-    }
     :global(:root) {
         /* Light theme colors */
         --color-text-main: #333333;
@@ -137,8 +135,9 @@
     }
     /* TO DO ADD GRADIENT LIKE IN settings thanks*/
     :global(body) {
-        font-family: system-ui;
-        transition:
+       font-family: Inter, 'Papyrus', 'Hack'; 
+       font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+       transition:
             background-color 0.3s,
             color 0.3s;
         /* font-family: 'Playfair Display'; */
@@ -147,7 +146,6 @@
         margin: 0;
         min-height: 100vh;
     }
-
     /* Toaster Colors */
     :global(.preset-filled-success-500) {
         background-color: #10b981;

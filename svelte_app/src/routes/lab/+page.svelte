@@ -4,6 +4,7 @@
   import { Toaster, createToaster } from "@skeletonlabs/skeleton-svelte";
   import type { MoveBar } from "../csdisplay/types";
   const toaster = createToaster({ placement: "bottom-start" });
+  import { koPercentReached, calculateProgress } from "../csdisplay/koUtils";
 
   function getErrorMessage(error: unknown) {
     if (error instanceof Error) return error.message;
@@ -65,9 +66,7 @@
     selectedStage = $state("Yoshi's Story");
 
   let matchupData: MatchupEntry | undefined = $state();
-
   let currentPercent = $state(0);
-
   let filePath = $derived(`/data/${myChar}/vs_${opponentChar}.json`);
 
   $effect(() => {
@@ -77,7 +76,7 @@
   });
 
   async function loadFile(): Promise<MatchupEntry | null> {
-    console.log("[loadFile] filePath:", filePath);
+    console.info("[loadFile] filePath:", filePath);
     try {
       const response = await fetch(filePath);
       if (!response.ok) {
@@ -85,14 +84,15 @@
         throw new Error(FILE_FETCH_ERROR);
       }
       const allStagesKOData = await response.json();
-      console.debug("[loadFile] Loaded JSON:", allStagesKOData);
+      console.info("[loadFile] Loaded JSON:", allStagesKOData);
+      // TODO: Add type safety
       const currentStageData = allStagesKOData.find(isCurrentStage);
-      console.log("currentStageData", currentStageData);
+      console.info("currentStageData", currentStageData);
       if (!currentStageData) {
         throw new Error(STAGE_NOT_FOUND_ERROR);
       }
-      console.debug("[loadFile] Current stage data:", currentStageData);
       toaster.success({ title: "Success!" });
+      matchupData = currentStageData;
       return currentStageData;
     } catch (error) {
       console.error("[loadFile] Error:", getErrorMessage(error));
@@ -113,46 +113,25 @@
     defender: "Marth",
     stage: "YS",
     moves: {
-      upSmash: 83,
-      strongUpTilt: 102,
-      downTilt: 145,
-      bAir: 124,
-      shuAir: 105,
+      SampleValueUpSmash: 83,
     },
   };
-
-  function checkHighlighted(
-    currentPercent: number,
-    koPercent: number,
-  ): boolean {
-    return currentPercent >= koPercent;
-  }
-  const calcWidth = (currentPercent: number, koPercent: number): string =>
-    currentPercent && koPercent
-      ? `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%`
-      : "0%";
-
-  const movesSource = $derived.by(() => {
-    if (!matchupData?.moves) {
-      console.warn("using sample_dynamic_data for moves");
-      return SAMPLE_DYNAMIC_DATA.moves;
-    }
-    return matchupData.moves;
+  
+  const movesSource = $derived.by(function determineSource() {
+      return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
   });
 
-  let dynamicBars: MoveBar[] = $derived(
-    Object.entries(movesSource).map(([moveName, koPercent]: [string, number]) => {
-      const isHighlighted = checkHighlighted(currentPercent || 0, koPercent);
-      const calculatedWidth = calcWidth(currentPercent || 0, koPercent);
-
-      return {
-        moveName,
-        koPercent,
-        width: calculatedWidth,
-        isHighlighted,
-      };
-    }),
-  );
+ let dynamicBars: MoveBar[] = $derived.by(() => {
+        const allBars = Object.entries(movesSource).map(
+            ([moveName, koPercent]) => ({
+                moveName,
+                koPercent,
+                width: calculateProgress(currentPercent || 0, koPercent),
+                highlight: koPercentReached(currentPercent || 0, koPercent),
+            }),
+        );
+        return allBars;
+    });
 </script>
 
 <Toaster {toaster}></Toaster>
