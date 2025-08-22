@@ -1,7 +1,16 @@
 <script lang="ts">
     import { settings } from "$lib/state/settings.svelte";
-    import { Toaster, createToaster } from "@skeletonlabs/skeleton-svelte";
+    import {
+        Toaster,
+        createToaster,
+        Popover,
+    } from "@skeletonlabs/skeleton-svelte";
     const toaster = createToaster({ placement: "bottom-start" });
+
+    let openState = $state(false);
+    function popoverClose() {
+        openState = false;
+    }
 
     function saveConnectCode(code: string) {
         if (code.trim().length <= 0) {
@@ -46,9 +55,10 @@
         toaster.success({ title: message });
     }
 
-    let connectCode = $state(settings.connectCode);
-    let slippiPath = $state(settings.slippiPath);
-    let pollingRate = $state(settings.pollingRate / 1000);
+    let connectCode: string = $state(settings.connectCode);
+    let slippiPath: string = $state(settings.slippiPath);
+    let pollingRate: number = $state(settings.pollingRate / 1000);
+    let privacyLevel: "allowed" | "not" = $state("allowed");
 </script>
 
 <Toaster classes="background" {toaster}></Toaster>
@@ -109,6 +119,48 @@
                     />
                     <span class="input-icon">⏱️</span>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <Popover
+                    open={openState}
+                    onOpenChange={(e) => (openState = e.open)}
+                    positioning={{ placement: "top" }}
+                    triggerBase="btn preset-tonal"
+                    contentBase="card bg-surface-800 p-4 space-y-4 max-w-[320px]"
+                    arrow
+                    arrowBackground="bg-surface-800"
+                >
+                    {#snippet trigger()}
+                        <label for="privacyLevel">Privacy Level ?</label>
+                    {/snippet}
+                    {#snippet content()}
+                        <header class="flex justify-between">
+                            <p class="font-bold text-xl">Popover Example</p>
+                            <button
+                                class="btn-icon hover:preset-tonal"
+                                onclick={popoverClose}
+                                title="Close"
+                                aria-label="Close">X</button
+                            >
+                        </header>
+                        <article>
+                            <p class="opacity-60">
+                                This will display a basic popover with a header
+                                and body. This also includes a title,
+                                description, and close button.
+                            </p>
+                        </article>
+                    {/snippet}
+                </Popover>
+                <select class="select">
+                    <option value="1"
+                        >Allowed (game start + app start + character)</option
+                    >
+                    <option value="2">Allowed (game start + app start)</option>
+                    <option value="3">Allowed (app start)</option>
+                    <option value="4">None</option>
+                </select>
             </div>
 
             <div class="form-actions">
