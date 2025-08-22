@@ -9,6 +9,7 @@
     "core:default",
     "updater:default",
     "store:default",
+    "aptabase:allow-track-event",
     {
       "identifier": "shell:allow-spawn",
       "allow": [
@@ -19,6 +20,6 @@
         }
       ]
     },
-    "shell:allow-open"
+    "shell:allow-kill"
   ]
 }

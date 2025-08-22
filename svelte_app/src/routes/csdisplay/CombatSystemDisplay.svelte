@@ -14,6 +14,9 @@
     } from "./koUtils";
     import { handleGameStart, handleSlippiUpdate } from "./gameHandlers";
     import { printSettings } from "$lib/state/settings.svelte";
+    import { trackEvent } from "@aptabase/tauri";
+    import DevTestSuite from "./DevTestSuite.svelte";
+    import Status from "./Status.svelte";
 
     $effect(function printGlobalSettings() {
         printSettings();
@@ -24,24 +27,45 @@
         percent?: number;
     }
 
-    let matchupData: MatchupEntry | undefined = $state();
+    //TODO: Change to GameState object for simplicity
+    interface GameState {
+        matchupData: MatchupEntry | undefined;
+        currentPercent: number | undefined;
+        displayStageName: string | undefined;
+        myChar: string;
+        opponentChar: string;
+        opponentPlayerIdx: number;
+    }
 
+    let gameState: GameState = $state({
+        matchupData: undefined,
+        currentPercent: undefined,
+        displayStageName: undefined,
+        myChar: "Fox",
+        opponentChar: "Marth",
+        opponentPlayerIdx: 1,
+    });
+
+    let matchupData: MatchupEntry | undefined = $state();
     let currentPercent: number | undefined = $state();
     let displayStageName: string | undefined = $state();
-
-    let myConnectCode: string = $state(settings.connectCode);
-    let opponentConnectCode: string = $state("OPPS#111");
     let myChar: string = $state("Fox");
     let opponentChar: string = $state("Marth");
     let opponentPlayerIdx: number = 1;
+
+    let myConnectCode: string = $state(settings.connectCode);
+    let opponentConnectCode: string = $state("OPPS#111");
 
     const socket: Socket = io("http://localhost:8090");
 
     onMount(() => {
         socket.on(
             "game_start",
-            async function populateValues(settings: TrimmedSettings) {
-                const gameState = await handleGameStart(
+            async function handleGameStartEvent(settings: TrimmedSettings) {
+                // TODO: Include analytics here
+                console.log("testing trackevent");
+                trackEvent("game_start");
+                const newGameState = await handleGameStart(
                     settings,
                     myConnectCode,
                 );
@@ -51,19 +75,42 @@
                     opponentPlayerIdx,
                     matchupData,
                     displayStageName,
-                } = gameState);
+                } = newGameState);
+
+                gameState = {
+                    ...gameState,
+                    ...newGameState,
+                };
             },
         );
 
-        socket.on("slippi_update", (players: PlayerStats[]) => {
-            currentPercent = handleSlippiUpdate(players, opponentPlayerIdx);
-        });
+        socket.on(
+            "slippi_update",
+            function handleSlippiUpdateEvent(players: PlayerStats[]) {
+                const newPercent = handleSlippiUpdate(
+                    players,
+                    opponentPlayerIdx,
+                );
+                currentPercent = newPercent;
+                gameState = {
+                    ...gameState,
+                    currentPercent: newPercent,
+                };
+            },
+        );
 
-        socket.on("game_end", () => {
+        socket.on("game_end", function handleGameEndEvent() {
             console.log("Game ended");
             matchupData = undefined;
             currentPercent = undefined;
             displayStageName = undefined;
+
+            gameState = {
+                ...gameState,
+                matchupData: undefined,
+                currentPercent: undefined,
+                displayStageName: undefined,
+            };
         });
         return () => socket.disconnect();
     });
@@ -82,7 +129,6 @@
                 highlight: koPercentReached(currentPercent || 0, koPercent),
             }),
         );
-
         return allBars.slice(0, allBars.length - limit);
     });
 
@@ -92,80 +138,17 @@
 </script>
 
 <div class="flex flex-col gap-y-2">
-    {#if true}
-        <div class="dev">
-            <span>Combat System Display Test</span>
-            <!-- For dev use -->
-            <button
-                type="button"
-                class="btn preset-filled"
-                onclick={() =>
-                    (currentPercent =
-                        typeof currentPercent === "number"
-                            ? currentPercent + 15
-                            : 15)}>+15%</button
-            >
-            <button
-                type="button"
-                class="btn preset-filled"
-                onclick={() =>
-                    (currentPercent =
-                        typeof currentPercent === "number"
-                            ? currentPercent + 1
-                            : 1)}>+1%</button
-            >
-            <button
-                type="button"
-                class="btn preset-filled"
-                onclick={() => (currentPercent = 0)}>Reset</button
-            >
-            {limit}
-            <button
-                type="button"
-                class="btn preset-filled"
-                onclick={function addOne() {
-                        limit = limit + 1;
-                }}
-                >Limit +1
-            </button>
-            <button
-                type="button"
-                class="btn preset-filled"
-                onclick={function subtractOne() {
-                    if (limit > 0) {
-                        limit = limit - 1;
-                    }
-                }}
-                >Limit -1
-            </button>
-        </div>
-    {/if}
-    <div class="status">
-        {myConnectCode}'s {myChar} vs {opponentConnectCode}'s {opponentChar} on
-        {displayStageName || "Battlefield"} - {opponentChar}'s current percent
-        is
-        {currentPercent || 0}%
-    </div>
-    {#if !matchupData}
-        <WaitingForGame />
-    {/if}
+    <DevTestSuite bind:currentPercent bind:limit />
+    <Status
+        {myConnectCode}
+        {myChar}
+        {opponentConnectCode}
+        {opponentChar}
+        {displayStageName}
+        {currentPercent}
+    />
+    {#if false}<WaitingForGame />{/if}
     <Bars {dynamicBars} />
 </div>
 
-<style>
-    .status {
-        color: var(--color-text-main);
-        font-size: 1.2rem;
-        font-weight: normal;
-        display: flex;
-        justify-content: left;
-        gap: 0.5rem;
-    }
-    .dev {
-        padding: 1rem;
-        text-align: left;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-    }
-</style>
+<style></style>
