@@ -5,6 +5,20 @@ const io = new SocketIOServer(8090, {
 
 console.log("Game Simulator running on http://localhost:8090");
 
+process.on('SIGINT', () => {
+  console.log('\n[SHUTDOWN] Received SIGINT, shutting down gracefully...');
+  io.close(() => {
+    console.log('[SHUTDOWN] Socket.IO server closed');
+    process.exit(0);
+  });
+  
+  // Force exit after 5 seconds if graceful shutdown fails
+  setTimeout(() => {
+    console.log('[SHUTDOWN] Force exit');
+    process.exit(1);
+  }, 5000);
+});
+
 // Function to emit test events automatically
 function startTestSequence() {
  console.log(`[TEST] Starting automated test sequence`);
