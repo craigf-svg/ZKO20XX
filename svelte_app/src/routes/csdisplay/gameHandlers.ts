@@ -35,7 +35,7 @@ function isCurrentStage(matchupEntry: MatchupEntry, stageName: string): boolean 
  * @param myConnectCode - The current player's connect code
  * @returns An object containing the updated game state
  */
-export async function handleGameStart(
+export async function initGameState(
   settings: TrimmedSettings,
   myConnectCode: string
 ): Promise<{
@@ -47,13 +47,24 @@ export async function handleGameStart(
 }> {
   const displayStageName = settings.stageName;
   const players: PlayerWithShortName[] = settings.players;
-
-  const myPlayerIdx = players.findIndex(
-    (p: PlayerWithShortName) => p?.connectCode === myConnectCode
-  );
-  const opponentPlayerIdx = players.findIndex(
-    (p: PlayerWithShortName) => p?.connectCode !== myConnectCode
-  );
+  
+  let myPlayerIdx = 0;
+  let opponentPlayerIdx = 1;
+  
+  if (players[0]?.connectCode !== undefined) {
+    myPlayerIdx = players.findIndex(
+      (p: PlayerWithShortName) => p?.connectCode === myConnectCode
+    );
+    opponentPlayerIdx = players.findIndex(
+      (p: PlayerWithShortName) => p?.connectCode !== myConnectCode
+    );
+    
+    // Probably local match, fallback to defaults 
+    if (opponentPlayerIdx === -1) {
+      myPlayerIdx = 0;
+      opponentPlayerIdx = 1;
+    }
+  }
 
   const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
   const opponentChar = players[opponentPlayerIdx]?.characterShortName.toLowerCase();
@@ -61,7 +72,7 @@ export async function handleGameStart(
   let matchupData: MatchupEntry | undefined;
   // Find matchup file based on characters
   const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
-  
+
   try {
     const response = await fetch(matchupPath);
     const allStagesKOData: MatchupEntry[] = await response.json();
@@ -86,12 +97,12 @@ export async function handleGameStart(
 }
 
 /**
- * Handles the slippi update event
+ * Extract Opponent Percent 
  * @param players - Array of player stats
  * @param opponentPlayerIdx - Index of the opponent player
  * @returns The opponent's current percent or undefined if invalid
  */
-export function handleSlippiUpdate(
+export function extractOpponentPercent(
   players: Array<{ percent?: number }>,
   opponentPlayerIdx: number
 ): number | undefined {

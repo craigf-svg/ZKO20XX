@@ -1,11 +1,15 @@
 <script lang="ts">
-    let {myConnectCode, myChar, opponentConnectCode, opponentChar, displayStageName, currentPercent} = $props();
+    let {gameState} = $props();
 </script>
 
 <div class="status">
-    {myConnectCode}'s {myChar} vs {opponentConnectCode}'s {opponentChar} on
-    {displayStageName || "Battlefield"} - {opponentChar}'s current percent is
-    {currentPercent || 0}%
+   <div>myConnectCode: {gameState.myConnectCode}</div>
+   <div>myChar: {gameState.myChar}</div>
+   <div>opponentConnectCode: {gameState.opponentConnectCode}</div>
+   <div>opponentChar: {gameState.opponentChar}</div>
+   <div>displayStageName: {gameState.displayStageName}</div>
+   <div>currentPercent: {gameState.currentPercent}</div>
+   <div>opponentPlayerIdx: {gameState.opponentPlayerIdx}</div>
 </div>
 
 <style>

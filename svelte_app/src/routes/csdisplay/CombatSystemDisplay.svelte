@@ -12,12 +12,13 @@
         koPercentReached,
         calculateProgress,
     } from "./koUtils";
-    import { handleGameStart, handleSlippiUpdate } from "./gameHandlers";
+    import { initGameState, extractOpponentPercent } from "./gameHandlers";
     import { printSettings } from "$lib/state/settings.svelte";
     import { trackEvent } from "@aptabase/tauri";
     import DevTestSuite from "./DevTestSuite.svelte";
     import Status from "./Status.svelte";
 
+    // TODO: Remove after dev
     $effect(function printGlobalSettings() {
         printSettings();
     });
@@ -27,7 +28,6 @@
         percent?: number;
     }
 
-    //TODO: Change to GameState object for simplicity
     interface GameState {
         matchupData: MatchupEntry | undefined;
         currentPercent: number | undefined;
@@ -35,118 +35,102 @@
         myChar: string;
         opponentChar: string;
         opponentPlayerIdx: number;
+        myConnectCode: string;
+        opponentConnectCode: string;
     }
 
     let gameState: GameState = $state({
         matchupData: undefined,
         currentPercent: undefined,
         displayStageName: undefined,
-        myChar: "Fox",
-        opponentChar: "Marth",
+        myChar: "",
+        opponentChar: "",
         opponentPlayerIdx: 1,
+        myConnectCode: settings.connectCode,
+        opponentConnectCode: "",
     });
-
-    let matchupData: MatchupEntry | undefined = $state();
-    let currentPercent: number | undefined = $state();
-    let displayStageName: string | undefined = $state();
-    let myChar: string = $state("Fox");
-    let opponentChar: string = $state("Marth");
-    let opponentPlayerIdx: number = 1;
-
-    let myConnectCode: string = $state(settings.connectCode);
-    let opponentConnectCode: string = $state("OPPS#111");
 
     const socket: Socket = io("http://localhost:8090");
 
+    async function onGameStart(settings: TrimmedSettings) {
+        // TODO: Include analytics here
+        console.log("testing trackevent");
+        trackEvent("game_start");
+        const newGameState = await initGameState(
+            settings,
+            gameState.myConnectCode,
+        );
+        gameState = {
+            ...gameState,
+            ...newGameState,
+        };
+    }
+
+    function onSlippiUpdate(players: PlayerStats[]) {
+        const newPercent = extractOpponentPercent(
+            players,
+            gameState.opponentPlayerIdx,
+        );
+        gameState = {
+            ...gameState,
+            currentPercent: newPercent,
+        };
+    }
+
+    function onGameEnd() {
+        gameState = {
+            ...gameState,
+            matchupData: undefined,
+            currentPercent: undefined,
+            displayStageName: undefined,
+        };
+    }
+
     onMount(() => {
-        socket.on(
-            "game_start",
-            async function handleGameStartEvent(settings: TrimmedSettings) {
-                // TODO: Include analytics here
-                console.log("testing trackevent");
-                trackEvent("game_start");
-                const newGameState = await handleGameStart(
-                    settings,
-                    myConnectCode,
-                );
-                ({
-                    myChar,
-                    opponentChar,
-                    opponentPlayerIdx,
-                    matchupData,
-                    displayStageName,
-                } = newGameState);
+        socket.on("game_start", onGameStart);
+        socket.on("slippi_update", onSlippiUpdate);
+        socket.on("game_end", onGameEnd);
 
-                gameState = {
-                    ...gameState,
-                    ...newGameState,
-                };
-            },
-        );
-
-        socket.on(
-            "slippi_update",
-            function handleSlippiUpdateEvent(players: PlayerStats[]) {
-                const newPercent = handleSlippiUpdate(
-                    players,
-                    opponentPlayerIdx,
-                );
-                currentPercent = newPercent;
-                gameState = {
-                    ...gameState,
-                    currentPercent: newPercent,
-                };
-            },
-        );
-
-        socket.on("game_end", function handleGameEndEvent() {
-            console.log("Game ended");
-            matchupData = undefined;
-            currentPercent = undefined;
-            displayStageName = undefined;
-
-            gameState = {
-                ...gameState,
-                matchupData: undefined,
-                currentPercent: undefined,
-                displayStageName: undefined,
-            };
-        });
         return () => socket.disconnect();
     });
 
     const movesSource = $derived.by(function determineSource() {
-        return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
+        return gameState.matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
     });
 
     let limit: number = $state(0);
     let dynamicBars: MoveBar[] = $derived.by(() => {
+        console.debug("movesSource", movesSource);
         const allBars = Object.entries(movesSource).map(
-            ([moveName, koPercent]) => ({
-                moveName,
-                koPercent,
-                width: calculateProgress(currentPercent || 0, koPercent),
-                highlight: koPercentReached(currentPercent || 0, koPercent),
-            }),
+            function prepareBarData([moveName, koPercent]) {
+                console.log("moveName", moveName)
+                console.log("koPercent", koPercent)
+                return {
+                    moveName,
+                    koPercent,
+                    width: calculateProgress(
+                        gameState.currentPercent || 0,
+                        koPercent,
+                    ),
+                    highlight: koPercentReached(
+                        gameState.currentPercent || 0,
+                        koPercent,
+                    ),
+                };
+            },
         );
         return allBars.slice(0, allBars.length - limit);
     });
 
+    // TODO: Remove after dev
     $effect(function printBars() {
         console.log("dynamicBars", dynamicBars);
     });
 </script>
 
 <div class="flex flex-col gap-y-2">
-    <DevTestSuite bind:currentPercent bind:limit />
-    <Status
-        {myConnectCode}
-        {myChar}
-        {opponentConnectCode}
-        {opponentChar}
-        {displayStageName}
-        {currentPercent}
-    />
+    <DevTestSuite bind:currentPercent={gameState.currentPercent} bind:limit />
+    <Status {gameState} />
     {#if false}<WaitingForGame />{/if}
     <Bars {dynamicBars} />
 </div>

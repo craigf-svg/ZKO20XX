@@ -4,10 +4,10 @@
     let noneOrDimClass = $derived(
         highlight === "full" ? "full" : highlight === "dim" ? "dim" : "none",
     );
-    let displayPercent = Array.isArray(koPercent)
+    let displayPercent = $derived(Array.isArray(koPercent)
         ? koPercent.join(" · ") // maybe a small x
-        : koPercent;
-</script>
+        : koPercent)
+    </script>
 
 <div class="card">
     <div class="card-header">
