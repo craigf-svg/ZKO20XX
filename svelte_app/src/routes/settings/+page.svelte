@@ -1,10 +1,13 @@
 <script lang="ts">
-    import { settings } from "$lib/state/settings.svelte";
+    import { saveSettings, settings } from "$lib/state/settings.svelte";
     import {
         Toaster,
         createToaster,
         Popover,
     } from "@skeletonlabs/skeleton-svelte";
+    import HelpCircle from "@lucide/svelte/icons/help-circle";
+    import CircleX from "@lucide/svelte/icons/circle-x";
+
     const toaster = createToaster({ placement: "bottom-start" });
 
     let openState = $state(false);
@@ -21,23 +24,24 @@
             return;
         }
         settings.connectCode = code;
+        saveSettings();
         let message = `Connect code saved: ${code}`;
         console.log(message);
         toaster.success({ title: message });
     }
 
     function saveSlippiPath(path: string) {
-        if (path.trim().length <= 0) {
-            console.error("Slippi path must be at least 1 character long");
-            toaster.error({
-                title: "Slippi path must be at least 1 character long",
-            });
+        const trimmedPath = path.trim();
+        if (!trimmedPath) {
+            const errorMsg = "Slippi path cannot be empty";
+            console.error(errorMsg);
+            toaster.error({ title: errorMsg });
             return;
         }
-        settings.slippiPath = path;
-        let message = `Slippi path saved: ${path}`;
-        console.log(message);
-        toaster.success({ title: message });
+        settings.slippiPath = trimmedPath;
+        saveSettings();
+        console.log(`Slippi path saved: ${trimmedPath}`);
+        toaster.success({ title: `Slippi path saved: ${trimmedPath}` });
     }
 
     function savePollingRate(rateInSeconds: number) {
@@ -50,6 +54,7 @@
         }
         const rateInMs = rateInSeconds * 1000;
         settings.pollingRate = rateInMs;
+        saveSettings();
         let message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
         console.log(message);
         toaster.success({ title: message });
@@ -59,6 +64,9 @@
     let slippiPath: string = $state(settings.slippiPath);
     let pollingRate: number = $state(settings.pollingRate / 1000);
     let privacyLevel: "allowed" | "not" = $state("allowed");
+
+    // TODO: Add dialog to verify directory exists
+    async function chooseDirectory(e: Event) {}
 </script>
 
 <Toaster classes="background" {toaster}></Toaster>
@@ -125,41 +133,67 @@
                 <Popover
                     open={openState}
                     onOpenChange={(e) => (openState = e.open)}
-                    positioning={{ placement: "top" }}
+                    positioning={{ placement: "left" }}
                     triggerBase="btn preset-tonal"
                     contentBase="card bg-surface-800 p-4 space-y-4 max-w-[320px]"
                     arrow
                     arrowBackground="bg-surface-800"
                 >
                     {#snippet trigger()}
-                        <label for="privacyLevel">Privacy Level ?</label>
+                        <div class="inline-flex items-center row gap-2">
+                            Anonymous Analytics
+                            <HelpCircle size={18} />
+                        </div>
                     {/snippet}
                     {#snippet content()}
                         <header class="flex justify-between">
-                            <p class="font-bold text-xl">Popover Example</p>
+                            <p class="font-bold text-xl">Privacy</p>
                             <button
-                                class="btn-icon hover:preset-tonal"
+                                class=" hover:preset-tonal"
                                 onclick={popoverClose}
                                 title="Close"
-                                aria-label="Close">X</button
+                                aria-label="Close"> <CircleX size={26} /></button
                             >
                         </header>
                         <article>
-                            <p class="opacity-60">
-                                This will display a basic popover with a header
-                                and body. This also includes a title,
-                                description, and close button.
+                            <p class="opacity-80 text-s">
+                               If enabled, this allows me to collect minimal, completely anonymous analytics via Aptabase to better understand app usage and share aggregated metrics with the community.
                             </p>
+                            <div class="p-3 rounded text-sm">
+                                <p class="font-semibold mb-2">Exact data collected:</p>
+                                <code  class="bg-gray-900 text-green-300 text-xs border-gray-800 p-0.5 font-mono leading-tight overflow-x-auto">
+                                {`{
+                                    timestamp: "2025-07-28 15:34:44",
+                                    user_id: "C4B2",
+                                    session_id: "1337149",
+                                    event_name: "app_start",
+                                    string_props: {},
+                                    numeric_props: {},
+                                    os_name: "Windows",
+                                    os_version: "10.0.1",
+                                    locale: "en-us",
+                                    app_version: "0.1.0",
+                                    app_build_number: "",
+                                    engine_name: "WebView2",
+                                    engine_version: "138.0.335",
+                                    country_code: "US",
+                                    country_name: "United States",
+                                    region_name: "Iowa"
+                                };`}
+                                </code>
+                            </div>
+                            <div class="text-sm space-y-1">
+                                <p><strong>✓</strong> No personal data, IP addresses, or device identifiers collected</p>
+                                <p><strong>✓</strong> Data is never sold </p>
+                                <p><strong>✓</strong> User ID is a daily-changing hashed value for privacy</p>
+                                <p><strong>✓</strong> Only two events tracked: app_start + app_exit</p>
+                            </div>
                         </article>
                     {/snippet}
                 </Popover>
                 <select class="select">
-                    <option value="1"
-                        >Allowed (game start + app start + character)</option
-                    >
-                    <option value="2">Allowed (game start + app start)</option>
-                    <option value="3">Allowed (app start)</option>
-                    <option value="4">None</option>
+                    <option value="1">Allowed</option>
+                    <option value="2">Not Allowed</option>
                 </select>
             </div>
 
@@ -168,7 +202,7 @@
                     Restore Defaults
                 </button>
                 <button type="submit" class="btn btn-primary">
-                    Save All Changes
+                    Save Settings
                 </button>
             </div>
         </form>
@@ -183,7 +217,6 @@
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        /*font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;*/
     }
 
     .settings-card {
@@ -208,7 +241,7 @@
     }
 
     header {
-        margin-bottom: 2.5rem;
+        margin-bottom: 0.5rem;
         text-align: center;
     }
 

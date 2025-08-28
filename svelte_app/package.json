@@ -43,6 +43,7 @@
 	},
 	"dependencies": {
 		"@aptabase/tauri": "github:aptabase/tauri-plugin-aptabase",
+		"@lucide/svelte": "^0.542.0",
 		"@skeletonlabs/tw-plugin": "^0.4.1",
 		"@tauri-apps/plugin-process": "^2.3.0",
 		"@tauri-apps/plugin-shell": "^2.3.0",
