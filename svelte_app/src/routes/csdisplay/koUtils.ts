@@ -25,16 +25,6 @@ export const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
     fakeMove8: 170,
     fakeMove9: 180,
     fakeMove10: 190,
-    fakeMove11: 200,
-    fakeMove12: 210,
-    fakeMove13: 220,
-    fakeMove14: 230,
-    fakeMove15: 240,
-    fakeMove16: 250,
-    fakeMove17: 260,
-    fakeMove18: 270,
-    fakeMove19: 280,
-    fakeMove20: 290,
   },
 };
 

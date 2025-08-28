@@ -4,7 +4,7 @@ import { Store } from "@tauri-apps/plugin-store";
 export const settings = $state<AppSettings>({
   connectCode: "",
   slippiPath: "",
-  pollingRate: 700,
+  pollingRate: 500,
   theme: "dark",
 });
 

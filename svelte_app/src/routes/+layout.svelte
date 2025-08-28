@@ -3,7 +3,7 @@
     import Navbar from "$lib/Navbar.svelte";
     import UpdateManager from "$lib/UpdateManager.svelte";
     const { children } = $props();
-    import { loadSettings } from "$lib/state/settings.svelte";
+    import { settings, loadSettings } from "$lib/state/settings.svelte";
 
     type Theme = "light" | "dark" | "catppuccin";
     let theme = $state<Theme>("dark");
@@ -29,10 +29,10 @@
     }
 
     $effect(() => {
-    (async () => {
-        await loadSettings();
-        await testSidecar();
-    })();
+        (async () => {
+            await loadSettings();
+            await testSidecar();
+        })();
     });
 
     import { Command, type Child } from "@tauri-apps/plugin-shell";
@@ -42,8 +42,8 @@
         try {
             const command = Command.sidecar("binaries/my-sidecar", [], { 
                 env: {
-                    SLIPPI_FOLDER_PATH: "Slippi/Folder/Path",
-                    INTERVAL_VALUE: "600" 
+                    SLIPPI_FOLDER_PATH: settings.slippiPath ?? "Slippi/Folder/Path",
+                    INTERVAL_VALUE: `${settings.pollingRate}` 
                 }
             });
             // Listeners

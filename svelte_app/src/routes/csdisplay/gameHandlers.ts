@@ -45,26 +45,14 @@ export async function initGameState(
   matchupData: MatchupEntry | undefined;
   displayStageName: string;
 }> {
+  console.log("settings", settings)
   const displayStageName = settings.stageName;
   const players: PlayerWithShortName[] = settings.players;
-  
-  let myPlayerIdx = 0;
-  let opponentPlayerIdx = 1;
-  
-  if (players[0]?.connectCode !== undefined) {
-    myPlayerIdx = players.findIndex(
-      (p: PlayerWithShortName) => p?.connectCode === myConnectCode
-    );
-    opponentPlayerIdx = players.findIndex(
-      (p: PlayerWithShortName) => p?.connectCode !== myConnectCode
-    );
-    
-    // Probably local match, fallback to defaults 
-    if (opponentPlayerIdx === -1) {
-      myPlayerIdx = 0;
-      opponentPlayerIdx = 1;
-    }
-  }
+
+  console.log("players", players);
+  const isOnline = players.every(player => player.connectCode);
+  const myPlayerIdx = isOnline ? players.findIndex(player => player.connectCode === myConnectCode) : 0;
+  const opponentPlayerIdx = myPlayerIdx === 0 ? 1 : 0;
 
   const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
   const opponentChar = players[opponentPlayerIdx]?.characterShortName.toLowerCase();
