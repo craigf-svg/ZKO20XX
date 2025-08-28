@@ -1,19 +1,9 @@
 <script lang="ts">
 	import CombatSystemDisplay from './csdisplay/CombatSystemDisplay.svelte';
-	import DisplaySlippi from './DisplaySlippi.svelte';
-	let showSlippi = false;
 </script>
 
 <main>
-	<!-- <button on:click={() => showSlippi = !showSlippi}> -->
-	<!-- 	{showSlippi ? 'Hide' : 'Show'} Slippi Display -->
-	<!-- </button> -->
 	<CombatSystemDisplay />
-
-{#if false}
-	<DisplaySlippi />
-{/if}
-
 </main>
 
 <style>
