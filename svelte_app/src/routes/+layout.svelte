@@ -4,6 +4,7 @@
     import UpdateManager from "$lib/UpdateManager.svelte";
     const { children } = $props();
     import { settings, loadSettings } from "$lib/state/settings.svelte";
+    import { onMount } from "svelte";
 
     type Theme = "light" | "dark" | "catppuccin";
     let theme = $state<Theme>("dark");
@@ -28,7 +29,7 @@
         }
     }
 
-    $effect(() => {
+    onMount(() => {
         (async () => {
             await loadSettings();
             await testSidecar();

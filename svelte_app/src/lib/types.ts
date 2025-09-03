@@ -3,4 +3,5 @@ export interface AppSettings {
     slippiPath: string;
     pollingRate: number;
     theme: string;
+    privacyLevel: "allowed" | "not_allowed";
 }

@@ -6,6 +6,7 @@ export const settings = $state<AppSettings>({
   slippiPath: "",
   pollingRate: 500,
   theme: "dark",
+  privacyLevel: "allowed"
 });
 
 export async function loadSettings() {

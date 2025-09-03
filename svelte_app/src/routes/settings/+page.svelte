@@ -60,12 +60,20 @@
         toaster.success({ title: message });
     }
 
+    function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
+        settings.privacyLevel = privacyLevel;
+        saveSettings();
+        let message = `Privacy Level saved: ${privacyLevel}`;
+        console.log(message);
+        toaster.success({title: message})
+    }
+
     let connectCode: string = $state(settings.connectCode);
     let slippiPath: string = $state(settings.slippiPath);
     let pollingRate: number = $state(settings.pollingRate / 1000);
-    let privacyLevel: "allowed" | "not" = $state("allowed");
+    let privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
 
-    // TODO: Add dialog to verify directory exists
+    // TODO: Add dialog to select directory and verify directory exists
     async function chooseDirectory(e: Event) {}
 </script>
 
@@ -82,6 +90,7 @@
                 saveConnectCode(connectCode);
                 saveSlippiPath(slippiPath);
                 savePollingRate(pollingRate);
+                savePrivacyLevel(privacyLevel);
             }}
         >
             <div class="form-group">
@@ -191,11 +200,13 @@
                         </article>
                     {/snippet}
                 </Popover>
-                <select class="select">
-                    <option value="1">Allowed</option>
-                    <option value="2">Not Allowed</option>
+                <select bind:value={privacyLevel} class="select">
+                    <option value="allowed">Allowed</option>
+                    <option value="not_allowed">Not Allowed</option>
                 </select>
             </div>
+
+            Privacy: {privacyLevel}
 
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary">
