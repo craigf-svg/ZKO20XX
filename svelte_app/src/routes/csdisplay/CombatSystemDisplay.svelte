@@ -50,7 +50,14 @@
         opponentConnectCode: "",
     });
 
-    const socket: Socket = io("http://localhost:8090");
+    const socket: Socket = io(
+        "http://localhost:8090",
+        // TODO: Remove these settings, put in place to stop console errors in dev
+       {
+            autoConnect: false,
+            transports: ["websocket"],
+        },
+    );
 
     async function onGameStart(settings: TrimmedSettings) {
         // TODO: Include analytics here
@@ -62,8 +69,13 @@
         );
         gameState = {
             ...gameState,
-            ...newGameState,
+            matchupData: newGameState.matchupData,
+            myChar: newGameState.myChar,
+            opponentChar: newGameState.opponentChar,
+            opponentPlayerIdx: newGameState.opponentPlayerIdx,
+            displayStageName: newGameState.displayStageName,
         };
+        // console.log("gameState", gameState)
     }
 
     function onSlippiUpdate(players: PlayerStats[]) {
@@ -78,11 +90,12 @@
     }
 
     function onGameEnd() {
+        // After dev uncomment these
         gameState = {
             ...gameState,
-            matchupData: undefined,
-            currentPercent: undefined,
-            displayStageName: undefined,
+            // matchupData: undefined,
+            // currentPercent: undefined,
+            // displayStageName: undefined,
         };
     }
 
@@ -90,6 +103,9 @@
         socket.on("game_start", onGameStart);
         socket.on("slippi_update", onSlippiUpdate);
         socket.on("game_end", onGameEnd);
+        socket.on("connect_error", (error) => {
+            console.debug("Socket connection failed:", error.message);
+        });
 
         return () => socket.disconnect();
     });
@@ -103,8 +119,8 @@
         console.debug("movesSource", movesSource);
         const allBars = Object.entries(movesSource).map(
             function prepareBarData([moveName, koPercent]) {
-                console.log("moveName", moveName)
-                console.log("koPercent", koPercent)
+                //console.log("moveName", moveName)
+                //console.log("koPercent", koPercent)
                 return {
                     moveName,
                     koPercent,

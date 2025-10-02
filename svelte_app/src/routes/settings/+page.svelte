@@ -7,6 +7,8 @@
     } from "@skeletonlabs/skeleton-svelte";
     import HelpCircle from "@lucide/svelte/icons/help-circle";
     import CircleX from "@lucide/svelte/icons/circle-x";
+    import { getVersion } from "@tauri-apps/api/app";
+    import UpdateManager from "$lib/UpdateManager.svelte";
 
     const toaster = createToaster({ placement: "bottom-start" });
 
@@ -65,13 +67,19 @@
         saveSettings();
         let message = `Privacy Level saved: ${privacyLevel}`;
         console.log(message);
-        toaster.success({title: message})
+        toaster.success({ title: message });
     }
 
     let connectCode: string = $state(settings.connectCode);
     let slippiPath: string = $state(settings.slippiPath);
     let pollingRate: number = $state(settings.pollingRate / 1000);
     let privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
+    let appVersion = $state("Default message when getVersion doesn't work: 0.0.5");
+    $effect(() => {
+        getVersion()
+            .then((v) => (appVersion = v))
+            .catch(() => {});
+    });
 
     // TODO: Add dialog to select directory and verify directory exists
     async function chooseDirectory(e: Event) {}
@@ -161,17 +169,26 @@
                                 class=" hover:preset-tonal"
                                 onclick={popoverClose}
                                 title="Close"
-                                aria-label="Close"> <CircleX size={26} /></button
+                                aria-label="Close"
+                            >
+                                <CircleX size={26} /></button
                             >
                         </header>
                         <article>
                             <p class="opacity-80 text-s">
-                               If enabled, this allows me to collect minimal, completely anonymous analytics via Aptabase to better understand app usage and share aggregated metrics with the community.
+                                If enabled, this allows me to collect minimal,
+                                completely anonymous analytics via Aptabase to
+                                better understand app usage and share aggregated
+                                metrics with the community.
                             </p>
                             <div class="p-3 rounded text-sm">
-                                <p class="font-semibold mb-2">Exact data collected:</p>
-                                <code  class="bg-gray-900 text-green-300 text-xs border-gray-800 p-0.5 font-mono leading-tight overflow-x-auto">
-                                {`{
+                                <p class="font-semibold mb-2">
+                                    Exact data collected:
+                                </p>
+                                <code
+                                    class="bg-gray-900 text-green-300 text-xs border-gray-800 p-0.5 font-mono leading-tight overflow-x-auto"
+                                >
+                                    {`{
                                     timestamp: "2025-07-28 15:34:44",
                                     user_id: "C4B2",
                                     session_id: "1337149",
@@ -192,10 +209,19 @@
                                 </code>
                             </div>
                             <div class="text-sm space-y-1">
-                                <p><strong>✓</strong> No personal data, IP addresses, or device identifiers collected</p>
-                                <p><strong>✓</strong> Data is never sold </p>
-                                <p><strong>✓</strong> User ID is a daily-changing hashed value for privacy</p>
-                                <p><strong>✓</strong> Only two events tracked: app_start + app_exit</p>
+                                <p>
+                                    <strong>✓</strong> No personal data, IP addresses,
+                                    or device identifiers collected
+                                </p>
+                                <p><strong>✓</strong> Data is never sold</p>
+                                <p>
+                                    <strong>✓</strong> User ID is a daily-changing
+                                    hashed value for privacy
+                                </p>
+                                <p>
+                                    <strong>✓</strong> Only two events tracked: app_start
+                                    + app_exit
+                                </p>
                             </div>
                         </article>
                     {/snippet}
@@ -218,11 +244,20 @@
             </div>
         </form>
     </div>
+    <p class="version-info">
+        App version: {appVersion}
+    </p>
 </div>
 
 <style>
+    .version-info {
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        opacity: 50%;
+    }
     .settings-container {
-        min-height: 100vh;
+        /* height: 100vh; */
         /* background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);      */
         padding: 2rem 1rem;
         display: flex;

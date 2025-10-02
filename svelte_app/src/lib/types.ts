@@ -4,4 +4,5 @@ export interface AppSettings {
     pollingRate: number;
     theme: string;
     privacyLevel: "allowed" | "not_allowed";
+    snoozeUntil: number | undefined;
 }

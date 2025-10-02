@@ -19,20 +19,31 @@
                   ? "catppuccin"
                   : "dark";
     }
-    $effect(function reactToTheme() { document.documentElement.setAttribute("data-theme", theme) })
+    $effect(function reactToTheme() {
+        document.documentElement.setAttribute("data-theme", theme);
+    });
 
     function stopSidecar(): void {
         if (commandChild) {
-            console.log("Kill child process")
+            console.log("Kill child process");
             commandChild.kill();
             commandChild = null;
         }
     }
 
+    function isTauri(): boolean {
+        return typeof window !== "undefined" && "__TAURI__" in window;
+    }
+
     onMount(() => {
+        // IIFE
         (async () => {
             await loadSettings();
-            await testSidecar();
+            if (isTauri()) {
+                await testSidecar();
+            } else {
+                console.debug("Skipping sidecar start: not running in Tauri");
+            }
         })();
     });
 
@@ -41,19 +52,28 @@
 
     async function testSidecar(): Promise<void> {
         try {
-            const command = Command.sidecar("binaries/my-sidecar", [], { 
+            const command = Command.sidecar("binaries/my-sidecar", [], {
                 env: {
-                    SLIPPI_FOLDER_PATH: settings.slippiPath ?? "Slippi/Folder/Path",
-                    INTERVAL_VALUE: `${settings.pollingRate}` 
-                }
+                    SLIPPI_FOLDER_PATH:
+                        settings.slippiPath ?? "Slippi/Folder/Path",
+                    INTERVAL_VALUE: `${settings.pollingRate}`,
+                },
             });
             // Listeners
-            command.on("close", data => {
-                console.log(`command finished with code ${data.code} and signal ${data.signal}`);
+            command.on("close", (data) => {
+                console.log(
+                    `command finished with code ${data.code} and signal ${data.signal}`,
+                );
             });
-            command.on("error", error => console.error(`command error: "${error}"`));
-            command.stdout.on("data", line => console.log(`command stdout: "${line}"`));
-            command.stderr.on("data", line => console.log(`command stderr: "${line}"`));
+            command.on("error", (error) =>
+                console.error(`command error: "${error}"`),
+            );
+            command.stdout.on("data", (line) =>
+                console.log(`command stdout: "${line}"`),
+            );
+            command.stderr.on("data", (line) =>
+                console.log(`command stderr: "${line}"`),
+            );
             commandChild = await command.spawn();
         } catch (error) {
             console.error("Error starting sidecar:", error as Error);
@@ -64,8 +84,8 @@
 </script>
 
 <Navbar {theme} {cycleTheme} {testSidecar} />
-<link rel="preconnect" href="https://rsms.me/">
-<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 <main data-theme={theme}>
     {@render children()}
 </main>
@@ -136,9 +156,11 @@
     }
     /* TO DO ADD GRADIENT LIKE IN settings thanks*/
     :global(body) {
-       font-family: Inter, 'Papyrus', 'Hack'; 
-       font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
-       transition:
+        font-family: Inter, "Papyrus", "Hack";
+        font-feature-settings:
+            "liga" 1,
+            "calt" 1; /* fix for Chrome */
+        transition:
             background-color 0.3s,
             color 0.3s;
         /* font-family: 'Playfair Display'; */
