@@ -42,5 +42,16 @@ APP_VERSION=0.1.1_sample_version
 APTABASE_KEY=sample_key
 ```
 
-## Create new sidecar from process
+## Sidecar Build Process
+
+Package node server as Tauri sidecar
+
+```bash
+# Run in order from svelte_app/sidecar-app
+tsc
+npm run sidecar:build 
+npm run sidecar:prepare
+```
+
+
 
