@@ -137,7 +137,7 @@
 <Toaster {toaster}></Toaster>
 <div class="space-y-4">
   <div class="text-3xl font-bold">The Lab</div>
-  <div class="font-italicized">Test your setup here before going live.</div>
+  <div class="font-italicized">Test your setup here beforehand.</div>
   <form class="mx-auto w-full max-w-md space-y-4">
     <select
       id="myChar"

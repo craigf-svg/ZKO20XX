@@ -1,16 +1,46 @@
-ZKO_20XX
+# ZKO_20XX
 
-#### Benefits
- - Stop guessing when moves kill
- - Calculate once, use forever
- - Training wheels to improve performance
- - Share your customizations with friends and teammates
- 
-#### Features
- - Display combos with real-time percent calculations.
- - Customize move data and add extra informational notes.
- - Lightweight & efficient - built with Tauri and Svelte to minimize system impact.
- - Share and import custom setups with others.
+A cross-platform desktop app built for Super Smash Bros. Melee data visualization and analysis using Tauri, Rust, Node, and Svelte. 
 
-#### Install Steps
+
+## Quick Setup
+```bash
+# Clone the repository
+git clone [repo-url]
+cd [project-name]
+
+# Install dependencies (per project)
+cd node_server && npm install
+cd ../svelte_app && npm install
+```
+**Launch from separate terminals:**
+```
+cd node_server && npm run dev                # Node server (required for file updates)
+
+# Choose one (web frontend vs desktop):
+cd svelte_app && npm run dev                 # Web app dev (SvelteKit)
+cd svelte_app && npm run tauri dev           # Desktop app dev (Tauri via npm)
+```
+
+## Project Structure
+
+```
+├── node_server/      # File update service
+├── svelte_app/
+│   ├── src-tauri/    # Rust backend
+│   ├── src/          # Svelte frontend
+│   └── .env          # Config 
+```
+
+## Configuration
+**Tauri Config:** `svelte_app/src-tauri/tauri.conf.json`
+
+**Environment Variables:** `svelte_app/src/.env` 
+```
+.env
+APP_VERSION=0.1.1_sample_version
+APTABASE_KEY=sample_key
+```
+
+## Create new sidecar from process
 

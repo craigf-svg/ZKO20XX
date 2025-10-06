@@ -13,8 +13,10 @@
 	<Accordion.Item value="edit">
 		{#snippet lead()}🎮{/snippet}
 		{#snippet control()}How do I edit percents?{/snippet}
-		{#snippet panel()}Navigate to the file structure, pick your matchup, and
-			edit the json values, and replace it.{/snippet}
+		{#snippet panel()}
+			Navigate to the file structure, pick your matchup,
+			edit the json values, and replace it. 
+			Use the lab to know exactly where your app is getting its information from and what it is reading before entering games.{/snippet}
 	</Accordion.Item>
 	<Accordion.Item value="performance" {...childProps}>
 		{#snippet lead()}
@@ -22,9 +24,9 @@
 		{/snippet}
 		{#snippet control()}Will this slow down my game?{/snippet}
 		{#snippet panel()}
-			ZKO was designed with performance in mind to minimize any impact,
-			the only way to tell is to give it a shot. ZKO was built with
-			performance in mind using Svelte, Tauri, and Node.
+			I've optimized the app to run with minimal overhead and to use efficient DOM updates. 
+			That said, performance depends on your system, so test it during a low-stakes session first. 
+			Since a single frame can be pivotal, I strive to monitor and improve performance continuously.
 		{/snippet}
 	</Accordion.Item>
 	<Accordion.Item value="support" {...childProps}>
@@ -33,9 +35,8 @@
 		{/snippet}
 		{#snippet control()}Will there be support for single screen users?{/snippet}
 		{#snippet panel()}
-			Given the fact that lots of melee players only have one screen,
-			single screen support is the top priority once this alpha release is
-			concluded and a minimum viable product is released.
+			Yes, single screen support is a top priority after alpha. Many Melee players 
+			use one screen, so it's essential for them.
 		{/snippet}
 	</Accordion.Item>
 </Accordion>

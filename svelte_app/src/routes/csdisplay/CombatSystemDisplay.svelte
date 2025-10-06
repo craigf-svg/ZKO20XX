@@ -52,7 +52,7 @@
 
     const socket: Socket = io(
         "http://localhost:8090",
-        // TODO: Remove these settings, put in place to stop console errors in dev
+        // TODO: These settings are purely for keeping a cleaner console in dev
        {
             autoConnect: false,
             transports: ["websocket"],
@@ -90,7 +90,7 @@
     }
 
     function onGameEnd() {
-        // After dev uncomment these
+        // TODO: Currently useful to be undefined for dev environment 
         gameState = {
             ...gameState,
             // matchupData: undefined,

@@ -2,6 +2,6 @@
 </script>
 
 <div>
-  This is the csdisplay page 
+  Test csdisplay page 
 </div>
 

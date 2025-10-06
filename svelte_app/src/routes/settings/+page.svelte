@@ -176,10 +176,9 @@
                         </header>
                         <article>
                             <p class="opacity-80 text-s">
-                                If enabled, this allows me to collect minimal,
-                                completely anonymous analytics via Aptabase to
-                                better understand app usage and share aggregated
-                                metrics with the community.
+                                If enabled, I collect minimal anonymous analytics 
+                                via Aptabase to better understand app usage 
+                                and share aggregated metrics with the community.
                             </p>
                             <div class="p-3 rounded text-sm">
                                 <p class="font-semibold mb-2">
@@ -213,7 +212,6 @@
                                     <strong>✓</strong> No personal data, IP addresses,
                                     or device identifiers collected
                                 </p>
-                                <p><strong>✓</strong> Data is never sold</p>
                                 <p>
                                     <strong>✓</strong> User ID is a daily-changing
                                     hashed value for privacy

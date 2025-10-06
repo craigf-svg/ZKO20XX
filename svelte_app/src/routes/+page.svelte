@@ -12,7 +12,7 @@
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
-		background-color: transparent; /* let body bg show through */
+		background-color: transparent;
 	}
 
 	@media (min-width: 640px) {

@@ -154,7 +154,7 @@
         --color-lab-button: #fab387;
         --color-lab-button-border: #313244;
     }
-    /* TO DO ADD GRADIENT LIKE IN settings thanks*/
+    /* TO DO ADD GRADIENT LIKE IN settings */
     :global(body) {
         font-family: Inter, "Papyrus", "Hack";
         font-feature-settings:

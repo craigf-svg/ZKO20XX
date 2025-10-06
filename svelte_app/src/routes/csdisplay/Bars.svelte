@@ -2,7 +2,6 @@
   import Bar from './Bar.svelte'
   import type { MoveBar } from './types';
   export let dynamicBars: MoveBar[] = [];
-  // console.log('bars dynamicBars', dynamicBars)
 </script>
 
 <style>

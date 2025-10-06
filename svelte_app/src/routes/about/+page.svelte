@@ -38,29 +38,12 @@
     </div>
   {/if}
 
-  <h3 class="text-xl font-bold">
-    ZKO_20XX is a tool for melee players. 
-  </h3>
-
   <div class="body-text">
-    It display combos with real-time percent calculations. <br />
-    This is information that pros either deliberately memorize or accumulate through
-    thousands of hours.
+        ZKO_20XX is a tool that display combos with real-time percent calculations. <br />
+    This is information that players either intentionally memorize or accumulate through thousands of hours, 
+    and still the amount of information.
+    This app lets you stop guessing when moves KO and serve as training wheels between calculated percents and memorized information incorporated into your game.
   </div>
-
-  <h4 class="text-lg font-semibold mt-8 mb-2">Benefits</h4>
-  <ul class="list-none ml-6 mb-6 text-base">
-    <li>Stop guessing when moves kill</li>
-    <li>Serve as training wheels between calculated and memorized</li>
-    <li>Calculate a kill percent once and use it forever</li>
-  </ul>
-
-  <h4 class="text-lg font-semibold mt-8 mb-2">Features</h4>
-  <ul class="list-none ml-6 mb-6 text-base">
-    <li>Customize move data and add extra informational notes.</li>
-    <li>Lightweight: built with Tauri and Svelte to minimize system impact.</li>
-    <li>Share and import custom setups with others.</li>
-  </ul>
 
   <Accordion />
 </main>

@@ -33,7 +33,7 @@ interface PlayerStats {
 
 dotenv.config();
 
-const SLIPPI_FOLDER_PATH = process.env.SLIPPI_FOLDER_PATH ?? 'C:\\Users\\Craig\\Documents\\Misc\\Slippi\\slippi-test\\';
+const SLIPPI_FOLDER_PATH = process.env.SLIPPI_FOLDER_PATH ?? 'C:\\Users\\User\\Documents\\slippi-path\\';
 const INTERVAL_VALUE = (function determineIntervalValue() {
   console.log(process.env.INTERVAL_VALUE);
   if (process.env.INTERVAL_VALUE == undefined) { return 500; }
