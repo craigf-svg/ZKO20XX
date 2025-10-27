@@ -103,9 +103,13 @@
         socket.on("game_start", onGameStart);
         socket.on("slippi_update", onSlippiUpdate);
         socket.on("game_end", onGameEnd);
+        socket.on("connect", () => {
+            console.log("Connected to sidecar Socket.IO server");
+        });
         socket.on("connect_error", (error) => {
             console.debug("Socket connection failed:", error.message);
         });
+        socket.connect();
 
         return () => socket.disconnect();
     });

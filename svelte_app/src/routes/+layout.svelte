@@ -52,10 +52,14 @@
 
     async function testSidecar(): Promise<void> {
         try {
+            if (!settings.slippiPath || !settings.slippiPath.trim()) {
+                console.error("Do not start sidecar, slippiPath is empty or invalid");
+                return;
+            }
             const command = Command.sidecar("binaries/my-sidecar", [], {
                 env: {
                     SLIPPI_FOLDER_PATH:
-                        settings.slippiPath ?? "Slippi/Folder/Path",
+                        settings.slippiPath || "Slippi/Folder/Path",
                     INTERVAL_VALUE: `${settings.pollingRate}`,
                 },
             });
@@ -77,9 +81,7 @@
             commandChild = await command.spawn();
         } catch (error) {
             console.error("Error starting sidecar:", error as Error);
-        } finally {
-            stopSidecar();
-        }
+        } 
     }
 </script>
 

@@ -4,6 +4,7 @@ import chokidar from "chokidar";
 import dotenv from "dotenv";
 import _ from 'lodash';
 import path from 'path';
+import fs from 'fs';
 import Spinner from "./Spinner";
 import { Server as SocketIOServer } from "socket.io";
 
@@ -40,10 +41,22 @@ const INTERVAL_VALUE = (function determineIntervalValue() {
   const parsed = parseInt(process.env.INTERVAL_VALUE, 10);
   return isNaN(parsed) || parsed <= 0 ? 500 : parsed;
 })();
-console.log('Slippi Folder Path:', process.env.SLIPPI_FOLDER_PATH);
+console.log('Sidecar Starting...');
+console.log('Slippi Folder Path:', SLIPPI_FOLDER_PATH);
 console.log('Interval Value:', INTERVAL_VALUE);
+
+if (!path.isAbsolute(SLIPPI_FOLDER_PATH)) {
+  console.error('Error: SLIPPI_FOLDER_PATH must be an absolute path.');
+  console.error('Received:', SLIPPI_FOLDER_PATH);
+  process.exit(1);
+} else if (!fs.existsSync(SLIPPI_FOLDER_PATH)) {
+  console.error('Error: SLIPPI_FOLDER_PATH does not exist.');
+  console.error('Path:', SLIPPI_FOLDER_PATH);
+  process.exit(1);
+}
+
 const watcher = chokidar.watch(SLIPPI_FOLDER_PATH, {
-  ignored: /(^|[\/\\])\../, // Ignore dotfiles
+  ignored: /(^|[/\\])\../, // Ignore dotfiles
   depth: 0,
   persistent: true,
   ignoreInitial: true,
@@ -105,6 +118,11 @@ function processPlayerStats(players: PlayerType[], latestFrame: FrameEntryType):
 
 Spinner.start('waiting for new file...', 0.25);
 
+watcher.on('ready', () => {
+  console.log('Watcher is ready and monitoring:', SLIPPI_FOLDER_PATH);
+  console.log('Waiting for .slp files...');
+});
+
 watcher.on("add", async (filePath: string) => {
   if (!filePath.endsWith(".slp")) return;
   cleanupResources();
@@ -152,4 +170,9 @@ process.on('SIGINT', () => {
 
 watcher.on('error', (error) => {
   console.error('Watcher error:', error);
+  console.error('Path being watched:', SLIPPI_FOLDER_PATH);
+});
+
+io.on('connection', (socket) => {
+  console.log('Frontend client connected to Socket.IO server');
 });
