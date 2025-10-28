@@ -25,11 +25,11 @@ cd svelte_app && npm run tauri dev           # Desktop app dev (Tauri via npm)
 ## Project Structure
 
 ```
-├── node_server/      # File update service
 ├── svelte_app/
-│   ├── src-tauri/    # Rust backend
-│   ├── src/          # Svelte frontend
-│   └── .env          # Config 
+│   ├── src-tauri/    # Desktop shell + native bridge
+│   ├── src/          # Browser-based UI code
+│   ├── sidecar-app/  # Node-based replay watcher
+│   └── .env          # Shared configuration 
 ```
 
 ## Configuration
