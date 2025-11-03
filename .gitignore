@@ -1,7 +1,9 @@
 .env
-node_modules
-package-lock.json
+*.env
+node_modules/
 dist/
 .vscode/
-ROADMAP.md
-svelte_app/static/logo.svg
+.svelte-kit/
+build/
+*.log
+*.tmp
