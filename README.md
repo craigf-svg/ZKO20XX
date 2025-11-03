@@ -9,17 +9,20 @@ A cross-platform desktop app built for Super Smash Bros. Melee data visualizatio
 git clone [repo-url]
 cd [project-name]
 
-# Install dependencies (per project)
-cd node_server && npm install
-cd ../svelte_app && npm install
-```
-**Launch from separate terminals:**
-```
-cd node_server && npm run dev                # Node server (required for file updates)
+# Install dependencies from svelte_app 
+npm install
 
-# Choose one (web frontend vs desktop):
-cd svelte_app && npm run dev                 # Web app dev (SvelteKit)
-cd svelte_app && npm run tauri dev           # Desktop app dev (Tauri via npm)
+# Launch
+npm run dev                 # Web app dev (SvelteKit)
+npm run tauri dev           # Desktop app dev (Tauri via npm)
+```
+
+## Sidecar Service
+```bash
+# From svelte_app/sidecar-app
+tsc
+npm run sidecar:build 
+npm run sidecar:prepare
 ```
 
 ## Project Structure
@@ -41,17 +44,3 @@ cd svelte_app && npm run tauri dev           # Desktop app dev (Tauri via npm)
 APP_VERSION=0.1.1_sample_version
 APTABASE_KEY=sample_key
 ```
-
-## Sidecar Build Process
-
-Package node server as Tauri sidecar
-
-```bash
-# Run in order from svelte_app/sidecar-app
-tsc
-npm run sidecar:build 
-npm run sidecar:prepare
-```
-
-
-
