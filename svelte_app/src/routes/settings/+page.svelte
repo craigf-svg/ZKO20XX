@@ -8,7 +8,6 @@
     import HelpCircle from "@lucide/svelte/icons/help-circle";
     import CircleX from "@lucide/svelte/icons/circle-x";
     import { getVersion } from "@tauri-apps/api/app";
-    import UpdateManager from "$lib/UpdateManager.svelte";
 
     const toaster = createToaster({ placement: "bottom-start" });
 

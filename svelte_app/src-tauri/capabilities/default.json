@@ -7,7 +7,6 @@
   ],
   "permissions": [
     "core:default",
-    "updater:default",
     "store:default",
     "store:allow-get",
     "store:allow-set",

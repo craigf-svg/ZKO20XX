@@ -18,13 +18,12 @@ async fn main() {
         .expect("APTABASE_KEY must be set");
 
     tauri::Builder::default()
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![get_cpu_usage])
         .plugin(tauri_plugin_aptabase::Builder::new(&aptabase_key).build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .setup(move |app| {
-            app.track_event(
+            let _ = app.track_event(
                 "app_test",
                 None, // If passing properties
                      // Some(json!({ "test_value": "Testing"}))
@@ -42,7 +41,7 @@ async fn main() {
         .expect("error while running tauri application")
         .run(|app_handle, event| match event {
             tauri::RunEvent::Exit { .. } => {
-                app_handle.track_event("app_exited", None);
+                let _ = app_handle.track_event("app_exited", None);
                 app_handle.flush_events_blocking();
             }
             _ => {}
