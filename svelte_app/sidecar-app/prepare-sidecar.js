@@ -3,11 +3,19 @@ import fs from 'fs';
 
 const ext = process.platform === 'win32' ? '.exe' : '';
 
-const rustInfo = execSync('rustc -vV');
-const targetTriple = /host: (\S+)/g.exec(rustInfo)[1];
+let targetTriple = process.env.TARGET_TRIPLE;
+
+if (!targetTriple) {
+  const rustInfo = execSync('rustc -vV');
+  const match = /host: (\S+)/g.exec(rustInfo.toString());
+  targetTriple = match?.[1];
+}
+
 if (!targetTriple) {
   console.error('Failed to determine platform target triple');
+  process.exit(1);
 }
+
 fs.renameSync(
   `my-sidecar${ext}`,
   `../src-tauri/binaries/my-sidecar-${targetTriple}${ext}`
