@@ -14,20 +14,28 @@ async fn main() {
     let cpu_usage = get_cpu_usage();
     println!("cpu_usage is {}", cpu_usage);
 
-    let aptabase_key = std::env::var("APTABASE_KEY")
-        .expect("APTABASE_KEY must be set");
+    let aptabase_key = std::env::var("APTABASE_KEY").ok();
+    let aptabase_enabled = aptabase_key.is_some();
 
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![get_cpu_usage])
-        .plugin(tauri_plugin_aptabase::Builder::new(&aptabase_key).build())
-        .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_store::Builder::new().build());
+
+    if let Some(ref key) = aptabase_key {
+        builder = builder.plugin(tauri_plugin_aptabase::Builder::new(key).build());
+    } else {
+        println!("APTABASE_KEY not set; Aptabase analytics disabled.");
+    }
+
+    builder
         .setup(move |app| {
-            let _ = app.track_event(
-                "app_test",
-                None, // If passing properties
-                     // Some(json!({ "test_value": "Testing"}))
+            if aptabase_enabled {
+                let _ = app.track_event(
+                    "app_test",
+                    None,
             );
+            }
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
@@ -39,10 +47,12 @@ async fn main() {
         })
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
-        .run(|app_handle, event| match event {
+        .run(move |app_handle, event| match event {
             tauri::RunEvent::Exit { .. } => {
-                let _ = app_handle.track_event("app_exited", None);
-                app_handle.flush_events_blocking();
+                if aptabase_enabled {
+                    let _ = app_handle.track_event("app_exited", None);
+                    app_handle.flush_events_blocking();
+                }
             }
             _ => {}
         });
