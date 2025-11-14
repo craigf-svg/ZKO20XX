@@ -35,12 +35,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "externalBin": ["binaries/my-sidecar"],
-    "windows": {
-      "certificateThumbprint": "57d12762d629122044a95fa8157361a7d5814709",
-      "digestAlgorithm": "sha256",
-      "timestampUrl": "http://timestamp.comodoca.com"
-    }
+    "externalBin": ["binaries/my-sidecar"]
   },
   "plugins": {
     "updater": {
