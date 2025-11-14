@@ -1,3 +1,5 @@
+use sysinfo::System;
+
 #[tauri::command]
 pub fn get_cpu_usage() -> f32 {
     let mut sys = System::new_all();

@@ -21,7 +21,7 @@ async fn main() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![get_cpu_usage])
-        .plugin(tauri_plugin_aptabase::Builder::new(aptabase_key).build())
+        .plugin(tauri_plugin_aptabase::Builder::new(&aptabase_key).build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .setup(move |app| {
             app.track_event(
