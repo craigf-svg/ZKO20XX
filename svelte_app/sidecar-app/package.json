@@ -5,11 +5,9 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "sidecar:test": "echo \"Error: no test specified\" && exit 1",
-    "sidecar:build": "pkg dist/watcher.js --target node18-win-x64 --output my-sidecar",
-    "sidecar:olderbuildremoveonceready": "pkg index.js --output my-sidecar",
+    "sidecar:build": "npm run build && pkg dist/watcher.js --output my-sidecar",
     "sidecar:prepare": "node prepare-sidecar.js",
-    "orderToExecute": "tsc -> sidecar:build -> sidecar:prepare"
+    "orderToExecute": "sidecar:build -> sidecar:prepare"
   },
   "author": "",
   "license": "ISC",
