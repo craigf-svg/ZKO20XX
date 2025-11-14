@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "sidecar:build": "npm run build && pkg dist/watcher.js --output my-sidecar",
+    "sidecar:build": "npm run build && pkg dist/watcher.js --target node18 --output my-sidecar",
     "sidecar:prepare": "node prepare-sidecar.js",
     "orderToExecute": "sidecar:build -> sidecar:prepare"
   },
