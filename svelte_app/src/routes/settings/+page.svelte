@@ -17,7 +17,7 @@
         openState = false;
     }
 
-    function saveConnectCode(code: string) {
+    async function saveConnectCode(code: string) {
         if (code.trim().length <= 0) {
             console.error("Connect code must be at least 1 character long");
             toaster.error({
@@ -26,13 +26,13 @@
             return;
         }
         settings.connectCode = code;
-        saveSettings();
+        await saveSettings();
         let message = `Connect code saved: ${code}`;
         console.log(message);
         toaster.success({ title: message });
     }
 
-    function saveSlippiPath(path: string) {
+    async function saveSlippiPath(path: string) {
         const trimmedPath = path.trim();
         if (!trimmedPath) {
             const errorMsg = "Slippi path cannot be empty";
@@ -41,12 +41,12 @@
             return;
         }
         settings.slippiPath = trimmedPath;
-        saveSettings();
+        await saveSettings();
         console.log(`Slippi path saved: ${trimmedPath}`);
         toaster.success({ title: `Slippi path saved: ${trimmedPath}` });
     }
 
-    function savePollingRate(rateInSeconds: number) {
+    async function savePollingRate(rateInSeconds: number) {
         if (rateInSeconds < 0.1 || rateInSeconds > 10) {
             console.error("Polling rate must be between 0.1 and 10 seconds");
             toaster.error({
@@ -56,15 +56,15 @@
         }
         const rateInMs = rateInSeconds * 1000;
         settings.pollingRate = rateInMs;
-        saveSettings();
+        await saveSettings();
         let message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
         console.log(message);
         toaster.success({ title: message });
     }
 
-    function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
+    async function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
         settings.privacyLevel = privacyLevel;
-        saveSettings();
+        await saveSettings();
         let message = `Privacy Level saved: ${privacyLevel}`;
         console.log(message);
         toaster.success({ title: message });
@@ -72,7 +72,7 @@
 
     let connectCode: string = $state(settings.connectCode);
     let slippiPath: string = $state(settings.slippiPath);
-    let pollingRate: number = $state(settings.pollingRate / 1000);
+    let pollingRateInSeconds = $state(settings.pollingRate / 1000);
     let privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
     let appVersion = $state("Default message when getVersion doesn't work: 0.0.5");
     $effect(() => {
@@ -94,11 +94,12 @@
         </header>
 
         <form
-            onsubmit={() => {
-                saveConnectCode(connectCode);
-                saveSlippiPath(slippiPath);
-                savePollingRate(pollingRate);
-                savePrivacyLevel(privacyLevel);
+            onsubmit={async (e) => {
+                e.preventDefault();
+                await saveConnectCode(connectCode);
+                await saveSlippiPath(slippiPath);
+                await savePollingRate(pollingRateInSeconds);
+                await savePrivacyLevel(privacyLevel);
             }}
         >
             <div class="form-group">
@@ -135,7 +136,7 @@
                     <input
                         type="number"
                         id="pollingRate"
-                        bind:value={pollingRate}
+                        bind:value={pollingRateInSeconds}
                         placeholder="0.5"
                         min="0.1"
                         max="10"
@@ -176,8 +177,8 @@
                         </header>
                         <article>
                             <p class="opacity-80 text-s">
-                                If enabled, I collect minimal anonymous analytics 
-                                via Aptabase to better understand app usage 
+                                If enabled, I collect minimal anonymous analytics
+                                via Aptabase to better understand app usage
                                 and share aggregated metrics with the community.
                             </p>
                             <div class="p-3 rounded text-sm">

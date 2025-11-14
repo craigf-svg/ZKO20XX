@@ -9,6 +9,10 @@
     "core:default",
     "updater:default",
     "store:default",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-save",
+    "store:allow-load",
     "aptabase:allow-track-event",
     {
       "identifier": "shell:allow-spawn",

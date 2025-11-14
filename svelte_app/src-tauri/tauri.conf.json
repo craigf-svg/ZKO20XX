@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "svelte-app",
+  "productName": "ZKO_20XX",
   "version": "0.1.0",
   "identifier": "com.craigf.zko20xx",
   "build": {
@@ -10,9 +10,10 @@
     "beforeBuildCommand": "npm run build"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
-        "title": "svelte-app",
+        "title": "ZKO_20XX",
         "width": 800,
         "height": 600,
         "resizable": true,

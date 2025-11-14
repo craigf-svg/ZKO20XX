@@ -20,29 +20,22 @@ export async function loadSettings() {
       return;
     }
 
-    console.log('Loading settings from store...');
     const { Store } = await import("@tauri-apps/plugin-store");
     const settingsStore = await Store.load("settings.json");
+
     const saved_settings = await settingsStore.get<AppSettings>("settings");
 
-    console.log('Raw saved_settings:', saved_settings);
-    console.log('Type of saved_settings:', typeof saved_settings);
-    console.log('Is saved_settings truthy?', !!saved_settings);
-
-    // Saved Settings Found 
+    // Saved Settings Found
     if (saved_settings) {
-      console.log('Retrieved settings from store:', saved_settings);
       for (const key in saved_settings) {
         if (key in settings) {
           (settings as any)[key] = saved_settings[key as keyof AppSettings];
         }
       }
-      console.log('Applied settings to state:', JSON.parse(JSON.stringify(settings)));
     } else {
-      console.log('No saved settings found, using default settings:', settings);
-      await settingsStore.set("settings", settings);
+      const defaultSnapshot = $state.snapshot(settings);
+      await settingsStore.set("settings", defaultSnapshot);
       await settingsStore.save();
-      console.log('Saved default settings to store');
     }
   } catch (err) {
     console.error("Failed to load settings:", err);
@@ -55,13 +48,12 @@ export async function saveSettings() {
       console.log("Tauri not detected; skipping settings store save.");
       return;
     }
-    console.log('Saving current settings to store...');
-    console.log('Settings to save:', JSON.parse(JSON.stringify(settings)));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const settingsSnapshot = $state.snapshot(settings);
     const { Store } = await import("@tauri-apps/plugin-store");
     const store = await Store.load("settings.json");
-    await store.set("settings", settings);
+    await store.set("settings", settingsSnapshot);
     await store.save();
-    console.log('Settings successfully saved to store');
   } catch (err) {
     console.error("Failed to save settings:", err);
   }
