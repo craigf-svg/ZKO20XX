@@ -90,7 +90,7 @@
     }
 
     function onGameEnd() {
-        // TODO: Currently useful to be undefined for dev environment 
+        // TODO: Currently useful to be undefined for dev environment
         gameState = {
             ...gameState,
             // matchupData: undefined,
@@ -120,11 +120,8 @@
 
     let limit: number = $state(0);
     let dynamicBars: MoveBar[] = $derived.by(() => {
-        console.debug("movesSource", movesSource);
         const allBars = Object.entries(movesSource).map(
             function prepareBarData([moveName, koPercent]) {
-                //console.log("moveName", moveName)
-                //console.log("koPercent", koPercent)
                 return {
                     moveName,
                     koPercent,

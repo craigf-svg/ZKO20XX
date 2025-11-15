@@ -81,7 +81,7 @@
             commandChild = await command.spawn();
         } catch (error) {
             console.error("Error starting sidecar:", error as Error);
-        } 
+        }
     }
 </script>
 
@@ -108,6 +108,8 @@
         --color-bg-navbar-hover: #f0f0f0;
         --color-muted: #666666;
         --color-border: #e0e0e0;
+        --color-bar-bg: #101015;
+        --color-bars-bg: rgba(245, 245, 250, 0.9);
         --background-color: #ff4444;
         --transition: 250ms ease-out;
         --color-bar-fill: #ff3e00;
@@ -117,7 +119,7 @@
         --color-lab-button-border: #ffb86a;
     }
 
-    :global([data-theme="dark"]) {
+   :global([data-theme="dark"]) {
         /* Dark theme colors */
         --color-text-main: #f0f0f0;
         --color-text-heading: #ffffff;
@@ -126,15 +128,27 @@
         --color-orange-logo-secondary: orange;
         --color-orange-secondary: #ffa500;
         --color-purple-flair: #7c4dff;
-        --color-bg-body: #2b2b2b;
-        --color-bg-navbar: #333333;
-        --color-bg-navbar-hover: #444444;
+        --color-bg-body: #0a0a0f;
+        --color-bg-navbar: #12121a;
+        --color-bg-navbar-hover: #1a1a25;
         --color-muted: #888888;
-        --color-border: #444444;
+        --color-border: #2a2a35;
+        --color-bar-bg: #101015;
+        --color-bars-bg: rgba(10, 10, 15, 0.6);
         --color-bar-fill: #ff3e00;
+        --color-bar-fill-partial: #ffa366;
         --color-bar-shadow: rgba(255, 62, 0, 0.2);
         --color-lab-button: #ffb86a;
         --color-lab-button-border: #ffb86a;
+
+        --color-progress-danger: #ff3e00;
+        --color-progress-warning: #ffa366;
+        --color-progress-neutral: #555;
+        --color-progress-glow: rgba(255, 255, 255, 0.3);
+
+        --color-player-self: #4a9eff;
+        --color-player-opponent: #ff6b4a;
+        --color-stage: rgba(255, 255, 255, 0.7);
     }
 
     :global([data-theme="catppuccin"]) {
@@ -151,10 +165,22 @@
         --color-bg-navbar-hover: #313244;
         --color-muted: #a6adc8;
         --color-border: #45475a;
+        --color-bar-bg: #181825;
+        --color-bars-bg: rgba(10, 10, 15, 0.6);
         --color-bar-fill: #f5c2e7;
+        --color-bar-fill-partial: #f38ba8;
         --color-bar-shadow: rgba(245, 194, 231, 0.2);
         --color-lab-button: #fab387;
         --color-lab-button-border: #313244;
+
+        --color-progress-danger: #f38ba8;
+        --color-progress-warning: #fab387;
+        --color-progress-neutral: #45475a;
+        --color-progress-glow: rgba(245, 194, 231, 0.3);
+
+        --color-player-self: #89b4fa;
+        --color-player-opponent: #f38ba8;
+        --color-stage: #a6adc8;
     }
     /* TO DO ADD GRADIENT LIKE IN settings */
     :global(body) {

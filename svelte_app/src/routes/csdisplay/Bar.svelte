@@ -1,63 +1,134 @@
 <script lang="ts">
     import type { MoveBar } from "./types";
-    let { moveName, koPercent, width, highlight }: MoveBar = $props();
-    let noneOrDimClass = $derived(
-        highlight === "full" ? "full" : highlight === "dim" ? "dim" : "none",
-    );
-    let displayPercent = $derived(Array.isArray(koPercent)
-        ? koPercent.join(" · ") // maybe a small x
-        : koPercent)
-    </script>
+    import { getMoveIcon, getShortLabel } from "./iconMapping";
+    import * as LucideIcons from '@lucide/svelte';
 
-<div class="card">
-    <div class="card-header">
-        <span>{moveName}</span>
-        <span class="value">{displayPercent}%</span>
+    let { moveName, koPercent, width, highlight }: MoveBar = $props();
+
+    const formatRange = ([min, mid, max]: number[]) => `${min}-${mid}-${max}`;
+
+    let displayPercent = $derived(
+        Array.isArray(koPercent) ? formatRange(koPercent) : koPercent
+    );
+
+    let shortLabel = $derived(getShortLabel(moveName));
+    let iconName = $derived(getMoveIcon(moveName));
+    let Icon = $derived((LucideIcons as any)[iconName] || LucideIcons.ChevronRight);
+</script>
+
+<div class="move-card priority-{highlight}" data-highlight={highlight}>
+    <div class="move-header">
+        <div class="move-label">
+            <div class="move-icon">
+                <Icon size={20} strokeWidth={2.5} />
+            </div>
+            <span class="move-name">{shortLabel}</span>
+        </div>
+        <div class="ko-percent">
+            <span class="percent-value">{displayPercent}</span>
+            <span class="percent-symbol">%</span>
+        </div>
     </div>
-    <div class="bar">
-        <div class="bar-fill {noneOrDimClass}" style:width></div>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill {highlight}" style:width></div>
+        </div>
     </div>
 </div>
 
 <style>
-    .card {
-        background: #1e1e1e;
-        color: #f0f0f0;
-        border-radius: 12px;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        box-shadow: 0 0 8px var(--color-bar-shadow);
+    .move-card {
+        background: var(--color-bar-bg);
+        border-radius: 8px;
+        padding: 12px 16px;
     }
-    .card-header {
+
+    .move-header,
+    .move-label,
+    .move-icon,
+    .ko-percent {
         display: flex;
+    }
+
+    .move-header,
+    .move-label,
+    .move-icon {
+        align-items: center;
+    }
+
+    .move-header {
         justify-content: space-between;
-        margin-bottom: 0.5rem;
-        font-size: 1rem;
+        margin-bottom: 10px;
+        height: 28px;
+    }
+
+    .move-label {
+        gap: 8px;
+        flex: 1;
+    }
+
+    .move-icon {
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .move-name {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .ko-percent {
+        align-items: baseline;
+        gap: 2px;
+        font-weight: 700;
+    }
+
+    .percent-value {
+        font-variant-numeric: tabular-nums;
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    .percent-symbol {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.5);
         font-weight: 500;
     }
-    .value {
-        font-size: 1.2rem;
-        font-weight: bold;
+
+    .progress-container {
+        height: 28px;
     }
-    .bar {
-        background: #333;
-        height: 8px;
-        border-radius: 4px;
+
+    .progress-bar {
+        height: 24px;
+        border-radius: 12px;
         overflow: hidden;
     }
-    .bar-fill {
+
+    .progress-fill {
         height: 100%;
-        transition: width 0.3s ease;
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 11px;
     }
-    .full {
-        background: var(--color-bar-fill);
+
+    .progress-fill.full {
+        background: linear-gradient(90deg, #ff3e00, #ff6b4a);
+        box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
     }
-    .dim {
-        background: var(--color-bar-fill-partial);
+
+    .progress-fill.dim {
+        background: linear-gradient(90deg, #ff9955, #ffa366);
+        box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
     }
-    .none {
-        background: #444;
+
+    .progress-fill.none {
+        background: linear-gradient(90deg, #444, #555);
     }
 </style>
