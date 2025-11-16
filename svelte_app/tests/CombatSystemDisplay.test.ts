@@ -4,7 +4,7 @@ describe('stageInitialsToName', () => {
   function stageInitialsToName(initials: string) {
     const stageNames: { [key: string]: string } = {
       DL: "Dream Land N64",
-      YS: "Yoshi's Story", 
+      YS: "Yoshi's Story",
       PS: "Pokémon Stadium",
       FD: "Final Destination",
       FoD: "Fountain of Dreams",
@@ -40,13 +40,13 @@ describe('checkHighlighted', () => {
 
 describe('calcWidth', () => {
   const calcWidth = (currentPercent: number, koPercent: number) =>
-    (currentPercent && koPercent) ? 
+    (currentPercent && koPercent) ?
       `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%` : '0%'
 
   it('should calculate correct width percentage', () => {
     expect(calcWidth(50, 100)).toBe('50.0%')
     expect(calcWidth(83, 83)).toBe('100.0%')
-    expect(calcWidth(150, 100)).toBe('100.0%') 
+    expect(calcWidth(150, 100)).toBe('100.0%')
   })
 
   it('should return 0% for invalid inputs', () => {
