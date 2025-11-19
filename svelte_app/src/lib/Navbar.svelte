@@ -3,10 +3,9 @@
 
     type Theme = "light" | "dark" | "catppuccin";
 
-    const { theme, cycleTheme, testSidecar } = $props<{
+    const { theme, cycleTheme } = $props<{
         theme: Theme;
         cycleTheme: () => void;
-        testSidecar: () => void;
     }>();
 </script>
 
@@ -16,11 +15,6 @@
             <a href="/" class="link">
                 <Logo />
             </a>
-        </li>
-        <li>
-            <button type="button" class="link" onclick={testSidecar}
-                >Test Sidecar Ping</button
-            >
         </li>
         <li>
             <button type="button" class="link" onclick={cycleTheme}
