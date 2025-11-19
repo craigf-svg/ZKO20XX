@@ -50,6 +50,15 @@
         opponentConnectCode: "",
     });
 
+    $effect(function syncGameStateConnectCode() {
+        if (gameState.myConnectCode !== settings.connectCode) {
+            gameState = {
+                ...gameState,
+                myConnectCode: settings.connectCode,
+            };
+        }
+    });
+
     const socket: Socket = io(
         "http://localhost:8090",
         // TODO: These settings are purely for keeping a cleaner console in dev
