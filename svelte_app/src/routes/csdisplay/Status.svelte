@@ -1,5 +1,12 @@
 <script lang="ts">
+    import { getContext } from "svelte";
+    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+
     let { gameState } = $props();
+
+    const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
+    const sidecarRunning = $derived.by(() => sidecar.isSidecarRunning());
+    const sidecarNeedsRestart = $derived.by(() => sidecar.sidecarNeedsRestart());
 </script>
 
 <div class="status-shell">
@@ -38,9 +45,44 @@
         {/if}
 
         <span class="info subtle">
-            <span class="info-dot"></span>
+            <span
+                class="info-dot"
+                class:online={sidecarRunning}
+                class:offline={!sidecarRunning}
+            ></span>
             <span class="info-label">ZKO20XX</span>
             <span class="info-value">Combat System</span>
+            <span
+                class="info-status"
+                class:online-text={sidecarRunning}
+                class:offline-text={!sidecarRunning}
+            >
+                {sidecarRunning ? "Connected" : "Offline"}
+            </span>
+            {#if sidecarNeedsRestart}
+                <span class="info-status restart-required">
+                    Restart required
+                </span>
+            {/if}
+            {#if sidecar}
+                {#if sidecarRunning}
+                    <button
+                        type="button"
+                        class="info-button"
+                        onclick={sidecar.stopSidecar}
+                    >
+                        Stop server
+                    </button>
+                {:else}
+                    <button
+                        type="button"
+                        class="info-button"
+                        onclick={sidecar.startSidecar}
+                    >
+                        Start sidecar server
+                    </button>
+                {/if}
+            {/if}
         </span>
     </div>
 </div>
@@ -143,7 +185,52 @@
         width: 0.35rem;
         height: 0.35rem;
         border-radius: 1000px;
-        background: var(--color-accent, #22c55e);
+    }
+
+    .info-dot.online {
+        background: #22c55e;
         box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+    }
+
+    .info-dot.offline {
+        background: #ef4444;
+        box-shadow: 0 0 8px rgba(239, 68, 68, 0.7);
+    }
+
+    .info-button {
+        margin-left: 0.5rem;
+        padding: 0.1rem 0.4rem;
+        border-radius: 1000px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: transparent;
+        color: inherit;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+    }
+
+    .info-button:hover {
+        background: rgba(148, 163, 184, 0.15);
+    }
+
+    .info-status {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.75;
+    }
+
+    .info-status.restart-required {
+        color: #f59e0b;
+        margin-left: 0.35rem;
+    }
+
+    .info-status.online-text {
+        color: #22c55e;
+    }
+
+    .info-status.offline-text {
+        color: #ef4444;
     }
 </style>

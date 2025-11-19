@@ -8,8 +8,12 @@
     import HelpCircle from "@lucide/svelte/icons/help-circle";
     import CircleX from "@lucide/svelte/icons/circle-x";
     import { getVersion } from "@tauri-apps/api/app";
+    import { getContext } from "svelte";
+    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
 
     const toaster = createToaster({ placement: "bottom-start" });
+
+    const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
 
     let openState = $state(false);
     function popoverClose() {
@@ -25,6 +29,7 @@
             return;
         }
         settings.connectCode = code;
+        sidecar.setSidecarNeedsRestart(true);
         await saveSettings();
         let message = `Connect code saved: ${code}`;
         console.log(message);
@@ -40,6 +45,7 @@
             return;
         }
         settings.slippiPath = trimmedPath;
+        sidecar.setSidecarNeedsRestart(true);
         await saveSettings();
         console.log(`Slippi path saved: ${trimmedPath}`);
         toaster.success({ title: `Slippi path saved: ${trimmedPath}` });
@@ -55,6 +61,7 @@
         }
         const rateInMs = rateInSeconds * 1000;
         settings.pollingRate = rateInMs;
+        sidecar.setSidecarNeedsRestart(true);
         await saveSettings();
         let message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
         console.log(message);

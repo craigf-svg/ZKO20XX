@@ -2,12 +2,15 @@
     import "../app.css";
     import Navbar from "$lib/Navbar.svelte";
     import UpdateManager from "$lib/UpdateManager.svelte";
+    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
     const { children } = $props();
     import { settings, loadSettings } from "$lib/state/settings.svelte";
-    import { onMount } from "svelte";
+    import { onMount, setContext } from "svelte";
 
     type Theme = "light" | "dark" | "catppuccin";
     let theme = $state<Theme>("dark");
+    let sidecarRunning = $state(false);
+    let sidecarNeedsRestart = $state(false);
     // TODO: Take into account saved theme value
     document.documentElement.setAttribute("data-theme", "dark");
 
@@ -23,14 +26,18 @@
         document.documentElement.setAttribute("data-theme", theme);
     });
 
-    function stopSidecar(): void {
+    async function stopSidecar(): Promise<void> {
         if (commandChild) {
             console.log("Kill child process");
-            commandChild.kill();
+            await commandChild.kill();
             commandChild = null;
+            sidecarRunning = false;
         }
     }
 
+    function setSidecarNeedsRestart(value: boolean): void {
+        sidecarNeedsRestart = value;
+    }
     function isTauri(): boolean {
         return typeof window !== "undefined" && "__TAURI__" in window;
     }
@@ -40,7 +47,7 @@
         (async () => {
             await loadSettings();
             if (isTauri()) {
-                await testSidecar();
+                await startSidecar();
             } else {
                 console.debug("Skipping sidecar start: not running in Tauri");
             }
@@ -50,10 +57,14 @@
     import { Command, type Child } from "@tauri-apps/plugin-shell";
     let commandChild: Child | null = null;
 
-    async function testSidecar(): Promise<void> {
+    async function startSidecar(): Promise<void> {
         try {
             if (!settings.slippiPath || !settings.slippiPath.trim()) {
                 console.error("Do not start sidecar, slippiPath is empty or invalid");
+                return;
+            }
+            if (commandChild) {
+                console.log("Sidecar already running");
                 return;
             }
             const command = Command.sidecar("binaries/my-sidecar", [], {
@@ -68,10 +79,13 @@
                 console.log(
                     `command finished with code ${data.code} and signal ${data.signal}`,
                 );
+                commandChild = null;
+                sidecarRunning = false;
             });
-            command.on("error", (error) =>
-                console.error(`command error: "${error}"`),
-            );
+            command.on("error", (error) => {
+                console.error(`command error: "${error}"`);
+                sidecarRunning = false;
+            });
             command.stdout.on("data", (line) =>
                 console.log(`command stdout: "${line}"`),
             );
@@ -79,13 +93,26 @@
                 console.log(`command stderr: "${line}"`),
             );
             commandChild = await command.spawn();
+            sidecarRunning = true;
+            sidecarNeedsRestart = false;
         } catch (error) {
             console.error("Error starting sidecar:", error as Error);
+            sidecarRunning = false;
         }
     }
+
+    const sidecarContext: SidecarContext = {
+        isSidecarRunning: () => sidecarRunning,
+        startSidecar,
+        stopSidecar,
+        sidecarNeedsRestart: () => sidecarNeedsRestart,
+        setSidecarNeedsRestart,
+    };
+
+    setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
 </script>
 
-<Navbar {theme} {cycleTheme} {testSidecar} />
+<Navbar {theme} {cycleTheme} />
 <link rel="preconnect" href="https://rsms.me/" />
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 <main data-theme={theme}>
