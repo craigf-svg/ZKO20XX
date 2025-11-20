@@ -1,70 +1,70 @@
 [
-  {
-    "fileDone?": true,
-    "attacker": "Fox",
-    "defender": "Falco",
-    "stage": "YS",
-    "moves": {
-      "upSmash": 97,
-      "strongUpTilt": 118,
-      "bAir": 117,
-      "shuAir": 118
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Falco",
-    "stage": "PS",
-    "moves": {
-      "upSmash": 101,
-      "strongUpTilt": 132,
-      "bAir": 139,
-      "shuAir": 127
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Falco",
-    "stage": "FD",
-    "moves": {
-      "upSmash": 103,
-      "strongUpTilt": 135,
-      "bAir": 145,
-      "shuAir": 130
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Falco",
-    "stage": "BF",
-    "moves": {
-      "upSmash": 106.0,
-      "strongUpTilt": 126,
-      "bAir": 137,
-      "shuAir": 134
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Falco",
-    "stage": "FoD",
-    "moves": {
-      "upSmash": 106.0,
-      "strongUpTilt": 127,
-      "bAir": 127,
-      "nAir": 131
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Falco",
-    "stage": "DL",
-    "moves": {
-      "upSmash": 118,
-      "strongUpTilt": 139,
-      "downTilt": 185.0,
-      "bAir": 149,
-      "shuAir": 148
-    }
-  }
+	{
+		"fileDone?": true,
+		"attacker": "Fox",
+		"defender": "Falco",
+		"stage": "YS",
+		"moves": {
+			"upSmash": 97,
+			"strongUpTilt": 118,
+			"bAir": 117,
+			"shuAir": 118
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Falco",
+		"stage": "PS",
+		"moves": {
+			"upSmash": 101,
+			"strongUpTilt": 132,
+			"bAir": 139,
+			"shuAir": 127
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Falco",
+		"stage": "FD",
+		"moves": {
+			"upSmash": 103,
+			"strongUpTilt": 135,
+			"bAir": 145,
+			"shuAir": 130
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Falco",
+		"stage": "BF",
+		"moves": {
+			"upSmash": 106.0,
+			"strongUpTilt": 126,
+			"bAir": 137,
+			"shuAir": 134
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Falco",
+		"stage": "FoD",
+		"moves": {
+			"upSmash": 106.0,
+			"strongUpTilt": 127,
+			"bAir": 127,
+			"nAir": 131
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Falco",
+		"stage": "DL",
+		"moves": {
+			"upSmash": 118,
+			"strongUpTilt": 139,
+			"downTilt": 185.0,
+			"bAir": 149,
+			"shuAir": 148
+		}
+	}
 ]

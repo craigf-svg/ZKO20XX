@@ -1,58 +1,58 @@
 [
-  {
-    "fileDone?": true,
-    "allMovesFromCenter?": true,
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "YS",
-    "moves": {
-      "upSmash": 134,
-      "bAir": 136
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "PS",
-    "moves": {
-      "upSmash": 138,
-      "bAir": 160
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "FD",
-    "moves": {
-      "upSmash": 141,
-      "bAir": 166
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "BF",
-    "moves": {
-      "upSmash": 146,
-      "bAir": 157
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "FoD",
-    "moves": {
-      "upSmash": 147,
-      "bAir": 146
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "DL",
-    "moves": {
-      "upSmash": 163,
-      "bAir": 170
-    }
-  }
+	{
+		"fileDone?": true,
+		"allMovesFromCenter?": true,
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "YS",
+		"moves": {
+			"upSmash": 134,
+			"bAir": 136
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "PS",
+		"moves": {
+			"upSmash": 138,
+			"bAir": 160
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "FD",
+		"moves": {
+			"upSmash": 141,
+			"bAir": 166
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "BF",
+		"moves": {
+			"upSmash": 146,
+			"bAir": 157
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "FoD",
+		"moves": {
+			"upSmash": 147,
+			"bAir": 146
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "DL",
+		"moves": {
+			"upSmash": 163,
+			"bAir": 170
+		}
+	}
 ]

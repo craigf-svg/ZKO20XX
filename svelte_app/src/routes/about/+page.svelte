@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Accordion from "./accordion.svelte";
+import Accordion from "./accordion.svelte";
 </script>
 
 <main>
@@ -39,10 +39,12 @@
   {/if}
 
   <div class="body-text">
-        ZKO_20XX is a tool that display combos with real-time percent calculations. <br />
-    This is information that players either intentionally memorize or accumulate through thousands of hours, 
-    and still the amount of information.
-    This app lets you stop guessing when moves KO and serve as training wheels between calculated percents and memorized information incorporated into your game.
+    ZKO_20XX is a tool that display combos with real-time percent calculations.
+    <br />
+    This is information that players either intentionally memorize or accumulate
+    through thousands of hours, and still the amount of information. This app lets
+    you stop guessing when moves KO and serve as training wheels between calculated
+    percents and memorized information incorporated into your game.
   </div>
 
   <Accordion />

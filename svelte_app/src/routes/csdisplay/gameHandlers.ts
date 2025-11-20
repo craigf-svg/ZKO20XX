@@ -7,16 +7,16 @@ import type { PlayerWithShortName, TrimmedSettings } from "./types";
  * @returns Full stage name or 'Battlefield' if not found
  */
 function stageInitialsToName(initials: string): string {
-  const stageNames: { [key: string]: string } = {
-    DL: "Dream Land N64",
-    YS: "Yoshi's Story",
-    PS: "Pokémon Stadium",
-    FD: "Final Destination",
-    FoD: "Fountain of Dreams",
-    BF: "Battlefield",
-  };
+	const stageNames: { [key: string]: string } = {
+		DL: "Dream Land N64",
+		YS: "Yoshi's Story",
+		PS: "Pokémon Stadium",
+		FD: "Final Destination",
+		FoD: "Fountain of Dreams",
+		BF: "Battlefield",
+	};
 
-  return stageNames[initials] || "Battlefield";
+	return stageNames[initials] || "Battlefield";
 }
 
 /**
@@ -26,7 +26,7 @@ function stageInitialsToName(initials: string): string {
  * @returns true if the entry matches the current stage
  */
 function isCurrentStage(matchupEntry: MatchupEntry, stageName: string): boolean {
-  return stageInitialsToName(matchupEntry.stage) === stageName;
+	return stageInitialsToName(matchupEntry.stage) === stageName;
 }
 
 /**
@@ -36,75 +36,79 @@ function isCurrentStage(matchupEntry: MatchupEntry, stageName: string): boolean 
  * @returns An object containing the updated game state
  */
 export async function initGameState(
-  settings: TrimmedSettings,
-  myConnectCode: string
+	settings: TrimmedSettings,
+	myConnectCode: string,
 ): Promise<{
-  myChar: string;
-  opponentChar: string;
-  opponentPlayerIdx: number;
-  matchupData: MatchupEntry | undefined;
-  displayStageName: string;
+	myChar: string;
+	opponentChar: string;
+	opponentPlayerIdx: number;
+	matchupData: MatchupEntry | undefined;
+	displayStageName: string;
 }> {
-  console.log("settings", settings)
-  const displayStageName = settings.stageName;
-  const players: PlayerWithShortName[] = settings.players;
+	console.log("settings", settings);
+	const displayStageName = settings.stageName;
+	const players: PlayerWithShortName[] = settings.players;
 
-  console.log("players", players);
-  const isOnline = players.every(player => player.connectCode);
-  const myPlayerIdx = isOnline ? players.findIndex(player => player.connectCode === myConnectCode) : 0;
-  const opponentPlayerIdx = myPlayerIdx === 0 ? 1 : 0;
+	console.log("players", players);
+	const isOnline = players.every((player) => player.connectCode);
+	const myPlayerIdx = isOnline
+		? players.findIndex((player) => player.connectCode === myConnectCode)
+		: 0;
+	const opponentPlayerIdx = myPlayerIdx === 0 ? 1 : 0;
 
-  const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
-  const opponentChar = players[opponentPlayerIdx]?.characterShortName.toLowerCase();
+	const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
+	const opponentChar = players[opponentPlayerIdx]?.characterShortName.toLowerCase();
 
-  let matchupData: MatchupEntry | undefined;
-  // Find matchup file based on characters
-  const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
+	let matchupData: MatchupEntry | undefined;
+	// Find matchup file based on characters
+	const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
 
-  try {
-    const response = await fetch(matchupPath);
-    const allStagesKOData: MatchupEntry[] = await response.json();
-    console.log("Loaded character matchup data:", allStagesKOData);
-    matchupData = allStagesKOData.find((entry: MatchupEntry) =>
-      isCurrentStage(entry, settings.stageName)
-    );
-    console.log("currentStageData", matchupData);
-  } catch (e) {
-    console.error("Could not load matchup data for ", matchupPath, e);
-    console.log(`Make sure your file path "${matchupPath}" and your connect code "${myConnectCode}" are set correctly in settings!`);
-    matchupData = undefined;
-  }
+	try {
+		const response = await fetch(matchupPath);
+		const allStagesKOData: MatchupEntry[] = await response.json();
+		console.log("Loaded character matchup data:", allStagesKOData);
+		matchupData = allStagesKOData.find((entry: MatchupEntry) =>
+			isCurrentStage(entry, settings.stageName),
+		);
+		console.log("currentStageData", matchupData);
+	} catch (e) {
+		console.error("Could not load matchup data for ", matchupPath, e);
+		console.log(
+			`Make sure your file path "${matchupPath}" and your connect code "${myConnectCode}" are set correctly in settings!`,
+		);
+		matchupData = undefined;
+	}
 
-  return {
-    myChar,
-    opponentChar,
-    opponentPlayerIdx,
-    matchupData,
-    displayStageName,
-  };
+	return {
+		myChar,
+		opponentChar,
+		opponentPlayerIdx,
+		matchupData,
+		displayStageName,
+	};
 }
 
 /**
- * Extract Opponent Percent 
+ * Extract Opponent Percent
  * @param players - Array of player stats
  * @param opponentPlayerIdx - Index of the opponent player
  * @returns The opponent's current percent or undefined if invalid
  */
 export function extractOpponentPercent(
-  players: Array<{ percent?: number }>,
-  opponentPlayerIdx: number
+	players: Array<{ percent?: number }>,
+	opponentPlayerIdx: number,
 ): number | undefined {
-  console.log("Received an event with info ", JSON.stringify(players));
-  if (
-    players &&
-    players[opponentPlayerIdx] &&
-    typeof players[opponentPlayerIdx].percent === "number"
-  ) {
-    const currentPercent = players[opponentPlayerIdx].percent;
-    // console.log("currentPercent:", currentPercent);
-    return currentPercent;
-  } else {
-    console.log("Invalid data received.");
-    return undefined;
-  }
+	console.log("Received an event with info ", JSON.stringify(players));
+	if (
+		players &&
+		players[opponentPlayerIdx] &&
+		typeof players[opponentPlayerIdx].percent === "number"
+	) {
+		const currentPercent = players[opponentPlayerIdx].percent;
+		// console.log("currentPercent:", currentPercent);
+		return currentPercent;
+	} else {
+		console.log("Invalid data received.");
+		return undefined;
+	}
 }

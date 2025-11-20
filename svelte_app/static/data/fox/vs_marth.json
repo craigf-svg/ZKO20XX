@@ -1,75 +1,75 @@
 [
-  {
-    "fileDone?": true,
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "YS",
-    "moves": {
-      "upSmash": 83.0,
-      "strongUpTilt": 102.0,
-      "downTilt": 145.0,
-      "bAir": 124.0,
-      "shuAir": 105.0
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "PS",
-    "moves": {
-      "upSmash": 86.0,
-      "strongUpTilt": 121.0,
-      "downTilt": 160.0,
-      "bAir": 145.0,
-      "shuAir": 108.0
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "FD",
-    "moves": {
-      "upSmash": 88.0,
-      "strongUpTilt": 124.0,
-      "downTilt": 163.0,
-      "bAir": 151.0,
-      "shuAir": 111.0
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "BF",
-    "moves": {
-      "upSmash": [81, 82, 91],
-      "strongUpTilt": 127.0,
-      "downTilt": 168.0,
-      "bAir": 143.0,
-      "shuAir": 114.0
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "FoD",
-    "moves": {
-      "upSmash": 92.0,
-      "strongUpTilt": 101,
-      "downTilt": 158.0,
-      "bAir": 133.0,
-      "nAir": 115.0
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Marth",
-    "stage": "DL",
-    "moves": {
-      "upSmash": 103.0,
-      "strongUpTilt": 142.0,
-      "downTilt": 185.0,
-      "bAir": 154.0,
-      "shuAir": 130.0
-    }
-  }
+	{
+		"fileDone?": true,
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "YS",
+		"moves": {
+			"upSmash": 83.0,
+			"strongUpTilt": 102.0,
+			"downTilt": 145.0,
+			"bAir": 124.0,
+			"shuAir": 105.0
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "PS",
+		"moves": {
+			"upSmash": 86.0,
+			"strongUpTilt": 121.0,
+			"downTilt": 160.0,
+			"bAir": 145.0,
+			"shuAir": 108.0
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "FD",
+		"moves": {
+			"upSmash": 88.0,
+			"strongUpTilt": 124.0,
+			"downTilt": 163.0,
+			"bAir": 151.0,
+			"shuAir": 111.0
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "BF",
+		"moves": {
+			"upSmash": [81, 82, 91],
+			"strongUpTilt": 127.0,
+			"downTilt": 168.0,
+			"bAir": 143.0,
+			"shuAir": 114.0
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "FoD",
+		"moves": {
+			"upSmash": 92.0,
+			"strongUpTilt": 101,
+			"downTilt": 158.0,
+			"bAir": 133.0,
+			"nAir": 115.0
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Marth",
+		"stage": "DL",
+		"moves": {
+			"upSmash": 103.0,
+			"strongUpTilt": 142.0,
+			"downTilt": 185.0,
+			"bAir": 154.0,
+			"shuAir": 130.0
+		}
+	}
 ]

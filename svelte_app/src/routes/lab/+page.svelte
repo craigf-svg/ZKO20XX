@@ -1,137 +1,137 @@
 <script lang="ts">
-  import type { MatchupEntry } from "../../../static/data/MatchupEntry";
-  import Bars from "../csdisplay/Bars.svelte";
-  import { Toaster, createToaster } from "@skeletonlabs/skeleton-svelte";
-  import type { MoveBar } from "../csdisplay/types";
-  const toaster = createToaster({ placement: "bottom-start" });
-  import { koPercentReached, calculateProgress } from "../csdisplay/koUtils";
+import { createToaster, Toaster } from "@skeletonlabs/skeleton-svelte";
+import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+import Bars from "../csdisplay/Bars.svelte";
+import type { MoveBar } from "../csdisplay/types";
 
-  function getErrorMessage(error: unknown) {
-    if (error instanceof Error) return error.message;
-    return String(error);
-  }
+const toaster = createToaster({ placement: "bottom-start" });
 
-  const CHARACTER_SHORT_NAMES: string[] = [
-    "fox",
-    "falco",
-    "marth",
-    "sheik",
-    "jigglypuff",
-    "peach",
-    "iceclimbers",
-    "captainfalcon",
-    "pikachu",
-    "samus",
-    "drmario",
-    "luigi",
-    "ganondorf",
-    "mario",
-    "link",
-    "younglink",
-    "donkeykong",
-    "yoshi",
-    "kirby",
-    "roy",
-    "mewtwo",
-    "gameandwatch",
-    "zelda",
-    "ness",
-    "pichu",
-    "bowser",
-  ];
-  const FILE_FETCH_ERROR = "FILE_FETCH_ERROR";
-  const STAGE_NOT_FOUND_ERROR = "STAGE_NOT_FOUND";
+import { calculateProgress, koPercentReached } from "../csdisplay/koUtils";
 
-  function stageInitialsToName(initials: string): string {
-    const stageNames: { [key: string]: string } = {
-      DL: "Dream Land N64",
-      YS: "Yoshi's Story",
-      PS: "Pokémon Stadium",
-      FD: "Final Destination",
-      FoD: "Fountain of Dreams",
-      BF: "Battlefield",
-    };
+function getErrorMessage(error: unknown) {
+	if (error instanceof Error) return error.message;
+	return String(error);
+}
 
-    return stageNames[initials] || "Battlefield";
-  }
+const CHARACTER_SHORT_NAMES: string[] = [
+	"fox",
+	"falco",
+	"marth",
+	"sheik",
+	"jigglypuff",
+	"peach",
+	"iceclimbers",
+	"captainfalcon",
+	"pikachu",
+	"samus",
+	"drmario",
+	"luigi",
+	"ganondorf",
+	"mario",
+	"link",
+	"younglink",
+	"donkeykong",
+	"yoshi",
+	"kirby",
+	"roy",
+	"mewtwo",
+	"gameandwatch",
+	"zelda",
+	"ness",
+	"pichu",
+	"bowser",
+];
+const FILE_FETCH_ERROR = "FILE_FETCH_ERROR";
+const STAGE_NOT_FOUND_ERROR = "STAGE_NOT_FOUND";
 
-  // Review logic
-  function isCurrentStage(matchupEntry: MatchupEntry) {
-    const fullStageName = stageInitialsToName(matchupEntry.stage);
-    return fullStageName === selectedStage;
-  }
+function stageInitialsToName(initials: string): string {
+	const stageNames: { [key: string]: string } = {
+		DL: "Dream Land N64",
+		YS: "Yoshi's Story",
+		PS: "Pokémon Stadium",
+		FD: "Final Destination",
+		FoD: "Fountain of Dreams",
+		BF: "Battlefield",
+	};
 
-  let myChar = $state("fox"),
-    opponentChar = $state("falco"),
-    selectedStage = $state("Yoshi's Story");
+	return stageNames[initials] || "Battlefield";
+}
 
-  let matchupData: MatchupEntry | undefined = $state();
-  let currentPercent = $state(0);
-  let filePath = $derived(`/data/${myChar}/vs_${opponentChar}.json`);
+// Review logic
+function isCurrentStage(matchupEntry: MatchupEntry) {
+	const fullStageName = stageInitialsToName(matchupEntry.stage);
+	return fullStageName === selectedStage;
+}
 
-  $effect(() => {
-    console.log(myChar);
-    console.log(opponentChar);
-    console.log(selectedStage);
-  });
+const myChar = $state("fox"),
+	opponentChar = $state("falco"),
+	selectedStage = $state("Yoshi's Story");
 
-  async function loadFile(): Promise<MatchupEntry | null> {
-    console.info("[loadFile] filePath:", filePath);
-    try {
-      const response = await fetch(filePath);
-      if (!response.ok) {
-        console.log(filePath);
-        throw new Error(FILE_FETCH_ERROR);
-      }
-      const allStagesKOData = await response.json();
-      console.info("[loadFile] Loaded JSON:", allStagesKOData);
-      // TODO: Add type safety
-      const currentStageData = allStagesKOData.find(isCurrentStage);
-      console.info("currentStageData", currentStageData);
-      if (!currentStageData) {
-        throw new Error(STAGE_NOT_FOUND_ERROR);
-      }
-      toaster.success({ title: "Success!" });
-      matchupData = currentStageData;
-      return currentStageData;
-    } catch (error) {
-      console.error("[loadFile] Error:", getErrorMessage(error));
-      let message: string = "Unexpected error occurred: " + getErrorMessage(error);
-      if (getErrorMessage(error).startsWith(FILE_FETCH_ERROR)) {
-        message = `Could not load file ${filePath}.`;
-      } else if (getErrorMessage(error) === STAGE_NOT_FOUND_ERROR) {
-        message = `Could not find ${selectedStage} stage in the file.`;
-      }
-      toaster.error({ title: message, closable: false, duration: 1200 });
-      return null;
-    }
-  }
+let matchupData: MatchupEntry | undefined = $state();
+const currentPercent = $state(0);
+const filePath = $derived(`/data/${myChar}/vs_${opponentChar}.json`);
 
-  const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
-    "fileDone?": false,
-    attacker: "Fox",
-    defender: "Marth",
-    stage: "YS",
-    moves: {
-      SampleValueUpSmash: 83,
-    },
-  };
-  
-  const movesSource = $derived.by(function determineSource() {
-      return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
-  });
+$effect(() => {
+	console.log(myChar);
+	console.log(opponentChar);
+	console.log(selectedStage);
+});
 
- let dynamicBars: MoveBar[] = $derived.by(() => {
-        const allBars = Object.entries(movesSource).map(
-            ([moveName, koPercent]) => ({
-                moveName,
-                koPercent,
-                width: calculateProgress(currentPercent || 0, koPercent),
-                highlight: koPercentReached(currentPercent || 0, koPercent),
-            }),
-        );
-        return allBars;
-    });
+async function loadFile(): Promise<MatchupEntry | null> {
+	console.info("[loadFile] filePath:", filePath);
+	try {
+		const response = await fetch(filePath);
+		if (!response.ok) {
+			console.log(filePath);
+			throw new Error(FILE_FETCH_ERROR);
+		}
+		const allStagesKOData = await response.json();
+		console.info("[loadFile] Loaded JSON:", allStagesKOData);
+		// TODO: Add type safety
+		const currentStageData = allStagesKOData.find(isCurrentStage);
+		console.info("currentStageData", currentStageData);
+		if (!currentStageData) {
+			throw new Error(STAGE_NOT_FOUND_ERROR);
+		}
+		toaster.success({ title: "Success!" });
+		matchupData = currentStageData;
+		return currentStageData;
+	} catch (error) {
+		console.error("[loadFile] Error:", getErrorMessage(error));
+		let message: string = "Unexpected error occurred: " + getErrorMessage(error);
+		if (getErrorMessage(error).startsWith(FILE_FETCH_ERROR)) {
+			message = `Could not load file ${filePath}.`;
+		} else if (getErrorMessage(error) === STAGE_NOT_FOUND_ERROR) {
+			message = `Could not find ${selectedStage} stage in the file.`;
+		}
+		toaster.error({ title: message, closable: false, duration: 1200 });
+		return null;
+	}
+}
+
+const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
+	"fileDone?": false,
+	attacker: "Fox",
+	defender: "Marth",
+	stage: "YS",
+	moves: {
+		SampleValueUpSmash: 83,
+	},
+};
+
+const movesSource = $derived.by(function determineSource() {
+	return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
+});
+
+const dynamicBars: MoveBar[] = $derived.by(() => {
+	const allBars = Object.entries(movesSource).map(([moveName, koPercent]) => ({
+		moveName,
+		koPercent,
+		width: calculateProgress(currentPercent || 0, koPercent),
+		highlight: koPercentReached(currentPercent || 0, koPercent),
+	}));
+	return allBars;
+});
 </script>
 
 <Toaster {toaster}></Toaster>

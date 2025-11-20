@@ -1,19 +1,19 @@
 <script lang="ts">
-  import Bar from './Bar.svelte'
-  import type { MoveBar } from './types';
+import Bar from "./Bar.svelte";
+import type { MoveBar } from "./types";
 
-  let { dynamicBars = [] }: { dynamicBars: MoveBar[] } = $props();
-  let groupedBars = $derived({
-    high: dynamicBars.filter((bar) => bar.highlight === "full"),
-    medium: dynamicBars.filter((bar) => bar.highlight === "dim"),
-    low: dynamicBars.filter((bar) => bar.highlight === "none"),
-  });
+const { dynamicBars = [] }: { dynamicBars: MoveBar[] } = $props();
+const groupedBars = $derived({
+	high: dynamicBars.filter((bar) => bar.highlight === "full"),
+	medium: dynamicBars.filter((bar) => bar.highlight === "dim"),
+	low: dynamicBars.filter((bar) => bar.highlight === "none"),
+});
 
-  let sections = $derived([
-    { id: 'high', label: 'KO Ready', bars: groupedBars.high },
-    { id: 'medium', label: 'DI Dependent', bars: groupedBars.medium },
-    { id: 'low', label: 'Building up', bars: groupedBars.low },
-  ]);
+const sections = $derived([
+	{ id: "high", label: "KO Ready", bars: groupedBars.high },
+	{ id: "medium", label: "DI Dependent", bars: groupedBars.medium },
+	{ id: "low", label: "Building up", bars: groupedBars.low },
+]);
 </script>
 
 <style>

@@ -1,115 +1,106 @@
 <script lang="ts">
-    import "../app.css";
-    import Navbar from "$lib/Navbar.svelte";
-    import UpdateManager from "$lib/UpdateManager.svelte";
-    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
-    const { children } = $props();
-    import { settings, loadSettings } from "$lib/state/settings.svelte";
-    import { onMount, setContext } from "svelte";
+import "../app.css";
+import Navbar from "$lib/Navbar.svelte";
+import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+import UpdateManager from "$lib/UpdateManager.svelte";
 
-    type Theme = "light" | "dark" | "catppuccin";
-    let theme = $state<Theme>("dark");
-    let sidecarRunning = $state(false);
-    let sidecarNeedsRestart = $state(false);
-    // TODO: Take into account saved theme value
-    document.documentElement.setAttribute("data-theme", "dark");
+const { children } = $props();
 
-    function cycleTheme() {
-        theme =
-            theme === "dark"
-                ? "light"
-                : theme === "light"
-                  ? "catppuccin"
-                  : "dark";
-    }
-    $effect(function reactToTheme() {
-        document.documentElement.setAttribute("data-theme", theme);
-    });
+import { onMount, setContext } from "svelte";
+import { loadSettings, settings } from "$lib/state/settings.svelte";
 
-    async function stopSidecar(): Promise<void> {
-        if (commandChild) {
-            console.log("Kill child process");
-            await commandChild.kill();
-            commandChild = null;
-            sidecarRunning = false;
-        }
-    }
+type Theme = "light" | "dark" | "catppuccin";
+let theme = $state<Theme>("dark");
+let sidecarRunning = $state(false);
+let sidecarNeedsRestart = $state(false);
+// TODO: Take into account saved theme value
+document.documentElement.setAttribute("data-theme", "dark");
 
-    function setSidecarNeedsRestart(value: boolean): void {
-        sidecarNeedsRestart = value;
-    }
-    function isTauri(): boolean {
-        return typeof window !== "undefined" && "__TAURI__" in window;
-    }
+function cycleTheme() {
+	theme = theme === "dark" ? "light" : theme === "light" ? "catppuccin" : "dark";
+}
+$effect(function reactToTheme() {
+	document.documentElement.setAttribute("data-theme", theme);
+});
 
-    onMount(() => {
-        // IIFE
-        (async () => {
-            await loadSettings();
-            if (isTauri()) {
-                await startSidecar();
-            } else {
-                console.debug("Skipping sidecar start: not running in Tauri");
-            }
-        })();
-    });
+async function stopSidecar(): Promise<void> {
+	if (commandChild) {
+		console.log("Kill child process");
+		await commandChild.kill();
+		commandChild = null;
+		sidecarRunning = false;
+	}
+}
 
-    import { Command, type Child } from "@tauri-apps/plugin-shell";
-    let commandChild: Child | null = null;
+function setSidecarNeedsRestart(value: boolean): void {
+	sidecarNeedsRestart = value;
+}
+function isTauri(): boolean {
+	return typeof window !== "undefined" && "__TAURI__" in window;
+}
 
-    async function startSidecar(): Promise<void> {
-        try {
-            if (!settings.slippiPath || !settings.slippiPath.trim()) {
-                console.error("Do not start sidecar, slippiPath is empty or invalid");
-                return;
-            }
-            if (commandChild) {
-                console.log("Sidecar already running");
-                return;
-            }
-            const command = Command.sidecar("binaries/my-sidecar", [], {
-                env: {
-                    SLIPPI_FOLDER_PATH:
-                        settings.slippiPath || "Slippi/Folder/Path",
-                    INTERVAL_VALUE: `${settings.pollingRate}`,
-                },
-            });
-            // Listeners
-            command.on("close", (data) => {
-                console.log(
-                    `command finished with code ${data.code} and signal ${data.signal}`,
-                );
-                commandChild = null;
-                sidecarRunning = false;
-            });
-            command.on("error", (error) => {
-                console.error(`command error: "${error}"`);
-                sidecarRunning = false;
-            });
-            command.stdout.on("data", (line) =>
-                console.log(`command stdout: "${line}"`),
-            );
-            command.stderr.on("data", (line) =>
-                console.log(`command stderr: "${line}"`),
-            );
-            commandChild = await command.spawn();
-            sidecarRunning = true;
-            sidecarNeedsRestart = false;
-        } catch (error) {
-            console.error("Error starting sidecar:", error as Error);
-            sidecarRunning = false;
-        }
-    }
+onMount(() => {
+	// IIFE
+	(async () => {
+		await loadSettings();
+		if (isTauri()) {
+			await startSidecar();
+		} else {
+			console.debug("Skipping sidecar start: not running in Tauri");
+		}
+	})();
+});
 
-    const sidecarContext: SidecarContext = {
-        isSidecarRunning: () => sidecarRunning,
-        startSidecar,
-        stopSidecar,
-        sidecarNeedsRestart: () => sidecarNeedsRestart,
-        setSidecarNeedsRestart,
-    };
+import { type Child, Command } from "@tauri-apps/plugin-shell";
 
-    setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
+let commandChild: Child | null = null;
+
+async function startSidecar(): Promise<void> {
+	try {
+		if (!settings.slippiPath || !settings.slippiPath.trim()) {
+			console.error("Do not start sidecar, slippiPath is empty or invalid");
+			return;
+		}
+		if (commandChild) {
+			console.log("Sidecar already running");
+			return;
+		}
+		const command = Command.sidecar("binaries/my-sidecar", [], {
+			env: {
+				SLIPPI_FOLDER_PATH: settings.slippiPath || "Slippi/Folder/Path",
+				INTERVAL_VALUE: `${settings.pollingRate}`,
+			},
+		});
+		// Listeners
+		command.on("close", (data) => {
+			console.log(`command finished with code ${data.code} and signal ${data.signal}`);
+			commandChild = null;
+			sidecarRunning = false;
+		});
+		command.on("error", (error) => {
+			console.error(`command error: "${error}"`);
+			sidecarRunning = false;
+		});
+		command.stdout.on("data", (line) => console.log(`command stdout: "${line}"`));
+		command.stderr.on("data", (line) => console.log(`command stderr: "${line}"`));
+		commandChild = await command.spawn();
+		sidecarRunning = true;
+		sidecarNeedsRestart = false;
+	} catch (error) {
+		console.error("Error starting sidecar:", error as Error);
+		sidecarRunning = false;
+	}
+}
+
+const sidecarContext: SidecarContext = {
+	isSidecarRunning: () => sidecarRunning,
+	startSidecar,
+	stopSidecar,
+	sidecarNeedsRestart: () => sidecarNeedsRestart,
+	setSidecarNeedsRestart,
+};
+
+setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
 </script>
 
 <Navbar {theme} {cycleTheme} />

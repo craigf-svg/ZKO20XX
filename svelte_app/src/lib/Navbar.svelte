@@ -1,12 +1,12 @@
 <script lang="ts">
-    import Logo from "$lib/Logo.svelte";
+import Logo from "$lib/Logo.svelte";
 
-    type Theme = "light" | "dark" | "catppuccin";
+type Theme = "light" | "dark" | "catppuccin";
 
-    const { theme, cycleTheme } = $props<{
-        theme: Theme;
-        cycleTheme: () => void;
-    }>();
+const { theme, cycleTheme } = $props<{
+	theme: Theme;
+	cycleTheme: () => void;
+}>();
 </script>
 
 <nav>

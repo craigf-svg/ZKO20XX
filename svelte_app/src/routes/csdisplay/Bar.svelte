@@ -1,19 +1,17 @@
 <script lang="ts">
-    import type { MoveBar } from "./types";
-    import { getMoveIcon, getShortLabel } from "./iconMapping";
-    import * as LucideIcons from '@lucide/svelte';
+import * as LucideIcons from "@lucide/svelte";
+import { getMoveIcon, getShortLabel } from "./iconMapping";
+import type { MoveBar } from "./types";
 
-    let { moveName, koPercent, width, highlight }: MoveBar = $props();
+const { moveName, koPercent, width, highlight }: MoveBar = $props();
 
-    const formatRange = ([min, mid, max]: number[]) => `${min}-${mid}-${max}`;
+const formatRange = ([min, mid, max]: number[]) => `${min}-${mid}-${max}`;
 
-    let displayPercent = $derived(
-        Array.isArray(koPercent) ? formatRange(koPercent) : koPercent
-    );
+const displayPercent = $derived(Array.isArray(koPercent) ? formatRange(koPercent) : koPercent);
 
-    let shortLabel = $derived(getShortLabel(moveName));
-    let iconName = $derived(getMoveIcon(moveName));
-    let Icon = $derived((LucideIcons as any)[iconName] || LucideIcons.ChevronRight);
+const shortLabel = $derived(getShortLabel(moveName));
+const iconName = $derived(getMoveIcon(moveName));
+const Icon = $derived((LucideIcons as any)[iconName] || LucideIcons.ChevronRight);
 </script>
 
 <div class="move-card priority-{highlight}" data-highlight={highlight}>

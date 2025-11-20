@@ -1,94 +1,90 @@
 <script lang="ts">
-    import { saveSettings, settings } from "$lib/state/settings.svelte";
-    import {
-        Toaster,
-        createToaster,
-        Popover,
-    } from "@skeletonlabs/skeleton-svelte";
-    import HelpCircle from "@lucide/svelte/icons/help-circle";
-    import CircleX from "@lucide/svelte/icons/circle-x";
-    import { getVersion } from "@tauri-apps/api/app";
-    import { getContext } from "svelte";
-    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+import CircleX from "@lucide/svelte/icons/circle-x";
+import HelpCircle from "@lucide/svelte/icons/help-circle";
+import { createToaster, Popover, Toaster } from "@skeletonlabs/skeleton-svelte";
+import { getVersion } from "@tauri-apps/api/app";
+import { getContext } from "svelte";
+import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+import { saveSettings, settings } from "$lib/state/settings.svelte";
 
-    const toaster = createToaster({ placement: "bottom-start" });
+const toaster = createToaster({ placement: "bottom-start" });
 
-    const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
+const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
 
-    let openState = $state(false);
-    function popoverClose() {
-        openState = false;
-    }
+let openState = $state(false);
+function popoverClose() {
+	openState = false;
+}
 
-    async function saveConnectCode(code: string) {
-        if (code.trim().length <= 0) {
-            console.error("Connect code must be at least 1 character long");
-            toaster.error({
-                title: "Connect code must be at least 1 character long",
-            });
-            return;
-        }
-        settings.connectCode = code;
-        sidecar.setSidecarNeedsRestart(true);
-        await saveSettings();
-        let message = `Connect code saved: ${code}`;
-        console.log(message);
-        toaster.success({ title: message });
-    }
+async function saveConnectCode(code: string) {
+	if (code.trim().length <= 0) {
+		console.error("Connect code must be at least 1 character long");
+		toaster.error({
+			title: "Connect code must be at least 1 character long",
+		});
+		return;
+	}
+	settings.connectCode = code;
+	sidecar.setSidecarNeedsRestart(true);
+	await saveSettings();
+	const message = `Connect code saved: ${code}`;
+	console.log(message);
+	toaster.success({ title: message });
+}
 
-    async function saveSlippiPath(path: string) {
-        const trimmedPath = path.trim();
-        if (!trimmedPath) {
-            const errorMsg = "Slippi path cannot be empty";
-            console.error(errorMsg);
-            toaster.error({ title: errorMsg });
-            return;
-        }
-        settings.slippiPath = trimmedPath;
-        sidecar.setSidecarNeedsRestart(true);
-        await saveSettings();
-        console.log(`Slippi path saved: ${trimmedPath}`);
-        toaster.success({ title: `Slippi path saved: ${trimmedPath}` });
-    }
+async function saveSlippiPath(path: string) {
+	const trimmedPath = path.trim();
+	if (!trimmedPath) {
+		const errorMsg = "Slippi path cannot be empty";
+		console.error(errorMsg);
+		toaster.error({ title: errorMsg });
+		return;
+	}
+	settings.slippiPath = trimmedPath;
+	sidecar.setSidecarNeedsRestart(true);
+	await saveSettings();
+	console.log(`Slippi path saved: ${trimmedPath}`);
+	toaster.success({ title: `Slippi path saved: ${trimmedPath}` });
+}
 
-    async function savePollingRate(rateInSeconds: number) {
-        if (rateInSeconds < 0.1 || rateInSeconds > 10) {
-            console.error("Polling rate must be between 0.1 and 10 seconds");
-            toaster.error({
-                title: "Polling rate must be between 0.1 and 10 seconds",
-            });
-            return;
-        }
-        const rateInMs = rateInSeconds * 1000;
-        settings.pollingRate = rateInMs;
-        sidecar.setSidecarNeedsRestart(true);
-        await saveSettings();
-        let message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
-        console.log(message);
-        toaster.success({ title: message });
-    }
+async function savePollingRate(rateInSeconds: number) {
+	if (rateInSeconds < 0.1 || rateInSeconds > 10) {
+		console.error("Polling rate must be between 0.1 and 10 seconds");
+		toaster.error({
+			title: "Polling rate must be between 0.1 and 10 seconds",
+		});
+		return;
+	}
+	const rateInMs = rateInSeconds * 1000;
+	settings.pollingRate = rateInMs;
+	sidecar.setSidecarNeedsRestart(true);
+	await saveSettings();
+	const message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
+	console.log(message);
+	toaster.success({ title: message });
+}
 
-    async function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
-        settings.privacyLevel = privacyLevel;
-        await saveSettings();
-        let message = `Privacy Level saved: ${privacyLevel}`;
-        console.log(message);
-        toaster.success({ title: message });
-    }
+async function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
+	settings.privacyLevel = privacyLevel;
+	await saveSettings();
+	const message = `Privacy Level saved: ${privacyLevel}`;
+	console.log(message);
+	toaster.success({ title: message });
+}
 
-    let connectCode: string = $state(settings.connectCode);
-    let slippiPath: string = $state(settings.slippiPath);
-    let pollingRateInSeconds = $state(settings.pollingRate / 1000);
-    let privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
-    let appVersion = $state("Default message when getVersion doesn't work: 0.0.5");
-    $effect(() => {
-        getVersion()
-            .then((v) => (appVersion = v))
-            .catch(() => {});
-    });
+const connectCode: string = $state(settings.connectCode);
+const slippiPath: string = $state(settings.slippiPath);
+const pollingRateInSeconds = $state(settings.pollingRate / 1000);
+const privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
+let appVersion = $state("Default message when getVersion doesn't work: 0.0.5");
+$effect(() => {
+	getVersion()
+		.then((v) => (appVersion = v))
+		.catch(() => {});
+});
 
-    // TODO: Add dialog to select directory and verify directory exists
-    async function chooseDirectory(e: Event) {}
+// TODO: Add dialog to select directory and verify directory exists
+async function chooseDirectory(e: Event) {}
 </script>
 
 <Toaster classes="background" {toaster}></Toaster>

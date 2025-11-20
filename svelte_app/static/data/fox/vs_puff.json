@@ -1,111 +1,111 @@
 [
-  {
-    "fileDone?": true,
-    "attacker": "Fox",
-    "defender": "Puff",
-    "stage": "YS",
-    "moves": {
-      "fcUpSmash": 33,
-      "utUa0Sdi": 44,
-      "utUa1_5Sdi": 48,
-      "utUaTas": 58,
-      "upSmash": 58,
-      "ssSingleHitUa": 75,
-      "strongUpTilt": 88,
-      "weakUpTilt": 106,
-      "downTilt": 105,
-      "bAir": 110,
-      "nAir": 131
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Puff",
-    "stage": "PS",
-    "moves": {
-      "fcUpSmash": 36,
-      "utUa0Sdi": 47,
-      "utUa1_5Sdi": 51,
-      "utUaTas": 60,
-      "upSmash": 60,
-      "ssSingleHitUa": 78,
-      "strongUpTilt": 90,
-      "weakUpTilt": 109,
-      "downTilt": 109,
-      "bAir": 119,
-      "nAir": 142
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Puff",
-    "stage": "FD",
-    "moves": {
-      "fcUpSmash": 36,
-      "utUa0Sdi": 50,
-      "utUa1_5Sdi": 53,
-      "utUaTas": 62,
-      "upSmash": 62,
-      "ssSingleHitUa": 80,
-      "strongUpTilt": 92,
-      "weakUpTilt": 112,
-      "downTilt": 113,
-      "bAir": 121,
-      "nAir": 145
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Puff",
-    "stage": "BF",
-    "moves": {
-      "utUa0Sdi": 53,
-      "utUa1_5Sdi": 56,
-      "utUaTas": 65,
-      "upSmash": 64,
-      "fcUpSmash": 38,
-      "ssSingleHitUa": 83,
-      "strongUpTilt": 95,
-      "weakUpTilt": 115,
-      "downTilt": 116,
-      "bAir": 119,
-      "nAir": 142
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Puff",
-    "stage": "FoD",
-    "moves": {
-      "fcUpSmash": 38,
-      "utUa0Sdi": 54,
-      "utUa1_5Sdi": 57,
-      "utUaTas": 66,
-      "upSmash": 65,
-      "ssSingleHitUa": 83,
-      "strongUpTilt": 96,
-      "weakUpTilt": 116,
-      "downTilt": 114,
-      "bAir": 119,
-      "nAir": 143
-    }
-  },
-  {
-    "attacker": "Fox",
-    "defender": "Puff",
-    "stage": "DL",
-    "moves": {
-      "fcUpSmash": 45,
-      "utUa0Sdi": 66,
-      "utUa1_5Sdi": 69,
-      "utUaTas": 77,
-      "upSmash": 74,
-      "ssSingleHitUa": 95,
-      "strongUpTilt": 107,
-      "weakUpTilt": 129,
-      "downTilt": 129,
-      "bAir": 132,
-      "nAir": 158
-    }
-  }
+	{
+		"fileDone?": true,
+		"attacker": "Fox",
+		"defender": "Puff",
+		"stage": "YS",
+		"moves": {
+			"fcUpSmash": 33,
+			"utUa0Sdi": 44,
+			"utUa1_5Sdi": 48,
+			"utUaTas": 58,
+			"upSmash": 58,
+			"ssSingleHitUa": 75,
+			"strongUpTilt": 88,
+			"weakUpTilt": 106,
+			"downTilt": 105,
+			"bAir": 110,
+			"nAir": 131
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Puff",
+		"stage": "PS",
+		"moves": {
+			"fcUpSmash": 36,
+			"utUa0Sdi": 47,
+			"utUa1_5Sdi": 51,
+			"utUaTas": 60,
+			"upSmash": 60,
+			"ssSingleHitUa": 78,
+			"strongUpTilt": 90,
+			"weakUpTilt": 109,
+			"downTilt": 109,
+			"bAir": 119,
+			"nAir": 142
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Puff",
+		"stage": "FD",
+		"moves": {
+			"fcUpSmash": 36,
+			"utUa0Sdi": 50,
+			"utUa1_5Sdi": 53,
+			"utUaTas": 62,
+			"upSmash": 62,
+			"ssSingleHitUa": 80,
+			"strongUpTilt": 92,
+			"weakUpTilt": 112,
+			"downTilt": 113,
+			"bAir": 121,
+			"nAir": 145
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Puff",
+		"stage": "BF",
+		"moves": {
+			"utUa0Sdi": 53,
+			"utUa1_5Sdi": 56,
+			"utUaTas": 65,
+			"upSmash": 64,
+			"fcUpSmash": 38,
+			"ssSingleHitUa": 83,
+			"strongUpTilt": 95,
+			"weakUpTilt": 115,
+			"downTilt": 116,
+			"bAir": 119,
+			"nAir": 142
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Puff",
+		"stage": "FoD",
+		"moves": {
+			"fcUpSmash": 38,
+			"utUa0Sdi": 54,
+			"utUa1_5Sdi": 57,
+			"utUaTas": 66,
+			"upSmash": 65,
+			"ssSingleHitUa": 83,
+			"strongUpTilt": 96,
+			"weakUpTilt": 116,
+			"downTilt": 114,
+			"bAir": 119,
+			"nAir": 143
+		}
+	},
+	{
+		"attacker": "Fox",
+		"defender": "Puff",
+		"stage": "DL",
+		"moves": {
+			"fcUpSmash": 45,
+			"utUa0Sdi": 66,
+			"utUa1_5Sdi": 69,
+			"utUaTas": 77,
+			"upSmash": 74,
+			"ssSingleHitUa": 95,
+			"strongUpTilt": 107,
+			"weakUpTilt": 129,
+			"downTilt": 129,
+			"bAir": 132,
+			"nAir": 158
+		}
+	}
 ]

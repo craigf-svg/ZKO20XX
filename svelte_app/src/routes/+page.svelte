@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CombatSystemDisplay from './csdisplay/CombatSystemDisplay.svelte';
+import CombatSystemDisplay from "./csdisplay/CombatSystemDisplay.svelte";
 </script>
 
 <main>

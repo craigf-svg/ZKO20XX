@@ -1,28 +1,26 @@
 {
-  "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "enables the default permissions",
-  "windows": [
-    "main"
-  ],
-  "permissions": [
-    "core:default",
-    "store:default",
-    "store:allow-get",
-    "store:allow-set",
-    "store:allow-save",
-    "store:allow-load",
-    "aptabase:allow-track-event",
-    {
-      "identifier": "shell:allow-spawn",
-      "allow": [
-        {
-          "args": true,
-          "name": "binaries/my-sidecar",
-          "sidecar": true
-        }
-      ]
-    },
-    "shell:allow-kill"
-  ]
+	"$schema": "../gen/schemas/desktop-schema.json",
+	"identifier": "default",
+	"description": "enables the default permissions",
+	"windows": ["main"],
+	"permissions": [
+		"core:default",
+		"store:default",
+		"store:allow-get",
+		"store:allow-set",
+		"store:allow-save",
+		"store:allow-load",
+		"aptabase:allow-track-event",
+		{
+			"identifier": "shell:allow-spawn",
+			"allow": [
+				{
+					"args": true,
+					"name": "binaries/my-sidecar",
+					"sidecar": true
+				}
+			]
+		},
+		"shell:allow-kill"
+	]
 }

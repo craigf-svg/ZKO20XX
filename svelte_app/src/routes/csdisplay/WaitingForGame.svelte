@@ -1,12 +1,13 @@
 <script>
-  import { onDestroy } from 'svelte';
-  import { cubicInOut } from 'svelte/easing';
-  let progress = 0;
-  let interval = setInterval(() => {
-    progress = cubicInOut(progress += 0.01);
-  }, 16);
+import { onDestroy } from "svelte";
+import { cubicInOut } from "svelte/easing";
 
-  onDestroy(() => clearInterval(interval));
+let progress = 0;
+const interval = setInterval(() => {
+	progress = cubicInOut((progress += 0.01));
+}, 16);
+
+onDestroy(() => clearInterval(interval));
 </script>
 
 <style>

@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { getContext } from "svelte";
-    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+import { getContext } from "svelte";
+import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
 
-    let { gameState } = $props();
+const { gameState } = $props();
 
-    const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
-    const sidecarRunning = $derived.by(() => sidecar.isSidecarRunning());
-    const sidecarNeedsRestart = $derived.by(() => sidecar.sidecarNeedsRestart());
+const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
+const sidecarRunning = $derived.by(() => sidecar.isSidecarRunning());
+const sidecarNeedsRestart = $derived.by(() => sidecar.sidecarNeedsRestart());
 </script>
 
 <div class="status-shell">
