@@ -7,6 +7,7 @@
     "build:watch": "tsc -w",
     "sidecar:build": "npm run build && pkg dist/watcher.js --target node18 --output my-sidecar",
     "sidecar:prepare": "node prepare-sidecar.js",
+    "simulate:game": "tsx simulate-game.ts",
     "orderToExecute": "sidecar:build -> sidecar:prepare"
   },
   "author": "",
