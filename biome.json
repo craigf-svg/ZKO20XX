@@ -1,0 +1,3 @@
+{
+	"extends": ["./svelte_app/biome.json"]
+}

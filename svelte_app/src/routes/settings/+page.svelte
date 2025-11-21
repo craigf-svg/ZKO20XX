@@ -72,19 +72,20 @@ async function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
 	toaster.success({ title: message });
 }
 
-const connectCode: string = $state(settings.connectCode);
-const slippiPath: string = $state(settings.slippiPath);
-const pollingRateInSeconds = $state(settings.pollingRate / 1000);
-const privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
+let connectCode: string = $state(settings.connectCode);
+let slippiPath: string = $state(settings.slippiPath);
+let pollingRateInSeconds = $state(settings.pollingRate / 1000);
+let privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
 let appVersion = $state("Default message when getVersion doesn't work: 0.0.5");
 $effect(() => {
 	getVersion()
-		.then((v) => (appVersion = v))
+		.then((v) => {
+			appVersion = v;
+		})
 		.catch(() => {});
 });
 
 // TODO: Add dialog to select directory and verify directory exists
-async function chooseDirectory(e: Event) {}
 </script>
 
 <Toaster classes="background" {toaster}></Toaster>

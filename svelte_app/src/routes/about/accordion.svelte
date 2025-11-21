@@ -5,7 +5,7 @@ interface Props {
 	childProps?: Record<string, unknown>;
 }
 const { childProps }: Props = $props();
-const value = $state([""]);
+let value = $state([""]);
 </script>
 
 <div class="text-xl font-bold my-8">FAQs</div>

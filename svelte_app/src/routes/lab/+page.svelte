@@ -63,7 +63,7 @@ function isCurrentStage(matchupEntry: MatchupEntry) {
 	return fullStageName === selectedStage;
 }
 
-const myChar = $state("fox"),
+let myChar = $state("fox"),
 	opponentChar = $state("falco"),
 	selectedStage = $state("Yoshi's Story");
 

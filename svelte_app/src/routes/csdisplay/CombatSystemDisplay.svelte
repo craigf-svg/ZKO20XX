@@ -115,17 +115,23 @@ const movesSource = $derived.by(function determineSource() {
 	return gameState.matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
 });
 
-const limit: number = $state(0);
+let currentPercent: number | undefined = $state(undefined);
+let limit: number = $state(0);
+
 const dynamicBars: MoveBar[] = $derived.by(() => {
 	const allBars = Object.entries(movesSource).map(function prepareBarData([moveName, koPercent]) {
 		return {
 			moveName,
 			koPercent,
-			width: calculateProgress(gameState.currentPercent || 0, koPercent),
-			highlight: koPercentReached(gameState.currentPercent || 0, koPercent),
+			width: calculateProgress(currentPercent || 0, koPercent),
+			highlight: koPercentReached(currentPercent || 0, koPercent),
 		};
 	});
 	return allBars.slice(0, allBars.length - limit);
+});
+
+$effect(() => {
+	gameState.currentPercent = currentPercent;
 });
 
 // TODO: Remove after dev
@@ -135,7 +141,7 @@ $effect(function printBars() {
 </script>
 
 <div class="flex flex-col gap-y-2">
-    <DevTestSuite bind:currentPercent={gameState.currentPercent} bind:limit />
+    <DevTestSuite bind:currentPercent bind:limit />
     <Status {gameState} />
     {#if false}<WaitingForGame />{/if}
     <Bars {dynamicBars} />
