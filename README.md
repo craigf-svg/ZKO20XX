@@ -9,7 +9,7 @@
 ![Biome](https://img.shields.io/badge/Biome-009688?style=flat-square)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-3B5998?style=flat-square&logo=githubactions&logoColor=white)
 
-A cross-platform desktop app built for Super Smash Bros. Melee data visualization and analysis using Tauri, Rust, Node, and Svelte. 
+A cross-platform desktop app built for Super Smash Bros. Melee data visualization and analysis using Tauri, Rust, Node, and Svelte.
 
 ## Quick Setup
 ```bash
@@ -17,7 +17,7 @@ A cross-platform desktop app built for Super Smash Bros. Melee data visualizatio
 git clone [repo-url]
 cd [project-name]
 
-# Install dependencies from svelte_app 
+# Install dependencies at repo root
 npm install
 
 # Launch
@@ -27,26 +27,24 @@ npm run tauri dev           # Desktop app dev (Tauri via npm)
 
 ## Sidecar Service
 ```bash
-# From svelte_app/sidecar-app
+# From sidecar-app/
 tsc
-npm run sidecar:build 
+npm run sidecar:build
 npm run sidecar:prepare
 ```
 
 ## Project Structure
 
 ```
-├── svelte_app/
-│   ├── src-tauri/    # Desktop shell + native bridge
-│   ├── src/          # Browser-based UI code
-│   ├── sidecar-app/  # Node-based replay watcher
-│   └── .env          # Shared configuration 
+├── src-tauri/        # Desktop shell + native bridge
+├── src/              # Browser-based UI code
+└── sidecar-app/      # Node-based replay watcher
 ```
 
 ## Configuration
-**Tauri Config:** `svelte_app/src-tauri/tauri.conf.json`
+**Tauri Config:** `src-tauri/tauri.conf.json`
 
-**Environment Variables:** `svelte_app/src/.env` 
+**Environment Variables:** `src/.env`
 ```
 .env
 APP_VERSION=0.1.1_sample_version
