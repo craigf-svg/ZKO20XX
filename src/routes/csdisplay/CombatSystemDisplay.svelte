@@ -80,10 +80,7 @@ async function onGameStart(settings: TrimmedSettings) {
 
 function onSlippiUpdate(players: PlayerStats[]) {
 	const newPercent = extractOpponentPercent(players, gameState.opponentPlayerIdx);
-	gameState = {
-		...gameState,
-		currentPercent: newPercent,
-	};
+	currentPercent = newPercent;
 }
 
 function onGameEnd() {
