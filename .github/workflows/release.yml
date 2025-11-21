@@ -44,21 +44,20 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './svelte_app/src-tauri -> target'
+          workspaces: './src-tauri -> target'
 
       - name: Sync node version and setup cache
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'npm'
-          cache-dependency-path: './svelte_app/package-lock.json'
+          cache-dependency-path: './package-lock.json'
 
       - name: Install frontend dependencies
         run: npm install
-        working-directory: ./svelte_app
 
       - name: Build sidecar
-        working-directory: ./svelte_app/sidecar-app
+        working-directory: ./sidecar-app
         env:
           TARGET_TRIPLE: ${{ matrix.sidecarTargetTriple }}
         run: |
@@ -72,7 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
         with:
-          projectPath: './svelte_app'
+          projectPath: '.'
           tagName: ${{ github.ref_name }}
           releaseName: 'ZKO20XX v${{ github.ref_name }}'
           releaseBody: 'See the assets to download and install this version.'

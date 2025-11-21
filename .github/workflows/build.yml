@@ -19,14 +19,12 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: svelte_app/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install frontend dependencies
-        working-directory: ./svelte_app
         run: npm ci
 
       - name: Run unit tests with coverage
-        working-directory: ./svelte_app
         run: npm run test:coverage
 
       - name: SonarQube Scan
@@ -37,5 +35,5 @@ jobs:
           args: >
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.projectBaseDir=./svelte_app
+            -Dsonar.projectBaseDir=.
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
