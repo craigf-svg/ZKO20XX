@@ -3,6 +3,7 @@ import { createToaster, Toaster } from "@skeletonlabs/skeleton-svelte";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 import Bars from "../csdisplay/Bars.svelte";
 import type { MoveBar } from "../csdisplay/types";
+import { loadMatchupData } from "$lib/matchupDataLoader";
 
 const toaster = createToaster({ placement: "bottom-start" });
 
@@ -41,7 +42,6 @@ const CHARACTER_SHORT_NAMES: string[] = [
 	"pichu",
 	"bowser",
 ];
-const FILE_FETCH_ERROR = "FILE_FETCH_ERROR";
 const STAGE_NOT_FOUND_ERROR = "STAGE_NOT_FOUND";
 
 function stageInitialsToName(initials: string): string {
@@ -78,15 +78,10 @@ $effect(() => {
 });
 
 async function loadFile(): Promise<MatchupEntry | null> {
-	console.info("[loadFile] filePath:", filePath);
+	console.info("[loadFile] matchup:", myChar, "vs", opponentChar, "on", selectedStage);
 	try {
-		const response = await fetch(filePath);
-		if (!response.ok) {
-			console.log(filePath);
-			throw new Error(FILE_FETCH_ERROR);
-		}
-		const allStagesKOData = await response.json();
-		console.info("[loadFile] Loaded JSON:", allStagesKOData);
+		const allStagesKOData = await loadMatchupData(myChar, opponentChar);
+		console.info("[loadFile] Loaded matchup entries:", allStagesKOData);
 		// TODO: Add type safety
 		const currentStageData = allStagesKOData.find(isCurrentStage);
 		console.info("currentStageData", currentStageData);
@@ -98,11 +93,9 @@ async function loadFile(): Promise<MatchupEntry | null> {
 		return currentStageData;
 	} catch (error) {
 		console.error("[loadFile] Error:", getErrorMessage(error));
-		let message: string = "Unexpected error occurred: " + getErrorMessage(error);
-		if (getErrorMessage(error).startsWith(FILE_FETCH_ERROR)) {
-			message = `Could not load file ${filePath}.`;
-		} else if (getErrorMessage(error) === STAGE_NOT_FOUND_ERROR) {
-			message = `Could not find ${selectedStage} stage in the file.`;
+		let message: string = `Could not load matchup data for ${myChar} vs ${opponentChar}.`;
+		if (getErrorMessage(error) === STAGE_NOT_FOUND_ERROR) {
+			message = `Could not find ${selectedStage} stage in the matchup data.`;
 		}
 		toaster.error({ title: message, closable: false, duration: 1200 });
 		return null;

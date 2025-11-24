@@ -1,4 +1,5 @@
 <script lang="ts">
+import { Download, X } from "@lucide/svelte";
 import { getVersion } from "@tauri-apps/api/app";
 import { onMount } from "svelte";
 import { loadSettings, saveSettings, settings } from "./state/settings.svelte";
@@ -28,14 +29,10 @@ function compareVersionNumbers(latest: string, current: string): number {
 	return 0;
 }
 
-function closeUpdateBanner() {
-	update = undefined;
-}
-
 function snoozeUpdateBanner(durationMs: number) {
 	settings.snoozeUntil = Date.now() + durationMs;
 	saveSettings();
-	closeUpdateBanner();
+	update = undefined;
 }
 
 function isTauri(): boolean {
@@ -45,11 +42,9 @@ function isTauri(): boolean {
 let update = $state<UpdateInfo | undefined>();
 
 async function showUpdateBannerIfNeeded() {
-	const snoozeUntil: number | undefined = settings.snoozeUntil;
-	console.log("snoozeUntil is ", snoozeUntil);
-	if (snoozeUntil && Date.now() < snoozeUntil) return;
+	if (settings.snoozeUntil && Date.now() < settings.snoozeUntil) return;
 
-	var version = "0.0.0";
+	let version = "0.0.0";
 	if (isTauri()) {
 		version = await getVersion();
 	}
@@ -65,11 +60,15 @@ async function checkGitHubForUpdates(currVersion: string): Promise<UpdateInfo | 
 	try {
 		const response = await fetch(
 			"https://raw.githubusercontent.com/craigf-svg/ZKO_20XX-updates/master/version.json",
+			{ signal: AbortSignal.timeout(10000) },
 		);
+
+		if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
 		const data = await response.json();
 		return compareVersionNumbers(data.latest_version, currVersion) > 0 ? data : undefined;
 	} catch (err) {
-		console.error("Check GitHub for updates failed: ", err);
+		console.error("Check GitHub for updates failed:", err);
 		return undefined;
 	}
 }
@@ -84,44 +83,70 @@ onMount(() => {
 </script>
 
 {#if update}
-	<div class="banner">
-		New version {update?.latest_version} available!
-		<a href={update?.download_url} target="_blank">Download</a>
-		{#if update?.features}
-			{update?.features}
-		{/if}
-		<div class="ml-auto">
-			<button
-				onclick={() => snoozeUpdateBanner(time.weeks(1))}
-				class="border border-gray-300 px-4 py-1.5"
-			>
-				Don't show for a week
-			</button>
-			<button
-				onclick={() => snoozeUpdateBanner(time.days(1))}
-				class="border border-gray-300 px-4 py-1.5"
-			>
-				Close
-			</button>
+	<div class="update-banner">
+		<Download size={16} color="var(--color-orange-main)" />
+		<div>
+			<div class="version">v{update.latest_version}</div>
+			<a href={update.download_url} target="_blank">Update available</a>
 		</div>
+		<button
+			onclick={() => snoozeUpdateBanner(time.weeks(3))}
+			aria-label="Close update notification"
+		>
+			<X size={16} />
+		</button>
 	</div>
 {/if}
 
 <style>
-	.banner {
-		position: absolute;
-		bottom: 0;
-		width: 100%;
-		background: #059669;
-		color: white;
+	.update-banner {
+		position: fixed;
+		bottom: 20px;
+		left: 20px;
+		background: var(--color-bg-navbar);
+		border: 1px solid var(--color-border);
+		border-radius: 8px;
 		padding: 12px;
 		display: flex;
-		gap: 12px;
 		align-items: center;
+		gap: 10px;
 		z-index: 1000;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		animation: slideIn 0.3s ease-out;
 	}
+
+	@keyframes slideIn {
+		from { transform: translateX(-100%); opacity: 0; }
+		to { transform: translateX(0); opacity: 1; }
+	}
+
+	.version {
+		font-size: 0.75rem;
+		color: var(--color-muted);
+	}
+
 	a {
-		color: white;
+		color: var(--color-orange-main);
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	a:hover {
+		color: var(--color-orange-secondary);
 		text-decoration: underline;
+	}
+
+	button {
+		background: none;
+		border: none;
+		color: var(--color-muted);
+		cursor: pointer;
+		padding: 4px;
+		border-radius: 4px;
+	}
+
+	button:hover {
+		background: var(--color-bg-navbar-hover);
+		color: var(--color-text-main);
 	}
 </style>

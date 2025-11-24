@@ -21,6 +21,9 @@
 				}
 			]
 		},
-		"shell:allow-kill"
+		"shell:allow-kill",
+		"fs:default",
+		"fs:allow-open",
+		"fs:allow-appdata-read-recursive"
 	]
 }

@@ -1,3 +1,4 @@
+import { loadMatchupData } from "$lib/matchupDataLoader";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 import type { PlayerWithShortName, TrimmedSettings } from "./types";
 
@@ -60,23 +61,19 @@ export async function initGameState(
 	const opponentChar = players[opponentPlayerIdx]?.characterShortName.toLowerCase();
 
 	let matchupData: MatchupEntry | undefined;
-	// Find matchup file based on characters
-	const matchupPath = `/data/${myChar}/vs_${opponentChar}.json`;
 
 	try {
-		const response = await fetch(matchupPath);
-		const allStagesKOData: MatchupEntry[] = await response.json();
+		const allStagesKOData = await loadMatchupData(myChar, opponentChar);
 		console.log("Loaded character matchup data:", allStagesKOData);
 		matchupData = allStagesKOData.find((entry: MatchupEntry) =>
 			isCurrentStage(entry, settings.stageName),
 		);
 		console.log("currentStageData", matchupData);
 	} catch (e) {
-		console.error("Could not load matchup data for ", matchupPath, e);
-		console.log(
-			`Make sure your file path "${matchupPath}" and your connect code "${myConnectCode}" are set correctly in settings!`,
+		console.error(
+			`Could not load matchup data for ${myChar} vs ${opponentChar}. Check connect code "${myConnectCode}" in settings.`,
+			e,
 		);
-		matchupData = undefined;
 	}
 
 	return {
@@ -98,17 +95,5 @@ export function extractOpponentPercent(
 	players: Array<{ percent?: number }>,
 	opponentPlayerIdx: number,
 ): number | undefined {
-	console.log("Received an event with info ", JSON.stringify(players));
-	if (
-		players &&
-		players[opponentPlayerIdx] &&
-		typeof players[opponentPlayerIdx].percent === "number"
-	) {
-		const currentPercent = players[opponentPlayerIdx].percent;
-		// console.log("currentPercent:", currentPercent);
-		return currentPercent;
-	} else {
-		console.log("Invalid data received.");
-		return undefined;
-	}
+	return players?.[opponentPlayerIdx]?.percent;
 }

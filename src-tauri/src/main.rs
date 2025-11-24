@@ -19,8 +19,9 @@ async fn main() {
 
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![get_cpu_usage])
-        .plugin(tauri_plugin_store::Builder::new().build());
+        .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_fs::init())
+        .invoke_handler(tauri::generate_handler![get_cpu_usage]);
 
     if let Some(ref key) = aptabase_key {
         builder = builder.plugin(tauri_plugin_aptabase::Builder::new(key).build());

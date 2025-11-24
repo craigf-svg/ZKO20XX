@@ -62,20 +62,17 @@ const socket: Socket = io(
 	},
 );
 
-async function onGameStart(settings: TrimmedSettings) {
-	// TODO: Include analytics here
-	console.log("testing trackevent");
-	trackEvent("game_start");
-	const newGameState = await initGameState(settings, gameState.myConnectCode);
-	gameState = {
-		...gameState,
-		matchupData: newGameState.matchupData,
-		myChar: newGameState.myChar,
-		opponentChar: newGameState.opponentChar,
-		opponentPlayerIdx: newGameState.opponentPlayerIdx,
-		displayStageName: newGameState.displayStageName,
-	};
-	// console.log("gameState", gameState)
+async function onGameStart(gameSettings: TrimmedSettings) {
+	try {
+		if (settings.privacyLevel === "allowed") {
+			trackEvent("game_start").catch(console.warn);
+		}
+
+		const newGameState = await initGameState(gameSettings, gameState.myConnectCode);
+		gameState = { ...gameState, ...newGameState };
+	} catch (err) {
+		console.error("Error during game start initialization:", err);
+	}
 }
 
 function onSlippiUpdate(players: PlayerStats[]) {
