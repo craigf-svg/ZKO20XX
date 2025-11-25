@@ -15,7 +15,7 @@
 			"identifier": "shell:allow-spawn",
 			"allow": [
 				{
-					"args": true,
+					"args": [],
 					"name": "binaries/my-sidecar",
 					"sidecar": true
 				}

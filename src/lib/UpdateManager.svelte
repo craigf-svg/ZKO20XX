@@ -60,15 +60,22 @@ async function checkGitHubForUpdates(currVersion: string): Promise<UpdateInfo | 
 	try {
 		const response = await fetch(
 			"https://raw.githubusercontent.com/craigf-svg/ZKO_20XX-updates/master/version.json",
-			{ signal: AbortSignal.timeout(10000) },
+			{
+				signal: AbortSignal.timeout(5000),
+			},
 		);
 
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
 		const data = await response.json();
+
+		if (!data.latest_version || !data.download_url) {
+			throw new Error('Invalid update data format');
+		}
+
 		return compareVersionNumbers(data.latest_version, currVersion) > 0 ? data : undefined;
 	} catch (err) {
-		console.error("Check GitHub for updates failed:", err);
+		console.error("Update check failed:", err);
 		return undefined;
 	}
 }

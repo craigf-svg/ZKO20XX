@@ -12,10 +12,6 @@ import Status from "./Status.svelte";
 import type { MoveBar, PlayerWithShortName, TrimmedSettings } from "./types";
 import WaitingForGame from "./WaitingForGame.svelte";
 
-// TODO: Remove after dev
-$effect(function printGlobalSettings() {
-	printSettings();
-});
 
 interface PlayerStats {
 	character?: string;
@@ -102,7 +98,10 @@ onMount(() => {
 	});
 	socket.connect();
 
-	return () => socket.disconnect();
+	return () => {
+		socket.disconnect();
+		socket.removeAllListeners();
+	};
 });
 
 const movesSource = $derived.by(function determineSource() {
@@ -128,10 +127,6 @@ $effect(() => {
 	gameState.currentPercent = currentPercent;
 });
 
-// TODO: Remove after dev
-$effect(function printBars() {
-	console.log("dynamicBars", dynamicBars);
-});
 </script>
 
 <div class="flex flex-col gap-y-2">
