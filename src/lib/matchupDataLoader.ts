@@ -16,15 +16,21 @@ function validateMatchupData(data: unknown): data is MatchupEntry[] {
 	);
 }
 
-function isTauri(): boolean {
-	return typeof window !== "undefined" && "__TAURI__" in window;
+function notTauri(): boolean {
+	const isTauri: boolean = typeof window !== "undefined" && "__TAURI__" in window;
+	return !isTauri;
 }
 
 const MATCHUP_DATA_DIR_NAME = "matchup_data";
 
-async function getMatchupDataDir(): Promise<string> {
-	const appData = await appDataDir();
-	return await join(appData, MATCHUP_DATA_DIR_NAME);
+async function fetchBundledData(bundledPath: string): Promise<MatchupEntry[]> {
+	const response = await fetch(bundledPath, { signal: AbortSignal.timeout(5000) });
+	if (!response.ok) throw new Error(`HTTP ${response.status}`);
+	const parsed = await response.json();
+	if (!validateMatchupData(parsed)) {
+		throw new Error("Invalid matchup data format in bundled file");
+	}
+	return parsed;
 }
 
 /**
@@ -41,56 +47,37 @@ export async function loadMatchupData(
 ): Promise<MatchupEntry[]> {
 	const bundledPath = `/data/${myChar}/vs_${opponentChar}.json`;
 
-	if (!isTauri()) {
-		const response = await fetch(bundledPath, { signal: AbortSignal.timeout(5000) });
-		if (!response.ok) throw new Error(`HTTP ${response.status}`);
-		return await response.json();
+	if (notTauri()) {
+		return fetchBundledData(bundledPath);
 	}
 
 	try {
 		const relativePath = `${MATCHUP_DATA_DIR_NAME}/${myChar}/vs_${opponentChar}.json`;
-		const file = await open(relativePath, {
-			read: true,
-			baseDir: BaseDirectory.AppData,
-		});
-
+		const file = await open(relativePath, { read: true, baseDir: BaseDirectory.AppData });
 		try {
 			const stat = await file.stat();
 			const buf = new Uint8Array(stat.size);
 			await file.read(buf);
-			const textContents = new TextDecoder().decode(buf);
-
-			const parsed = JSON.parse(textContents);
+			const parsed = JSON.parse(new TextDecoder().decode(buf));
 			if (!validateMatchupData(parsed)) {
 				throw new Error("Invalid matchup data format in user file");
 			}
-
 			console.log(`Loaded matchup data from user directory: ${relativePath}`);
 			return parsed;
 		} finally {
 			await file.close();
 		}
 	} catch (e) {
-		console.warn(
-			`Could not load matchup data from user directory, falling back to bundled data:`,
-			e,
-		);
+		console.warn(`Could not load from user directory, falling back to bundled:`, e);
+		return fetchBundledData(bundledPath);
 	}
-
-	const response = await fetch(bundledPath, { signal: AbortSignal.timeout(5000) });
-	if (!response.ok) throw new Error(`HTTP ${response.status}`);
-	const parsed = await response.json();
-	if (!validateMatchupData(parsed)) {
-		throw new Error("Invalid matchup data format in bundled file");
-	}
-	console.log(`Loaded matchup data from bundled assets: ${bundledPath}`);
-	return parsed;
 }
 
 export async function getMatchupDataPath(): Promise<string | null> {
-	if (!isTauri()) return null;
+	if (notTauri()) return null;
 	try {
-		return await getMatchupDataDir();
+		const appData = await appDataDir();
+		return await join(appData, MATCHUP_DATA_DIR_NAME);
 	} catch (e) {
 		console.error("Failed to get matchup data path:", e);
 		return null;
