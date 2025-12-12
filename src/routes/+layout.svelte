@@ -60,7 +60,7 @@ let commandChild: Child | null = null;
 function sanitizePath(path: string): string {
 	// Only filter dangerous characters, keep backslashes for Windows paths
 	// biome-ignore lint/suspicious/noControlCharactersInRegex: intentionally filtering null bytes
-	const cleaned = path.replace(/[\x00$`]/g, '');
+	const cleaned = path.replace(/[\x00$`]/g, "");
 	if (cleaned.length > 260) {
 		throw new Error("Path too long (max 260 characters)");
 	}

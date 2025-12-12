@@ -1,10 +1,10 @@
 <script lang="ts">
 import { createToaster, Toaster } from "@skeletonlabs/skeleton-svelte";
+import { openPath } from "@tauri-apps/plugin-opener";
+import { getMatchupDataPath, loadMatchupData } from "$lib/matchupDataLoader";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 import Bars from "../csdisplay/Bars.svelte";
 import type { MoveBar } from "../csdisplay/types";
-import { getMatchupDataPath, loadMatchupData } from "$lib/matchupDataLoader";
-import { openPath } from "@tauri-apps/plugin-opener";
 
 const toaster = createToaster({ placement: "bottom-start" });
 

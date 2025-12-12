@@ -70,7 +70,7 @@ async function checkGitHubForUpdates(currVersion: string): Promise<UpdateInfo | 
 		const data = await response.json();
 
 		if (!data.latest_version || !data.download_url) {
-			throw new Error('Invalid update data format');
+			throw new Error("Invalid update data format");
 		}
 
 		return compareVersionNumbers(data.latest_version, currVersion) > 0 ? data : undefined;

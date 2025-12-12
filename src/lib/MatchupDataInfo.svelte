@@ -1,8 +1,8 @@
 <script lang="ts">
+import FolderOpen from "@lucide/svelte/icons/folder-open";
+import { open } from "@tauri-apps/plugin-shell";
 import { onMount } from "svelte";
 import { getMatchupDataPath } from "./matchupDataLoader";
-import { open } from "@tauri-apps/plugin-shell";
-import FolderOpen from "@lucide/svelte/icons/folder-open";
 
 let matchupDataPath = $state<string | null>(null);
 let loading = $state(true);
