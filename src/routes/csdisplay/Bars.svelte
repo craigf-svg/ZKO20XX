@@ -89,7 +89,7 @@ const sections = $derived([
           <span class="section-label">{section.label}</span>
         </div>
         <div class="bars-grid">
-          {#each section.bars as bar}
+          {#each section.bars as bar (bar.moveName)}
             <Bar {...bar} />
           {/each}
         </div>

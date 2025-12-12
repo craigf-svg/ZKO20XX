@@ -1,7 +1,6 @@
 <script lang="ts">
+import CombatSystemDisplay from "./CombatSystemDisplay.svelte";
 </script>
 
-<div>
-  Test csdisplay page 
-</div>
+<CombatSystemDisplay />
 

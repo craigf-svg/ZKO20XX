@@ -47,20 +47,16 @@ export async function initGameState(
 	displayStageName: string;
 	error?: string;
 }> {
-	console.log("settings", settings);
 	const displayStageName = settings.stageName;
 	const players: PlayerWithShortName[] = settings.players;
 
-	console.log("players", players);
 	const isOnline = players.every((player) => player.connectCode);
 	const myPlayerIdx = isOnline
 		? players.findIndex((player) => player.connectCode === myConnectCode)
 		: 0;
 
-	// Validate player exists
 	if (myPlayerIdx === -1) {
 		const errorMsg = `Connect code "${myConnectCode}" not found in game. Check settings.`;
-		console.error(errorMsg);
 		return {
 			myChar: "",
 			opponentChar: "",
@@ -74,7 +70,6 @@ export async function initGameState(
 	// Validate 1v1 format (not teams)
 	if (players.length !== 2) {
 		const errorMsg = `Expected 1v1 match but found ${players.length} players. Teams mode not supported.`;
-		console.error(errorMsg);
 		return {
 			myChar: "",
 			opponentChar: "",
@@ -92,16 +87,23 @@ export async function initGameState(
 
 	let matchupData: MatchupEntry | undefined;
 
+	// TODO: Make error message more specific on failing behavior in try
 	try {
 		const allStagesKOData = await loadMatchupData(myChar, opponentChar);
 		console.log("Loaded character matchup data:", allStagesKOData);
 		matchupData = allStagesKOData.find((entry: MatchupEntry) =>
 			isCurrentStage(entry, settings.stageName),
 		);
-		console.log("currentStageData", matchupData);
-	} catch (e) {
+	} catch {
 		const errorMsg = `Could not load matchup data for ${myChar} vs ${opponentChar}. Check connect code "${myConnectCode}" in settings.`;
-		console.error(errorMsg, e);
+		return {
+			myChar,
+			opponentChar,
+			opponentPlayerIdx,
+			matchupData: undefined,
+			displayStageName,
+			error: errorMsg,
+		};
 	}
 
 	return {

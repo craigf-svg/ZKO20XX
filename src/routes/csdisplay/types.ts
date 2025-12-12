@@ -1,3 +1,5 @@
+import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+
 export interface MoveBar {
 	moveName: string;
 	koPercent: number | number[];
@@ -13,6 +15,28 @@ export interface TrimmedSettings {
 	players: PlayerWithShortName[];
 	stageName: string;
 }
+
+export interface PlayerStats {
+	character?: string;
+	percent?: number;
+}
+
+export interface CombatSystemGameState {
+	matchupData: MatchupEntry | undefined;
+	currentPercent: number | undefined;
+	displayStageName: string | undefined;
+	myChar: string;
+	opponentChar: string;
+	opponentPlayerIdx: number;
+	myConnectCode: string;
+	opponentConnectCode: string;
+	error?: string;
+}
+
+export interface CombatSystemViewState {
+	limit: number;
+}
+
 // From Slippi-js
 export interface PlayerType {
 	playerIndex: number;

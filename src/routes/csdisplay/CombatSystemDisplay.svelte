@@ -1,16 +1,15 @@
 <script lang="ts">
-import { trackEvent } from "@aptabase/tauri";
 import { io, type Socket } from "socket.io-client";
 import { onMount } from "svelte";
-import { printSettings, settings } from "$lib/state/settings.svelte";
+import { settings } from "$lib/state/settings.svelte";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 import Bars from "./Bars.svelte";
 import DevTestSuite from "./DevTestSuite.svelte";
 import { extractOpponentPercent, initGameState } from "./gameHandlers";
 import { calculateProgress, koPercentReached, SAMPLE_DYNAMIC_DATA } from "./koUtils";
 import Status from "./Status.svelte";
-import type { MoveBar, PlayerWithShortName, TrimmedSettings } from "./types";
-
+import type { MoveBar, TrimmedSettings } from "./types";
+import { trackIfAllowed } from "./analyticsService";
 
 interface PlayerStats {
 	character?: string;
@@ -26,7 +25,6 @@ interface GameState {
 	opponentPlayerIdx: number;
 	myConnectCode: string;
 	opponentConnectCode: string;
-	error?: string;
 }
 
 let gameState: GameState = $state({
@@ -42,9 +40,6 @@ let gameState: GameState = $state({
 
 $effect(function syncGameStateConnectCode() {
 	if (gameState.myConnectCode !== settings.connectCode) {
-		console.warn("Connect code changed")
-		console.warn(gameState.myConnectCode, "to", settings.connectCode);
-		console.warn("Restart sidecar for changes to take effect")
 		gameState = {
 			...gameState,
 			myConnectCode: settings.connectCode,
@@ -61,27 +56,9 @@ const socket: Socket = io(
 	},
 );
 
-function onSocketConnect() {
-	console.log("Connected to sidecar");
-	// Clear existing data on new connection
-	gameState = {
-		matchupData: undefined,
-		currentPercent: undefined,
-		displayStageName: undefined,
-		myChar: "",
-		opponentChar: "",
-		opponentPlayerIdx: 1,
-		myConnectCode: settings.connectCode,
-		opponentConnectCode: "",
-	};
-	currentPercent = undefined;
-}
-
 async function onGameStart(gameSettings: TrimmedSettings) {
 	try {
-		if (settings.privacyLevel === "allowed") {
-			trackEvent("game_start").catch(console.warn);
-		}
+		await trackIfAllowed("game_start", settings.privacyLevel);
 
 		const newGameState = await initGameState(gameSettings, gameState.myConnectCode);
 		gameState = { ...gameState, ...newGameState };
@@ -91,10 +68,6 @@ async function onGameStart(gameSettings: TrimmedSettings) {
 }
 
 function onSlippiUpdate(players: PlayerStats[]) {
-	if (!gameState.matchupData) {
-		console.warn("Ignoring slippi_update before game_start");
-		return;
-	}
 	const newPercent = extractOpponentPercent(players, gameState.opponentPlayerIdx);
 	currentPercent = newPercent;
 }
@@ -114,7 +87,9 @@ onMount(() => {
 	socket.on("game_start", onGameStart);
 	socket.on("slippi_update", onSlippiUpdate);
 	socket.on("game_end", onGameEnd);
-	socket.on("connect", onSocketConnect);
+	socket.on("connect", () => {
+		console.log("Connected to sidecar Socket.IO server");
+	});
 	socket.on("connect_error", (error) => {
 		console.debug("Socket connection failed:", error.message);
 	});
