@@ -1,7 +1,8 @@
+import fs from "node:fs";
+import path from "node:path";
 import {
 	characters as characterUtils,
 	type FrameEntryType,
-	GameEndType,
 	type GameStartType,
 	type PlayerType,
 	type PostFrameUpdateType,
@@ -10,9 +11,6 @@ import {
 } from "@slippi/slippi-js";
 import chokidar from "chokidar";
 import dotenv from "dotenv";
-import fs from "fs";
-import _ from "lodash";
-import path from "path";
 import { Server as SocketIOServer } from "socket.io";
 import Spinner from "./Spinner";
 
@@ -50,7 +48,7 @@ const INTERVAL_VALUE = (function determineIntervalValue() {
 		return 500;
 	}
 	const parsed = parseInt(process.env.INTERVAL_VALUE, 10);
-	return isNaN(parsed) || parsed <= 0 ? 500 : parsed;
+	return Number.isNaN(parsed) || parsed <= 0 ? 500 : parsed;
 })();
 console.log("Sidecar Starting...");
 console.log("Slippi Folder Path:", SLIPPI_FOLDER_PATH);
@@ -74,14 +72,12 @@ const watcher = chokidar.watch(SLIPPI_FOLDER_PATH, {
 });
 
 let intId: NodeJS.Timeout | null = null;
-let currentGame: SlippiGame | null = null;
 
 function cleanupResources(): void {
 	if (intId) {
 		clearInterval(intId);
 		intId = null;
 	}
-	currentGame = null;
 }
 
 function processGameSettings(settings: GameStartType): TrimmedSettings {
@@ -143,7 +139,7 @@ watcher.on("add", async (filePath: string) => {
 	Spinner.stop();
 
 	console.log(`Processing replay: ${path.basename(filePath)}`);
-	const currentGame = new SlippiGame(filePath, { processOnTheFly: true });
+	const currentGame: SlippiGame = new SlippiGame(filePath, { processOnTheFly: true });
 	const settings = currentGame.getSettings();
 	if (!settings) {
 		return;
@@ -189,6 +185,6 @@ watcher.on("error", (error) => {
 	console.error("Path being watched:", SLIPPI_FOLDER_PATH);
 });
 
-io.on("connection", (socket) => {
+io.on("connection", (_socket) => {
 	console.log("Frontend client connected to Socket.IO server");
 });
