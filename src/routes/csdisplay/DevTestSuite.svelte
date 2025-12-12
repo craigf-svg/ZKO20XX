@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { currentPercent = $bindable(), limit = $bindable() } = $props();
+let { currentPercent = $bindable(), limit = $bindable() } = $props();
 </script>
 
 <div class="dev">

@@ -3,13 +3,13 @@ import { io, type Socket } from "socket.io-client";
 import { onMount } from "svelte";
 import { settings } from "$lib/state/settings.svelte";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+import { trackIfAllowed } from "./analyticsService";
 import Bars from "./Bars.svelte";
 import DevTestSuite from "./DevTestSuite.svelte";
 import { extractOpponentPercent, initGameState } from "./gameHandlers";
 import { calculateProgress, koPercentReached, SAMPLE_DYNAMIC_DATA } from "./koUtils";
 import Status from "./Status.svelte";
 import type { MoveBar, TrimmedSettings } from "./types";
-import { trackIfAllowed } from "./analyticsService";
 
 interface PlayerStats {
 	character?: string;
@@ -123,7 +123,6 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
 $effect(() => {
 	gameState.currentPercent = currentPercent;
 });
-
 </script>
 
 <div class="flex flex-col gap-y-2">
