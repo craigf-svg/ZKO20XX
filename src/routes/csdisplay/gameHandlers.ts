@@ -45,6 +45,7 @@ export async function initGameState(
 	opponentPlayerIdx: number;
 	matchupData: MatchupEntry | undefined;
 	displayStageName: string;
+	error?: string;
 }> {
 	console.log("settings", settings);
 	const displayStageName = settings.stageName;
@@ -55,6 +56,35 @@ export async function initGameState(
 	const myPlayerIdx = isOnline
 		? players.findIndex((player) => player.connectCode === myConnectCode)
 		: 0;
+
+	// Validate player exists
+	if (myPlayerIdx === -1) {
+		const errorMsg = `Connect code "${myConnectCode}" not found in game. Check settings.`;
+		console.error(errorMsg);
+		return {
+			myChar: "",
+			opponentChar: "",
+			opponentPlayerIdx: 1,
+			matchupData: undefined,
+			displayStageName,
+			error: errorMsg,
+		};
+	}
+
+	// Validate 1v1 format (not teams)
+	if (players.length !== 2) {
+		const errorMsg = `Expected 1v1 match but found ${players.length} players. Teams mode not supported.`;
+		console.error(errorMsg);
+		return {
+			myChar: "",
+			opponentChar: "",
+			opponentPlayerIdx: 1,
+			matchupData: undefined,
+			displayStageName,
+			error: errorMsg,
+		};
+	}
+
 	const opponentPlayerIdx = myPlayerIdx === 0 ? 1 : 0;
 
 	const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
@@ -70,10 +100,8 @@ export async function initGameState(
 		);
 		console.log("currentStageData", matchupData);
 	} catch (e) {
-		console.error(
-			`Could not load matchup data for ${myChar} vs ${opponentChar}. Check connect code "${myConnectCode}" in settings.`,
-			e,
-		);
+		const errorMsg = `Could not load matchup data for ${myChar} vs ${opponentChar}. Check connect code "${myConnectCode}" in settings.`;
+		console.error(errorMsg, e);
 	}
 
 	return {

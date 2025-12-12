@@ -7,7 +7,7 @@ import UpdateManager from "$lib/UpdateManager.svelte";
 const { children } = $props();
 
 import { onMount, setContext } from "svelte";
-import { loadSettings, settings } from "$lib/state/settings.svelte";
+import { loadSettings, saveSettings, settings } from "$lib/state/settings.svelte";
 
 type Theme = "light" | "dark" | "catppuccin";
 let theme = $state<Theme>("dark");
@@ -18,6 +18,8 @@ document.documentElement.setAttribute("data-theme", "dark");
 
 function cycleTheme() {
 	theme = theme === "dark" ? "light" : theme === "light" ? "catppuccin" : "dark";
+	settings.theme = theme;
+	saveSettings();
 }
 $effect(function reactToTheme() {
 	document.documentElement.setAttribute("data-theme", theme);
@@ -55,6 +57,23 @@ import { type Child, Command } from "@tauri-apps/plugin-shell";
 
 let commandChild: Child | null = null;
 
+function sanitizePath(path: string): string {
+	// Only filter dangerous characters, keep backslashes for Windows paths
+	// biome-ignore lint/suspicious/noControlCharactersInRegex: intentionally filtering null bytes
+	const cleaned = path.replace(/[\x00$`]/g, '');
+	if (cleaned.length > 260) {
+		throw new Error("Path too long (max 260 characters)");
+	}
+	if (cleaned.length === 0) {
+		throw new Error("Path cannot be empty");
+	}
+	return cleaned;
+}
+
+function sanitizePollingRate(rate: number): number {
+	return Math.max(100, Math.min(10000, rate));
+}
+
 async function startSidecar(): Promise<void> {
 	try {
 		if (!settings.slippiPath || !settings.slippiPath.trim()) {
@@ -65,10 +84,13 @@ async function startSidecar(): Promise<void> {
 			console.log("Sidecar already running");
 			return;
 		}
+
+		const sanitizedPath = sanitizePath(settings.slippiPath);
+		const sanitizedRate = sanitizePollingRate(settings.pollingRate);
 		const command = Command.sidecar("binaries/my-sidecar", [], {
 			env: {
-				SLIPPI_FOLDER_PATH: settings.slippiPath || "Slippi/Folder/Path",
-				INTERVAL_VALUE: `${settings.pollingRate}`,
+				SLIPPI_FOLDER_PATH: sanitizedPath,
+				INTERVAL_VALUE: `${sanitizedRate}`,
 			},
 		});
 		// Listeners

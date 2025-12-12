@@ -22,6 +22,10 @@
 			]
 		},
 		"shell:allow-kill",
+		{
+			"identifier": "opener:allow-open-path",
+			"allow": [{ "path": "$APPDATA/**" }]
+		},
 		"fs:default",
 		"fs:allow-open",
 		"fs:allow-appdata-read-recursive"

@@ -113,6 +113,15 @@ $effect(() => {
                         id="codeInput"
                         bind:value={connectCode}
                         placeholder="BLU#007"
+                        required
+                        oninput={(e) => {
+                            const val = e.currentTarget.value.trim();
+                            if (val.length === 0) {
+                                e.currentTarget.setCustomValidity("Connect code must be at least 1 character long");
+                            } else {
+                                e.currentTarget.setCustomValidity("");
+                            }
+                        }}
                         aria-label="Connect Code"
                     />
                     <span class="input-icon">#</span>
@@ -127,6 +136,15 @@ $effect(() => {
                         id="slippiPath"
                         bind:value={slippiPath}
                         placeholder="C:\\Users\\Username\\Documents\\Slippi"
+                        required
+                        oninput={(e) => {
+                            const val = e.currentTarget.value.trim();
+                            if (val.length === 0) {
+                                e.currentTarget.setCustomValidity("Slippi path cannot be empty");
+                            } else {
+                                e.currentTarget.setCustomValidity("");
+                            }
+                        }}
                         aria-label="Slippi Folder Path"
                     />
                     <span class="input-icon">📁</span>
@@ -144,6 +162,15 @@ $effect(() => {
                         min="0.1"
                         max="10"
                         step="0.1"
+                        required
+                        oninput={(e) => {
+                            const val = parseFloat(e.currentTarget.value);
+                            if (isNaN(val) || val < 0.1 || val > 10) {
+                                e.currentTarget.setCustomValidity("Must be between 0.1 and 10 seconds");
+                            } else {
+                                e.currentTarget.setCustomValidity("");
+                            }
+                        }}
                         aria-label="Polling Rate"
                     />
                     <span class="input-icon">⏱️</span>

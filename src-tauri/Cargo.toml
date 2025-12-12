@@ -29,3 +29,4 @@ sysinfo = "0.30"
 tauri-plugin-store = "2.3.0"
 tauri-plugin-shell = { version = "2" }
 tauri-plugin-fs = "2"
+tauri-plugin-opener = "2"

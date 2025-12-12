@@ -3,7 +3,8 @@ import { createToaster, Toaster } from "@skeletonlabs/skeleton-svelte";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 import Bars from "../csdisplay/Bars.svelte";
 import type { MoveBar } from "../csdisplay/types";
-import { loadMatchupData } from "$lib/matchupDataLoader";
+import { getMatchupDataPath, loadMatchupData } from "$lib/matchupDataLoader";
+import { openPath } from "@tauri-apps/plugin-opener";
 
 const toaster = createToaster({ placement: "bottom-start" });
 
@@ -76,6 +77,15 @@ $effect(() => {
 	console.log(opponentChar);
 	console.log(selectedStage);
 });
+
+async function openMatchupDataFolder() {
+	const path = await getMatchupDataPath();
+	if (path) {
+		await openPath(path);
+	} else {
+		toaster.error({ title: "Could not get matchup data folder path", duration: 2000 });
+	}
+}
 
 async function loadFile(): Promise<MatchupEntry | null> {
 	console.info("[loadFile] matchup:", myChar, "vs", opponentChar, "on", selectedStage);
@@ -169,6 +179,13 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
       onclick={loadFile}
     >
       Fetch Loadout File
+    </button>
+    <button
+      class="bg-[var(--color-lab-button)] text-white font-semibold py-2 px-4 border border-[var(--color-lab-button-border)] rounded shadow"
+      type="button"
+      onclick={openMatchupDataFolder}
+    >
+      Open Matchup Data Folder
     </button>
     {#if false}
       <label class="label">
