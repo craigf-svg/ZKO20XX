@@ -1,91 +1,98 @@
 <script lang="ts">
-import CircleX from "@lucide/svelte/icons/circle-x";
-import HelpCircle from "@lucide/svelte/icons/help-circle";
-import { createToaster, Popover, Toaster } from "@skeletonlabs/skeleton-svelte";
-import { getVersion } from "@tauri-apps/api/app";
-import { getContext } from "svelte";
-import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
-import { saveSettings, settings } from "$lib/state/settings.svelte";
+    import CircleX from "@lucide/svelte/icons/circle-x";
+    import HelpCircle from "@lucide/svelte/icons/help-circle";
+    import {
+        createToaster,
+        Popover,
+        Toaster,
+    } from "@skeletonlabs/skeleton-svelte";
+    import { getVersion } from "@tauri-apps/api/app";
+    import { getContext } from "svelte";
+    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+    import { saveSettings, settings } from "$lib/state/settings.svelte";
+    import PrivacyArticle from "./PrivacyArticle.svelte";
 
-const toaster = createToaster({ placement: "bottom-start" });
+    const toaster = createToaster({ placement: "bottom-start" });
 
-const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
+    const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
 
-let openState = $state(false);
-function popoverClose() {
-	openState = false;
-}
+    let openState = $state(false);
+    function popoverClose() {
+        openState = false;
+    }
 
-async function saveConnectCode(code: string) {
-	if (code.trim().length <= 0) {
-		console.error("Connect code must be at least 1 character long");
-		toaster.error({
-			title: "Connect code must be at least 1 character long",
-		});
-		return;
-	}
-	settings.connectCode = code;
-	sidecar.setSidecarNeedsRestart(true);
-	await saveSettings();
-	const message = `Connect code saved: ${code}`;
-	console.log(message);
-	toaster.success({ title: message });
-}
+    async function saveConnectCode(code: string) {
+        if (code.trim().length <= 0) {
+            console.error("Connect code must be at least 1 character long");
+            toaster.error({
+                title: "Connect code must be at least 1 character long",
+            });
+            return;
+        }
+        settings.connectCode = code;
+        sidecar.setSidecarNeedsRestart(true);
+        await saveSettings();
+        const message = `Connect code saved: ${code}`;
+        console.log(message);
+        toaster.success({ title: message });
+    }
 
-async function saveSlippiPath(path: string) {
-	const trimmedPath = path.trim();
-	if (!trimmedPath) {
-		const errorMsg = "Slippi path cannot be empty";
-		console.error(errorMsg);
-		toaster.error({ title: errorMsg });
-		return;
-	}
-	settings.slippiPath = trimmedPath;
-	sidecar.setSidecarNeedsRestart(true);
-	await saveSettings();
-	console.log(`Slippi path saved: ${trimmedPath}`);
-	toaster.success({ title: `Slippi path saved: ${trimmedPath}` });
-}
+    async function saveSlippiPath(path: string) {
+        const trimmedPath = path.trim();
+        if (!trimmedPath) {
+            const errorMsg = "Slippi path cannot be empty";
+            console.error(errorMsg);
+            toaster.error({ title: errorMsg });
+            return;
+        }
+        settings.slippiPath = trimmedPath;
+        sidecar.setSidecarNeedsRestart(true);
+        await saveSettings();
+        console.log(`Slippi path saved: ${trimmedPath}`);
+        toaster.success({ title: `Slippi path saved: ${trimmedPath}` });
+    }
 
-async function savePollingRate(rateInSeconds: number) {
-	if (rateInSeconds < 0.1 || rateInSeconds > 10) {
-		console.error("Polling rate must be between 0.1 and 10 seconds");
-		toaster.error({
-			title: "Polling rate must be between 0.1 and 10 seconds",
-		});
-		return;
-	}
-	const rateInMs = rateInSeconds * 1000;
-	settings.pollingRate = rateInMs;
-	sidecar.setSidecarNeedsRestart(true);
-	await saveSettings();
-	const message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
-	console.log(message);
-	toaster.success({ title: message });
-}
+    async function savePollingRate(rateInSeconds: number) {
+        if (rateInSeconds < 0.1 || rateInSeconds > 10) {
+            console.error("Polling rate must be between 0.1 and 10 seconds");
+            toaster.error({
+                title: "Polling rate must be between 0.1 and 10 seconds",
+            });
+            return;
+        }
+        const rateInMs = rateInSeconds * 1000;
+        settings.pollingRate = rateInMs;
+        sidecar.setSidecarNeedsRestart(true);
+        await saveSettings();
+        const message = `Polling rate saved: ${rateInSeconds} seconds (${rateInMs} ms)`;
+        console.log(message);
+        toaster.success({ title: message });
+    }
 
-async function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
-	settings.privacyLevel = privacyLevel;
-	await saveSettings();
-	const message = `Privacy Level saved: ${privacyLevel}`;
-	console.log(message);
-	toaster.success({ title: message });
-}
+    async function savePrivacyLevel(privacyLevel: "allowed" | "not_allowed") {
+        settings.privacyLevel = privacyLevel;
+        await saveSettings();
+        const message = `Privacy Level saved: ${privacyLevel}`;
+        console.log(message);
+        toaster.success({ title: message });
+    }
 
-let connectCode: string = $state(settings.connectCode);
-let slippiPath: string = $state(settings.slippiPath);
-let pollingRateInSeconds = $state(settings.pollingRate / 1000);
-let privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
-let appVersion = $state("Default message when getVersion doesn't work: 0.0.5");
-$effect(() => {
-	getVersion()
-		.then((v) => {
-			appVersion = v;
-		})
-		.catch(() => {});
-});
+    let connectCode: string = $state(settings.connectCode);
+    let slippiPath: string = $state(settings.slippiPath);
+    let pollingRateInSeconds = $state(settings.pollingRate / 1000);
+    let privacyLevel: "allowed" | "not_allowed" = $state(settings.privacyLevel);
+    let appVersion = $state(
+        "Default message when getVersion doesn't work: 0.0.5",
+    );
+    $effect(() => {
+        getVersion()
+            .then((v) => {
+                appVersion = v;
+            })
+            .catch(() => {});
+    });
 
-// TODO: Add dialog to select directory and verify directory exists
+    // TODO: Add dialog to select directory and verify directory exists
 </script>
 
 <Toaster classes="background" {toaster}></Toaster>
@@ -105,7 +112,7 @@ $effect(() => {
                 await savePrivacyLevel(privacyLevel);
             }}
         >
-            <div class="form-group">
+            <div class="mb-7">
                 <label for="codeInput">Connect Code</label>
                 <div class="input-wrapper">
                     <input
@@ -117,7 +124,9 @@ $effect(() => {
                         oninput={(e) => {
                             const val = e.currentTarget.value.trim();
                             if (val.length === 0) {
-                                e.currentTarget.setCustomValidity("Connect code must be at least 1 character long");
+                                e.currentTarget.setCustomValidity(
+                                    "Connect code must be at least 1 character long",
+                                );
                             } else {
                                 e.currentTarget.setCustomValidity("");
                             }
@@ -128,7 +137,7 @@ $effect(() => {
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="mb-7">
                 <label for="slippiPath">Slippi Folder Path</label>
                 <div class="input-wrapper">
                     <input
@@ -140,7 +149,9 @@ $effect(() => {
                         oninput={(e) => {
                             const val = e.currentTarget.value.trim();
                             if (val.length === 0) {
-                                e.currentTarget.setCustomValidity("Slippi path cannot be empty");
+                                e.currentTarget.setCustomValidity(
+                                    "Slippi path cannot be empty",
+                                );
                             } else {
                                 e.currentTarget.setCustomValidity("");
                             }
@@ -151,7 +162,7 @@ $effect(() => {
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="mb-7">
                 <label for="pollingRate">Polling Rate (seconds)</label>
                 <div class="input-wrapper">
                     <input
@@ -166,7 +177,9 @@ $effect(() => {
                         oninput={(e) => {
                             const val = parseFloat(e.currentTarget.value);
                             if (isNaN(val) || val < 0.1 || val > 10) {
-                                e.currentTarget.setCustomValidity("Must be between 0.1 and 10 seconds");
+                                e.currentTarget.setCustomValidity(
+                                    "Must be between 0.1 and 10 seconds",
+                                );
                             } else {
                                 e.currentTarget.setCustomValidity("");
                             }
@@ -177,7 +190,7 @@ $effect(() => {
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="mb-7">
                 <Popover
                     open={openState}
                     onOpenChange={(e) => (openState = e.open)}
@@ -205,54 +218,7 @@ $effect(() => {
                                 <CircleX size={26} /></button
                             >
                         </header>
-                        <article>
-                            <p class="opacity-80 text-s">
-                                If enabled, I collect minimal anonymous analytics
-                                via Aptabase to better understand app usage
-                                and share aggregated metrics with the community.
-                            </p>
-                            <div class="p-3 rounded text-sm">
-                                <p class="font-semibold mb-2">
-                                    Exact data collected:
-                                </p>
-                                <code
-                                    class="bg-gray-900 text-green-300 text-xs border-gray-800 p-0.5 font-mono leading-tight overflow-x-auto"
-                                >
-                                    {`{
-                                    timestamp: "2025-07-28 15:34:44",
-                                    user_id: "C4B2",
-                                    session_id: "1337149",
-                                    event_name: "app_start",
-                                    string_props: {},
-                                    numeric_props: {},
-                                    os_name: "Windows",
-                                    os_version: "10.0.1",
-                                    locale: "en-us",
-                                    app_version: "0.1.0",
-                                    app_build_number: "",
-                                    engine_name: "WebView2",
-                                    engine_version: "138.0.335",
-                                    country_code: "US",
-                                    country_name: "United States",
-                                    region_name: "Iowa"
-                                };`}
-                                </code>
-                            </div>
-                            <div class="text-sm space-y-1">
-                                <p>
-                                    <strong>✓</strong> No personal data, IP addresses,
-                                    or device identifiers collected
-                                </p>
-                                <p>
-                                    <strong>✓</strong> User ID is a daily-changing
-                                    hashed value for privacy
-                                </p>
-                                <p>
-                                    <strong>✓</strong> Only two events tracked: app_start
-                                    + app_exit
-                                </p>
-                            </div>
-                        </article>
+                        <PrivacyArticle />
                     {/snippet}
                 </Popover>
                 <select bind:value={privacyLevel} class="select">
@@ -286,8 +252,6 @@ $effect(() => {
         opacity: 50%;
     }
     .settings-container {
-        /* height: 100vh; */
-        /* background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);      */
         padding: 2rem 1rem;
         display: flex;
         justify-content: center;
@@ -306,13 +270,6 @@ $effect(() => {
         transition:
             transform 0.3s ease,
             box-shadow 0.3s ease;
-    }
-
-    .settings-card:hover {
-        transform: translateY(-2px);
-        box-shadow:
-            0 20px 25px -5px rgba(0, 0, 0, 0.1),
-            0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
 
     header {
@@ -336,10 +293,6 @@ $effect(() => {
         font-size: 1rem;
     }
 
-    .form-group {
-        margin-bottom: 1.75rem;
-    }
-
     label {
         display: block;
         /* color: #334155; */
@@ -359,7 +312,7 @@ $effect(() => {
         left: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        color: #94a3b8;
+        color: var(--color-muted);
         pointer-events: none;
     }
 
@@ -367,23 +320,23 @@ $effect(() => {
         width: 100%;
         padding: 0.875rem 1rem 0.875rem 2.75rem;
         font-size: 1rem;
-        border: 2px solid #e2e8f0;
+        border: 2px solid var(--color-border);
         border-radius: 10px;
         transition: all 0.2s ease;
-        background-color: #f8fafc;
-        color: #1e293b;
+        background-color: var(--color-bg-navbar-hover);
+        color: var(--color-text-main);
         box-sizing: border-box;
     }
 
     input:focus {
         outline: none;
         border-color: #3b82f6;
-        background-color: white;
+        background-color: var(--color-bg-navbar-hover);
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     }
 
     input::placeholder {
-        color: #94a3b8;
+        color: var(--color-muted);
     }
 
     .form-actions {
@@ -415,11 +368,6 @@ $effect(() => {
 
     .btn-primary:hover {
         background-color: #2563eb;
-        transform: translateY(-1px);
-    }
-
-    .btn-primary:active {
-        transform: translateY(0);
     }
 
     .btn-secondary {
@@ -429,11 +377,6 @@ $effect(() => {
 
     .btn-secondary:hover {
         background-color: #e2e8f0;
-        transform: translateY(-1px);
-    }
-
-    .btn-secondary:active {
-        transform: translateY(0);
     }
 
     @media (max-width: 640px) {
@@ -455,30 +398,4 @@ $effect(() => {
         }
     }
 
-    /* Animation for form elements */
-    .form-group {
-        opacity: 0;
-        transform: translateY(10px);
-        animation: fadeInUp 0.4s ease-out forwards;
-    }
-
-    .form-group:nth-child(1) {
-        animation-delay: 0.1s;
-    }
-    .form-group:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-    .form-group:nth-child(3) {
-        animation-delay: 0.3s;
-    }
-    .form-actions {
-        animation-delay: 0.4s;
-    }
-
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
 </style>
