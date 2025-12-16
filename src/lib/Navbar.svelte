@@ -1,7 +1,7 @@
 <script lang="ts">
 import Logo from "$lib/Logo.svelte";
 
-type Theme = "light" | "dark" | "catppuccin";
+type Theme = "light" | "dark" | "ice" | "catppuccin";
 
 const { theme, cycleTheme } = $props<{
 	theme: Theme;
@@ -20,6 +20,8 @@ const { theme, cycleTheme } = $props<{
             <button type="button" class="link" onclick={cycleTheme}
                 >{theme === "dark"
                     ? "🌙 Dark Mode"
+                    : theme === "ice"
+                      ? "❄️ Ice"
                     : theme === "catppuccin"
                       ? "☕ Catppuccin"
                       : "☀️ Light Mode"}</button

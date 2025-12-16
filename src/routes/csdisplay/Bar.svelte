@@ -117,16 +117,16 @@ const Icon = $derived((LucideIcons as any)[iconName] || LucideIcons.ChevronRight
     }
 
     .progress-fill.full {
-        background: linear-gradient(90deg, #ff3e00, #ff6b4a);
+        background: linear-gradient(90deg, var(--color-bar-fill-ko), var(--color-bar-fill-ko-end));
         box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
     }
 
     .progress-fill.dim {
-        background: linear-gradient(90deg, #ff9955, #ffa366);
+        background: linear-gradient(90deg, var(--color-bar-fill-di), var(--color-bar-fill-di-end));
         box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
     }
 
     .progress-fill.none {
-        background: linear-gradient(90deg, #444, #555);
+        background: linear-gradient(90deg, var(--color-bar-fill-neutral), var(--color-bar-fill-neutral-end));
     }
 </style>

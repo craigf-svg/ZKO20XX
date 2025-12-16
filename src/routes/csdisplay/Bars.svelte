@@ -57,14 +57,24 @@ const sections = $derived([
   }
 
   .priority-high .section-label {
-    color: #ff6b4a;
+    color: var(--color-bar-fill-ko-end);
     opacity: 0.8;
   }
 
   .priority-high .section-indicator {
-    background: #ff3e00;
+    background: var(--color-bar-fill-ko);
     opacity: 0.6;
-    box-shadow: 0 0 8px rgba(255, 62, 0, 0.4);
+    box-shadow: 0 0 8px var(--color-ko-glow);
+  }
+
+  .priority-medium .section-label {
+    color: var(--color-bar-fill-di-end);
+    opacity: 0.7;
+  }
+
+  .priority-medium .section-indicator {
+    background: var(--color-bar-fill-di);
+    opacity: 0.5;
   }
 
   .bars-grid {

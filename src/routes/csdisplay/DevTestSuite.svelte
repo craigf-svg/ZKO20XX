@@ -24,6 +24,24 @@ let { currentPercent = $bindable(), limit = $bindable() } = $props();
     <button
         type="button"
         class="btn preset-filled"
+        onclick={() =>
+            (currentPercent =
+                typeof currentPercent === "number" ? Math.max(0, currentPercent - 1) : 0)}
+        >-1%</button
+    >
+    <button
+        type="button"
+        class="btn preset-filled"
+        onclick={() =>
+            (currentPercent =
+                typeof currentPercent === "number"
+                    ? Math.max(0, currentPercent - 15)
+                    : 0)}
+        >-15%</button
+    >
+    <button
+        type="button"
+        class="btn preset-filled"
         onclick={() => (currentPercent = 0)}>Reset</button
     >
     {limit}

@@ -1,128 +1,156 @@
 <script lang="ts">
-import "../app.css";
-import Navbar from "$lib/Navbar.svelte";
-import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
-import UpdateManager from "$lib/UpdateManager.svelte";
+    import "../app.css";
+    import Navbar from "$lib/Navbar.svelte";
+    import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+    import UpdateManager from "$lib/UpdateManager.svelte";
 
-const { children } = $props();
+    const { children } = $props();
 
-import { onMount, setContext } from "svelte";
-import { loadSettings, saveSettings, settings } from "$lib/state/settings.svelte";
+    import { onMount, setContext } from "svelte";
+    import {
+        loadSettings,
+        saveSettings,
+        settings,
+    } from "$lib/state/settings.svelte";
 
-type Theme = "light" | "dark" | "catppuccin";
-let theme = $state<Theme>("dark");
-let sidecarRunning = $state(false);
-let sidecarNeedsRestart = $state(false);
-// TODO: Take into account saved theme value
-document.documentElement.setAttribute("data-theme", "dark");
+    type Theme = "light" | "dark" | "ice" | "catppuccin";
+    let theme = $state<Theme>("dark");
+    let sidecarRunning = $state(false);
+    let sidecarNeedsRestart = $state(false);
+    // TODO: Take into account saved theme value
+    document.documentElement.setAttribute("data-theme", "dark");
 
-function cycleTheme() {
-	theme = theme === "dark" ? "light" : theme === "light" ? "catppuccin" : "dark";
-	settings.theme = theme;
-	saveSettings();
-}
-$effect(function reactToTheme() {
-	document.documentElement.setAttribute("data-theme", theme);
-});
+    function cycleTheme() {
+        theme =
+            theme === "dark"
+                ? "light"
+                : theme === "light"
+                  ? "ice"
+                  : theme === "ice"
+                    ? "catppuccin"
+                    : "dark";
+        settings.theme = theme;
+        saveSettings();
+    }
+    $effect(function reactToTheme() {
+        document.documentElement.setAttribute("data-theme", theme);
+    });
 
-async function stopSidecar(): Promise<void> {
-	if (commandChild) {
-		console.log("Kill child process");
-		await commandChild.kill();
-		commandChild = null;
-		sidecarRunning = false;
-	}
-}
+    async function stopSidecar(): Promise<void> {
+        if (commandChild) {
+            console.log("Kill child process");
+            await commandChild.kill();
+            commandChild = null;
+            sidecarRunning = false;
+        }
+    }
 
-function setSidecarNeedsRestart(value: boolean): void {
-	sidecarNeedsRestart = value;
-}
-function isTauri(): boolean {
-	return typeof window !== "undefined" && "__TAURI__" in window;
-}
+    function setSidecarNeedsRestart(value: boolean): void {
+        sidecarNeedsRestart = value;
+    }
+    function isTauri(): boolean {
+        return typeof window !== "undefined" && "__TAURI__" in window;
+    }
 
-onMount(() => {
-	// IIFE
-	(async () => {
-		await loadSettings();
-		if (isTauri()) {
-			await startSidecar();
-		} else {
-			console.debug("Skipping sidecar start: not running in Tauri");
-		}
-	})();
-});
+    onMount(() => {
+        // IIFE
+        (async () => {
+            await loadSettings();
+            const savedTheme = settings.theme;
+            if (
+                savedTheme === "dark" ||
+                savedTheme === "light" ||
+                savedTheme === "catppuccin" ||
+                savedTheme === "ice"
+            ) {
+                theme = savedTheme;
+            }
+            if (isTauri()) {
+                await startSidecar();
+            } else {
+                console.debug("Skipping sidecar start: not running in Tauri");
+            }
+        })();
+    });
 
-import { type Child, Command } from "@tauri-apps/plugin-shell";
+    import { type Child, Command } from "@tauri-apps/plugin-shell";
 
-let commandChild: Child | null = null;
+    let commandChild: Child | null = null;
 
-function sanitizePath(path: string): string {
-	// Only filter dangerous characters, keep backslashes for Windows paths
-	// biome-ignore lint/suspicious/noControlCharactersInRegex: intentionally filtering null bytes
-	const cleaned = path.replace(/[\x00$`]/g, "");
-	if (cleaned.length > 260) {
-		throw new Error("Path too long (max 260 characters)");
-	}
-	if (cleaned.length === 0) {
-		throw new Error("Path cannot be empty");
-	}
-	return cleaned;
-}
+    function sanitizePath(path: string): string {
+        // Only filter dangerous characters, keep backslashes for Windows paths
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: intentionally filtering null bytes
+        const cleaned = path.replace(/[\x00$`]/g, "");
+        if (cleaned.length > 260) {
+            throw new Error("Path too long (max 260 characters)");
+        }
+        if (cleaned.length === 0) {
+            throw new Error("Path cannot be empty");
+        }
+        return cleaned;
+    }
 
-function sanitizePollingRate(rate: number): number {
-	return Math.max(100, Math.min(10000, rate));
-}
+    function sanitizePollingRate(rate: number): number {
+        return Math.max(100, Math.min(10000, rate));
+    }
 
-async function startSidecar(): Promise<void> {
-	try {
-		if (!settings.slippiPath || !settings.slippiPath.trim()) {
-			console.error("Do not start sidecar, slippiPath is empty or invalid");
-			return;
-		}
-		if (commandChild) {
-			console.log("Sidecar already running");
-			return;
-		}
+    async function startSidecar(): Promise<void> {
+        try {
+            if (!settings.slippiPath || !settings.slippiPath.trim()) {
+                console.error(
+                    "Do not start sidecar, slippiPath is empty or invalid",
+                );
+                return;
+            }
+            if (commandChild) {
+                console.log("Sidecar already running");
+                return;
+            }
 
-		const sanitizedPath = sanitizePath(settings.slippiPath);
-		const sanitizedRate = sanitizePollingRate(settings.pollingRate);
-		const command = Command.sidecar("binaries/my-sidecar", [], {
-			env: {
-				SLIPPI_FOLDER_PATH: sanitizedPath,
-				INTERVAL_VALUE: `${sanitizedRate}`,
-			},
-		});
-		// Listeners
-		command.on("close", (data) => {
-			console.log(`command finished with code ${data.code} and signal ${data.signal}`);
-			commandChild = null;
-			sidecarRunning = false;
-		});
-		command.on("error", (error) => {
-			console.error(`command error: "${error}"`);
-			sidecarRunning = false;
-		});
-		command.stdout.on("data", (line) => console.log(`command stdout: "${line}"`));
-		command.stderr.on("data", (line) => console.log(`command stderr: "${line}"`));
-		commandChild = await command.spawn();
-		sidecarRunning = true;
-		sidecarNeedsRestart = false;
-	} catch (error) {
-		console.error("Error starting sidecar:", error as Error);
-		sidecarRunning = false;
-	}
-}
+            const sanitizedPath = sanitizePath(settings.slippiPath);
+            const sanitizedRate = sanitizePollingRate(settings.pollingRate);
+            const command = Command.sidecar("binaries/my-sidecar", [], {
+                env: {
+                    SLIPPI_FOLDER_PATH: sanitizedPath,
+                    INTERVAL_VALUE: `${sanitizedRate}`,
+                },
+            });
+            // Listeners
+            command.on("close", (data) => {
+                console.log(
+                    `command finished with code ${data.code} and signal ${data.signal}`,
+                );
+                commandChild = null;
+                sidecarRunning = false;
+            });
+            command.on("error", (error) => {
+                console.error(`command error: "${error}"`);
+                sidecarRunning = false;
+            });
+            command.stdout.on("data", (line) =>
+                console.log(`command stdout: "${line}"`),
+            );
+            command.stderr.on("data", (line) =>
+                console.log(`command stderr: "${line}"`),
+            );
+            commandChild = await command.spawn();
+            sidecarRunning = true;
+            sidecarNeedsRestart = false;
+        } catch (error) {
+            console.error("Error starting sidecar:", error as Error);
+            sidecarRunning = false;
+        }
+    }
 
-const sidecarContext: SidecarContext = {
-	isSidecarRunning: () => sidecarRunning,
-	startSidecar,
-	stopSidecar,
-	sidecarNeedsRestart: () => sidecarNeedsRestart,
-	setSidecarNeedsRestart,
-};
+    const sidecarContext: SidecarContext = {
+        isSidecarRunning: () => sidecarRunning,
+        startSidecar,
+        stopSidecar,
+        sidecarNeedsRestart: () => sidecarNeedsRestart,
+        setSidecarNeedsRestart,
+    };
 
-setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
+    setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
 </script>
 
 <Navbar {theme} {cycleTheme} />
@@ -157,9 +185,17 @@ setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
         --color-bar-shadow: rgba(255, 62, 0, 0.1);
         --color-lab-button: #ffb86a;
         --color-lab-button-border: #ffb86a;
+
+        --color-bar-fill-ko: #ff3e00;
+        --color-bar-fill-ko-end: #ff6b4a;
+        --color-bar-fill-di: #ff9955;
+        --color-bar-fill-di-end: #ffa366;
+        --color-bar-fill-neutral: #444;
+        --color-bar-fill-neutral-end: #555;
+        --color-ko-glow: rgba(255, 62, 0, 0.4);
     }
 
-   :global([data-theme="dark"]) {
+    :global([data-theme="dark"]) {
         /* Dark theme colors */
         --color-text-main: #f0f0f0;
         --color-text-heading: #ffffff;
@@ -181,6 +217,14 @@ setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
         --color-lab-button: #ffb86a;
         --color-lab-button-border: #ffb86a;
 
+        --color-bar-fill-ko: #ff3e00;
+        --color-bar-fill-ko-end: #ff6b4a;
+        --color-bar-fill-di: #ff9955;
+        --color-bar-fill-di-end: #ffa366;
+        --color-bar-fill-neutral: #444;
+        --color-bar-fill-neutral-end: #555;
+        --color-ko-glow: rgba(255, 62, 0, 0.4);
+
         --color-progress-danger: #ff3e00;
         --color-progress-warning: #ffa366;
         --color-progress-neutral: #555;
@@ -189,6 +233,46 @@ setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
         --color-player-self: #4a9eff;
         --color-player-opponent: #ff6b4a;
         --color-stage: rgba(255, 255, 255, 0.7);
+    }
+
+    :global([data-theme="ice"]) {
+        --color-text-main: #eaf6ff;
+        --color-text-heading: #ffffff;
+        --color-orange-main: #64b5f6;
+        --color-orange-logo: #64b5f6;
+        --color-orange-logo-secondary: #90caf9;
+        --color-orange-secondary: #90caf9;
+        --color-purple-flair: #64b5f6;
+        --color-bg-body: #273849;
+        --color-bg-navbar: #273849;
+        --color-bg-navbar-hover: #314a5d;
+        --color-muted: rgba(234, 246, 255, 0.7);
+        --color-border: rgba(100, 181, 246, 0.25);
+        --color-bar-bg: #1f2f3b;
+        --color-bars-bg: rgba(39, 56, 73, 0.7);
+        --background-color: #64b5f6;
+        --color-bar-fill: #64b5f6;
+        --color-bar-fill-partial: #90caf9;
+        --color-bar-shadow: rgba(100, 181, 246, 0.25);
+        --color-lab-button: #64b5f6;
+        --color-lab-button-border: rgba(100, 181, 246, 0.35);
+
+        --color-bar-fill-ko: #4ade80;
+        --color-bar-fill-ko-end: #22c55e;
+        --color-bar-fill-di: #fbbf24;
+        --color-bar-fill-di-end: #f59e0b;
+        --color-bar-fill-neutral: #475569;
+        --color-bar-fill-neutral-end: #64748b;
+        --color-ko-glow: rgba(74, 222, 128, 0.5);
+
+        --color-progress-danger: #4ade80;
+        --color-progress-warning: #90caf9;
+        --color-progress-neutral: rgba(234, 246, 255, 0.35);
+        --color-progress-glow: rgba(100, 181, 246, 0.3);
+
+        --color-player-self: #64b5f6;
+        --color-player-opponent: #ff6b4a;
+        --color-stage: rgba(234, 246, 255, 0.75);
     }
 
     :global([data-theme="catppuccin"]) {
@@ -212,6 +296,14 @@ setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
         --color-bar-shadow: rgba(245, 194, 231, 0.2);
         --color-lab-button: #fab387;
         --color-lab-button-border: #313244;
+
+        --color-bar-fill-ko: #fab387;
+        --color-bar-fill-ko-end: #fab387;
+        --color-bar-fill-di: #f38ba8;
+        --color-bar-fill-di-end: #f5c2e7;
+        --color-bar-fill-neutral: #45475a;
+        --color-bar-fill-neutral-end: #585b70;
+        --color-ko-glow: rgba(250, 179, 135, 0.5);
 
         --color-progress-danger: #f38ba8;
         --color-progress-warning: #fab387;

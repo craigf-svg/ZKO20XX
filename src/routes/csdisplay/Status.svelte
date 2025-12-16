@@ -137,8 +137,8 @@ const sidecarNeedsRestart = $derived.by(() => sidecar.sidecarNeedsRestart());
         gap: 0.25rem;
         padding: 0.1rem 0.5rem;
         border-radius: 1000px;
-        background: rgba(15, 23, 42, 0.75);
-        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: var(--color-percent-pill-bg, var(--color-bg-navbar-hover));
+        border: 1px solid var(--color-percent-pill-border, var(--color-border));
     }
 
     .percent-label {
