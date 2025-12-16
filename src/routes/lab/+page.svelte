@@ -141,36 +141,38 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
 <div class="space-y-4">
   <div class="text-3xl font-bold">The Lab</div>
   <div class="font-italicized">Test your setup here beforehand.</div>
-  <form class="mx-auto w-full max-w-md space-y-4">
-    <select
-      id="myChar"
-      bind:value={myChar}
-      class="select w-full p-2 border rounded"
-    >
-      {#each CHARACTER_SHORT_NAMES as short_name}
-        <option value={short_name}>{short_name}</option>
-      {/each}
-    </select>
-    <div>vs</div>
-    <select
-      id="opponentChar"
-      bind:value={opponentChar}
-      class="select w-full p-2 border rounded"
-    >
-      {#each CHARACTER_SHORT_NAMES as short_name}
-        <option value={short_name}>{short_name}</option>
-      {/each}
-    </select>
-    <div>on</div>
-    <select class="select w-full p-2 border rounded">
-      <option value="YS">Yoshi's Story</option>
-      <option value="FoD">Fountain of Dreams</option>
-      <option value="DL">Dreamland</option>
-      <option value="FD">Final Destination</option>
-      <option value="BF">Battlefield</option>
-      <option value="PS">Pokemon Stadium</option>
-    </select>
-    <div>
+  <form class="mx-auto w-full max-w-2xl space-y-4">
+    <div class="flex items-center justify-center gap-3 flex-wrap">
+      <select
+        id="myChar"
+        bind:value={myChar}
+        class="select p-2 border rounded"
+      >
+        {#each CHARACTER_SHORT_NAMES as short_name}
+          <option value={short_name}>{short_name}</option>
+        {/each}
+      </select>
+      <span>vs</span>
+      <select
+        id="opponentChar"
+        bind:value={opponentChar}
+        class="select p-2 border rounded"
+      >
+        {#each CHARACTER_SHORT_NAMES as short_name}
+          <option value={short_name}>{short_name}</option>
+        {/each}
+      </select>
+      <span>on</span>
+      <select class="select p-2 border rounded">
+        <option value="YS">Yoshi's Story</option>
+        <option value="FoD">Fountain of Dreams</option>
+        <option value="DL">Dreamland</option>
+        <option value="FD">Final Destination</option>
+        <option value="BF">Battlefield</option>
+        <option value="PS">Pokemon Stadium</option>
+      </select>
+    </div>
+    <div class="text-sm text-[var(--color-muted)]">
       File Path: {filePath}
     </div>
     <button

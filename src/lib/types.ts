@@ -5,4 +5,5 @@ export interface AppSettings {
 	theme: string;
 	privacyLevel: "allowed" | "not_allowed";
 	snoozeUntil: number | undefined;
+	iceUnlocked: boolean;
 }

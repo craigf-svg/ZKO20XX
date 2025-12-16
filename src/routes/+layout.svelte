@@ -17,21 +17,67 @@
     let theme = $state<Theme>("dark");
     let sidecarRunning = $state(false);
     let sidecarNeedsRestart = $state(false);
+    let iceUnlocked = $state(false);
+
+    const easter_code = [
+        "ArrowUp",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowLeft",
+        "ArrowRight",
+        "KeyB",
+        "KeyA",
+    ];
+    let konamiIndex = 0;
     // TODO: Take into account saved theme value
     document.documentElement.setAttribute("data-theme", "dark");
 
     function cycleTheme() {
-        theme =
-            theme === "dark"
-                ? "light"
-                : theme === "light"
-                  ? "ice"
-                  : theme === "ice"
-                    ? "catppuccin"
-                    : "dark";
+        if (iceUnlocked) {
+            theme =
+                theme === "dark"
+                    ? "light"
+                    : theme === "light"
+                      ? "ice"
+                      : theme === "ice"
+                        ? "catppuccin"
+                        : "dark";
+        } else {
+            theme =
+                theme === "dark"
+                    ? "light"
+                    : theme === "light"
+                      ? "catppuccin"
+                      : "dark";
+        }
         settings.theme = theme;
         saveSettings();
     }
+
+    function handleKonamiKey(event: KeyboardEvent) {
+        if (event.code === easter_code[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === easter_code.length) {
+                unlock();
+                konamiIndex = 0;
+            }
+        } else {
+            konamiIndex = event.code === easter_code[0] ? 1 : 0;
+        }
+    }
+
+    function unlock() {
+        if (iceUnlocked) return;
+        iceUnlocked = true;
+        settings.iceUnlocked = true;
+        theme = "ice";
+        settings.theme = "ice";
+        saveSettings();
+    }
+
     $effect(function reactToTheme() {
         document.documentElement.setAttribute("data-theme", theme);
     });
@@ -53,15 +99,19 @@
     }
 
     onMount(() => {
+        // Konami listener
+        window.addEventListener("keydown", handleKonamiKey);
+
         // IIFE
         (async () => {
             await loadSettings();
+            iceUnlocked = settings.iceUnlocked ?? false;
             const savedTheme = settings.theme;
             if (
                 savedTheme === "dark" ||
                 savedTheme === "light" ||
                 savedTheme === "catppuccin" ||
-                savedTheme === "ice"
+                (savedTheme === "ice" && iceUnlocked)
             ) {
                 theme = savedTheme;
             }
@@ -71,6 +121,10 @@
                 console.debug("Skipping sidecar start: not running in Tauri");
             }
         })();
+
+        return () => {
+            window.removeEventListener("keydown", handleKonamiKey);
+        };
     });
 
     import { type Child, Command } from "@tauri-apps/plugin-shell";
@@ -153,7 +207,7 @@
     setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);
 </script>
 
-<Navbar {theme} {cycleTheme} />
+<Navbar {theme} {cycleTheme} {iceUnlocked} />
 <link rel="preconnect" href="https://rsms.me/" />
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 <main data-theme={theme}>

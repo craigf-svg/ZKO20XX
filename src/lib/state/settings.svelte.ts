@@ -7,6 +7,7 @@ export const settings = $state<AppSettings>({
 	theme: "dark",
 	privacyLevel: "allowed",
 	snoozeUntil: undefined,
+	iceUnlocked: false,
 });
 
 function isTauri(): boolean {

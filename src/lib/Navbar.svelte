@@ -3,9 +3,10 @@ import Logo from "$lib/Logo.svelte";
 
 type Theme = "light" | "dark" | "ice" | "catppuccin";
 
-const { theme, cycleTheme } = $props<{
+const { theme, cycleTheme, iceUnlocked = false } = $props<{
 	theme: Theme;
 	cycleTheme: () => void;
+	iceUnlocked?: boolean;
 }>();
 </script>
 
@@ -20,7 +21,7 @@ const { theme, cycleTheme } = $props<{
             <button type="button" class="link" onclick={cycleTheme}
                 >{theme === "dark"
                     ? "🌙 Dark Mode"
-                    : theme === "ice"
+                    : theme === "ice" && iceUnlocked
                       ? "❄️ Ice"
                     : theme === "catppuccin"
                       ? "☕ Catppuccin"
