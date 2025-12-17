@@ -17,7 +17,7 @@ function validateMatchupData(data: unknown): data is MatchupEntry[] {
 }
 
 function isTauri(): boolean {
-	return typeof globalThis.window !== "undefined" && "__TAURI__" in globalThis.window;
+	return globalThis.window !== undefined && "__TAURI__" in globalThis.window;
 }
 
 const MATCHUP_DATA_DIR_NAME = "matchup_data";

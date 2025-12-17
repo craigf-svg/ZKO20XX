@@ -11,7 +11,7 @@ export const settings = $state<AppSettings>({
 });
 
 function isTauri(): boolean {
-	return typeof globalThis.window !== "undefined" && "__TAURI__" in globalThis.window;
+	return globalThis.window !== undefined && "__TAURI__" in globalThis.window;
 }
 
 export async function loadSettings() {
