@@ -47,7 +47,7 @@ const INTERVAL_VALUE = (function determineIntervalValue() {
 	if (process.env.INTERVAL_VALUE == undefined) {
 		return 500;
 	}
-	const parsed = parseInt(process.env.INTERVAL_VALUE, 10);
+	const parsed = Number.parseInt(process.env.INTERVAL_VALUE, 10);
 	return Number.isNaN(parsed) || parsed <= 0 ? 500 : parsed;
 })();
 console.log("Sidecar Starting...");

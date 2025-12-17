@@ -1,7 +1,7 @@
 import type { AppSettings } from "$lib/types";
 
 function isTauri(): boolean {
-	return typeof window !== "undefined" && "__TAURI__" in window;
+	return typeof globalThis.window !== "undefined" && "__TAURI__" in globalThis.window;
 }
 
 export async function trackIfAllowed(

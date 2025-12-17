@@ -61,7 +61,5 @@ export function calculateProgress(currentPercent: number, koPercent: number | nu
 		currentPercent && koPercent
 			? `${Math.min(100, (currentPercent / koPercent) * 100).toFixed(1)}%`
 			: "0%";
-	// console.log("to reach", koPercent);
-	// console.log("progress ", progress);
 	return progress;
 }

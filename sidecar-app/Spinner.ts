@@ -1,5 +1,5 @@
 export class Spinner {
-	private spinnerFrames: string[];
+	private readonly spinnerFrames: string[];
 	private myInterval: NodeJS.Timeout | null;
 	private idx: number;
 
@@ -10,7 +10,6 @@ export class Spinner {
 	}
 
 	start(message: string, delayInSeconds: number = 0.5): void {
-		//console.debug(`Starting spinner with delay between frames of ${delayInSeconds} seconds`);
 		this.myInterval = setInterval(() => {
 			try {
 				process.stdout.write(`\r${message} ${this.spinnerFrames[this.idx % 4]}`);
