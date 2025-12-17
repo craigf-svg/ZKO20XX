@@ -74,7 +74,17 @@ jobs:
           projectPath: '.'
           tagName: ${{ github.ref_name }}
           releaseName: 'ZKO20XX v${{ github.ref_name }}'
-          releaseBody: 'See the assets to download and install this version.'
+          releaseBody: |
+            ## Download
+
+            | Platform | Download |
+            |----------|----------|
+            | **Windows** | `ZKO_20XX_x64-setup.exe` *(recommended)* |
+            | **macOS (Apple Silicon M1/M2/M3)** | `ZKO_20XX_aarch64.dmg` |
+            | **macOS (Intel)** | `ZKO_20XX_x64.dmg` |
+            | **Linux (Universal)** | `ZKO_20XX_amd64.AppImage` |
+            | **Linux (Debian/Ubuntu)** | `ZKO_20XX_amd64.deb` |
+
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
