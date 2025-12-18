@@ -2,6 +2,13 @@ import { appDataDir, join } from "@tauri-apps/api/path";
 import { BaseDirectory, open } from "@tauri-apps/plugin-fs";
 import type { MatchupEntry } from "../../static/data/MatchupEntry";
 
+export type MatchupDataSource = "user" | "bundled";
+
+export interface MatchupDataResult {
+	data: MatchupEntry[];
+	source: MatchupDataSource;
+}
+
 function validateMatchupData(data: unknown): data is MatchupEntry[] {
 	if (!Array.isArray(data)) return false;
 	return data.every(
@@ -38,13 +45,13 @@ async function getMatchupDataDir(): Promise<string> {
 export async function loadMatchupData(
 	myChar: string,
 	opponentChar: string,
-): Promise<MatchupEntry[]> {
+): Promise<MatchupDataResult> {
 	const bundledPath = `/data/${myChar}/vs_${opponentChar}.json`;
 
 	if (!isTauri()) {
 		const response = await fetch(bundledPath, { signal: AbortSignal.timeout(5000) });
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
-		return await response.json();
+		return { data: await response.json(), source: "bundled" };
 	}
 
 	try {
@@ -66,7 +73,7 @@ export async function loadMatchupData(
 			}
 
 			console.log(`Loaded matchup data from user directory: ${relativePath}`);
-			return parsed;
+			return { data: parsed, source: "user" };
 		} finally {
 			await file.close();
 		}
@@ -84,7 +91,7 @@ export async function loadMatchupData(
 		throw new Error("Invalid matchup data format in bundled file");
 	}
 	console.log(`Loaded matchup data from bundled assets: ${bundledPath}`);
-	return parsed;
+	return { data: parsed, source: "bundled" };
 }
 
 export async function getMatchupDataPath(): Promise<string | null> {

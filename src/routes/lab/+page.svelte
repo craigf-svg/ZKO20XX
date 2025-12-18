@@ -1,7 +1,7 @@
 <script lang="ts">
 import { createToaster, Toaster } from "@skeletonlabs/skeleton-svelte";
 import { openPath } from "@tauri-apps/plugin-opener";
-import { getMatchupDataPath, loadMatchupData } from "$lib/matchupDataLoader";
+import { getMatchupDataPath, loadMatchupData, type MatchupDataSource } from "$lib/matchupDataLoader";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 import Bars from "../csdisplay/Bars.svelte";
 import type { MoveBar } from "../csdisplay/types";
@@ -69,8 +69,9 @@ let myChar = $state("fox"),
 	selectedStage = $state("Yoshi's Story");
 
 let matchupData: MatchupEntry | undefined = $state();
+let dataSource: MatchupDataSource | undefined = $state();
 const currentPercent = $state(0);
-const filePath = $derived(`/data/${myChar}/vs_${opponentChar}.json`);
+const filePath = $derived(`/matchup_data/${myChar}/vs_${opponentChar}.json`);
 
 $effect(() => {
 	console.log(myChar);
@@ -90,16 +91,16 @@ async function openMatchupDataFolder() {
 async function loadFile(): Promise<MatchupEntry | null> {
 	console.info("[loadFile] matchup:", myChar, "vs", opponentChar, "on", selectedStage);
 	try {
-		const allStagesKOData = await loadMatchupData(myChar, opponentChar);
-		console.info("[loadFile] Loaded matchup entries:", allStagesKOData);
-		// TODO: Add type safety
-		const currentStageData = allStagesKOData.find(isCurrentStage);
+		const result = await loadMatchupData(myChar, opponentChar);
+		console.info("[loadFile] Loaded matchup entries:", result.data);
+		const currentStageData = result.data.find(isCurrentStage);
 		console.info("currentStageData", currentStageData);
 		if (!currentStageData) {
 			throw new Error(STAGE_NOT_FOUND_ERROR);
 		}
 		toaster.success({ title: "Success!" });
 		matchupData = currentStageData;
+		dataSource = result.source;
 		return currentStageData;
 	} catch (error) {
 		console.error("[loadFile] Error:", getErrorMessage(error));
@@ -163,13 +164,13 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
         {/each}
       </select>
       <span>on</span>
-      <select class="select p-2 border rounded">
-        <option value="YS">Yoshi's Story</option>
-        <option value="FoD">Fountain of Dreams</option>
-        <option value="DL">Dreamland</option>
-        <option value="FD">Final Destination</option>
-        <option value="BF">Battlefield</option>
-        <option value="PS">Pokemon Stadium</option>
+      <select bind:value={selectedStage} class="select p-2 border rounded">
+        <option value="Yoshi's Story">Yoshi's Story</option>
+        <option value="Fountain of Dreams">Fountain of Dreams</option>
+        <option value="Dream Land N64">Dreamland</option>
+        <option value="Final Destination">Final Destination</option>
+        <option value="Battlefield">Battlefield</option>
+        <option value="Pokémon Stadium">Pokemon Stadium</option>
       </select>
     </div>
     <div class="text-sm text-[var(--color-muted)]">
@@ -189,11 +190,10 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
     >
       Open Matchup Data Folder
     </button>
-    {#if false}
-      <label class="label">
-        <span class="label-text">Percent</span>
-        <input type="number" class="input" placeholder="Enter Percent" />
-      </label>
+    {#if dataSource}
+      <div class="text-sm text-[var(--color-muted)]">
+        {dataSource === 'user' ? '✓ Using your custom data' : 'Using default bundled data'}
+      </div>
     {/if}
     <div>
       <Bars {dynamicBars} />
