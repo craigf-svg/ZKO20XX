@@ -1,0 +1,42 @@
+<svg
+  width="1024"
+  height="1024"
+  viewBox="0 0 1024 1024"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="TTY scanline melee lab logo 1024x1024 slightly lowered"
+>
+  <!-- Background -->
+  <rect x="0" y="0" width="1024" height="1024" fill="#0a0a0f" />
+
+  <!-- Hex outer frame -->
+  <path
+    d="M512 160
+       L768 312
+       L768 616
+       L512 768
+       L256 616
+       L256 312
+       Z"
+    fill="none"
+    stroke="#ff6836"
+    stroke-width="48"
+    stroke-linejoin="round"
+  />
+
+  <!-- Inner screen area -->
+  <rect
+    x="368"
+    y="348"
+    width="288"
+    height="224"
+    fill="#101015"
+  />
+
+  <!-- TTY / CRT scanlines -->
+  <rect x="384" y="364" width="256" height="24" fill="#ff3e00" />
+  <rect x="384" y="412" width="208" height="16" fill="#7c4dff" />
+  <rect x="384" y="452" width="232" height="16" fill="#ff8c00" />
+  <rect x="384" y="492" width="160" height="16" fill="#888888" />
+  <rect x="384" y="532" width="120" height="12" fill="#444444" />
+</svg>

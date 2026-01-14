@@ -1,0 +1,43 @@
+<svg
+  width="32"
+  height="32"
+  viewBox="0 0 32 32"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="Melee CRT icon centered"
+>
+  <!-- Background -->
+  <rect x="0" y="0" width="32" height="32" fill="#0a0a0f" />
+
+  <!-- Hex frame (moved down 1px) -->
+  <path
+    d="M16 5
+       L24 10
+       L24 18
+       L16 23
+       L8 18
+       L8 10
+       Z"
+    fill="none"
+    stroke="#ff6836"
+    stroke-width="2.4"
+    stroke-linejoin="round"
+  />
+
+  <!-- Inner screen (moved down with hex) -->
+  <rect
+    x="11"
+    y="11
+"
+    width="10"
+    height="8"
+    rx="1"
+    ry="1"
+    fill="#101015"
+  />
+
+  <!-- Scanlines (moved down with screen) -->
+  <rect x="12" y="12" width="8" height="1.5" fill="#ff3e00" />
+  <rect x="12" y="14" width="6" height="1.5" fill="#7c4dff" />
+  <rect x="12" y="16" width="5" height="1.5" fill="#888888" />
+</svg>

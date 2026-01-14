@@ -1,0 +1,78 @@
+<svg
+  width="256"
+  height="256"
+  viewBox="0 0 256 256"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="TTY scanline melee lab logo 256x256 centered"
+>
+  <!-- Background -->
+  <rect x="0" y="0" width="256" height="256" fill="#0a0a0f" />
+
+  <!-- Hex outer frame -->
+  <path
+    d="M128 32
+       L192 70
+       L192 146
+       L128 184
+       L64 146
+       L64 70
+       Z"
+    fill="none"
+    stroke="#ff6836"
+    stroke-width="12"
+    stroke-linejoin="round"
+  />
+
+  <!-- Inner screen area (slightly up from original, less than previous) -->
+  <!-- Original was y=82, last version was y=76; this splits the difference at y=79 -->
+  <rect
+    x="92"
+    y="79"
+    width="72"
+    height="56"
+    fill="#101015"
+  />
+
+  <!-- TTY / CRT scanlines, shifted with the screen -->
+  <!-- Top (strong) line -->
+  <rect
+    x="96"
+    y="83"
+    width="64"
+    height="6"
+    fill="#ff3e00"
+  />
+  <!-- Second line -->
+  <rect
+    x="96"
+    y="95"
+    width="52"
+    height="4"
+    fill="#7c4dff"
+  />
+  <!-- Third line -->
+  <rect
+    x="96"
+    y="105"
+    width="58"
+    height="4"
+    fill="#ff8c00"
+  />
+  <!-- Fourth line -->
+  <rect
+    x="96"
+    y="115"
+    width="40"
+    height="4"
+    fill="#888888"
+  />
+  <!-- Fifth, faint line -->
+  <rect
+    x="96"
+    y="125"
+    width="30"
+    height="3"
+    fill="#444444"
+  />
+</svg>

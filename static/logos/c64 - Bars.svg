@@ -1,0 +1,84 @@
+<svg
+  width="320"
+  height="128"
+  viewBox="0 0 320 128"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="Commodore64-inspired melee lab logo refined"
+>
+  <!-- Background -->
+  <rect x="0" y="0" width="320" height="128" fill="#0a0a0f" />
+
+  <!-- Hex-C mark on the left -->
+  <!-- Outer hex outline -->
+  <path
+    d="M64 20
+       L104 44
+       L104 84
+       L64 108
+       L24 84
+       L24 44
+       Z"
+    fill="none"
+    stroke="#ff6836"
+    stroke-width="10"
+    stroke-linejoin="round"
+  />
+
+  <!-- Inner cutout to create an open 'C' -->
+  <path
+    d="M64 34
+       L90 50
+       L90 78
+       L64 94
+       L38 78
+       L38 50
+       Z"
+    fill="#0a0a0f"
+  />
+
+  <!-- Knockback notch to make it more like a 'C' / arrow -->
+  <path
+    d="M90 56
+       L112 56
+       L112 72
+       L90 72
+       Z"
+    fill="#0a0a0f"
+  />
+
+  <!-- Commodore-style triple bars on the right (equal height, raised) -->
+  <!-- Top bar -->
+  <rect
+    x="140"
+    y="30"
+    width="140"
+    height="10"
+    fill="#ff6836"
+  />
+  <!-- Middle bar -->
+  <rect
+    x="140"
+    y="50"
+    width="140"
+    height="10"
+    fill="#ff3e00"
+  />
+  <!-- Bottom bar -->
+  <rect
+    x="140"
+    y="70"
+    width="140"
+    height="10"
+    fill="#7c4dff"
+  />
+
+  <!-- Grey base bar, aligned and raised -->
+  <rect
+    x="140"
+    y="90"
+    width="100"
+    height="10"
+    fill="#888888"
+  />
+</svg>
