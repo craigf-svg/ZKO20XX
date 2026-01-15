@@ -84,7 +84,11 @@ async function openMatchupDataFolder() {
 	if (path) {
 		await openPath(path);
 	} else {
-		toaster.error({ title: "Could not get matchup data folder path", duration: 2000 });
+		toaster.error({
+			title: "Matchup data folder not found",
+			description: "Please create the 'matchup_data' folder in your app data directory first.",
+			duration: 5000,
+		});
 	}
 }
 

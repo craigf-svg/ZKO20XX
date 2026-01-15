@@ -1,5 +1,5 @@
 import { appDataDir, join } from "@tauri-apps/api/path";
-import { BaseDirectory, open } from "@tauri-apps/plugin-fs";
+import { BaseDirectory, open, exists } from "@tauri-apps/plugin-fs";
 import type { MatchupEntry } from "../../static/data/MatchupEntry";
 
 export type MatchupDataSource = "user" | "bundled";
@@ -97,7 +97,14 @@ export async function loadMatchupData(
 export async function getMatchupDataPath(): Promise<string | null> {
 	if (!isTauri()) return null;
 	try {
-		return await getMatchupDataDir();
+		const dir = await getMatchupDataDir();
+		const folderExists = await exists(MATCHUP_DATA_DIR_NAME, {
+			baseDir: BaseDirectory.AppData,
+		});
+		if (!folderExists) {
+			return null;
+		}
+		return dir;
 	} catch (e) {
 		console.error("Failed to get matchup data path:", e);
 		return null;
