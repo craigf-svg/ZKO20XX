@@ -3,7 +3,7 @@
 		"fileDone?": true,
 		"allMovesFromCenter?": true,
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Falcon",
 		"stage": "YS",
 		"moves": {
 			"upSmash": 134,
@@ -12,7 +12,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Falcon",
 		"stage": "PS",
 		"moves": {
 			"upSmash": 138,
@@ -21,7 +21,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Falcon",
 		"stage": "FD",
 		"moves": {
 			"upSmash": 141,
@@ -30,7 +30,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Falcon",
 		"stage": "BF",
 		"moves": {
 			"upSmash": 146,
@@ -39,7 +39,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Falcon",
 		"stage": "FoD",
 		"moves": {
 			"upSmash": 147,
@@ -48,7 +48,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Falcon",
 		"stage": "DL",
 		"moves": {
 			"upSmash": 163,

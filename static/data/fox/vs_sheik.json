@@ -2,7 +2,7 @@
 	{
 		"fileDone?": false,
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Sheik",
 		"stage": "YS",
 		"moves": {
 			"upSmash": 83.0,
@@ -14,7 +14,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Sheik",
 		"stage": "PS",
 		"moves": {
 			"upSmash": 86.0,
@@ -26,7 +26,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Sheik",
 		"stage": "FD",
 		"moves": {
 			"upSmash": 88.0,
@@ -38,7 +38,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Sheik",
 		"stage": "BF",
 		"moves": {
 			"upSmash": 91.0,
@@ -50,7 +50,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Sheik",
 		"stage": "FoD",
 		"moves": {
 			"upSmash": 92.0,
@@ -62,7 +62,7 @@
 	},
 	{
 		"attacker": "Fox",
-		"defender": "Marth",
+		"defender": "Sheik",
 		"stage": "DL",
 		"moves": {
 			"upSmash": 103.0,
