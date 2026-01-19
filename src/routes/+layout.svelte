@@ -16,6 +16,7 @@
     type Theme = "light" | "dark" | "ice" | "catppuccin";
     let theme = $state<Theme>("dark");
     let sidecarRunning = $state(false);
+    let screenshotMode = $state(false);
     let sidecarNeedsRestart = $state(false);
     let iceUnlocked = $state(false);
 
@@ -197,11 +198,15 @@
     }
 
     const sidecarContext: SidecarContext = {
-        isSidecarRunning: () => sidecarRunning,
+        isSidecarRunning: () => sidecarRunning || screenshotMode,
         startSidecar,
         stopSidecar,
         sidecarNeedsRestart: () => sidecarNeedsRestart,
         setSidecarNeedsRestart,
+        isScreenshotMode: () => screenshotMode,
+        setScreenshotMode: (val: boolean) => {
+            screenshotMode = val;
+        },
     };
 
     setContext<SidecarContext>(SIDECAR_KEY, sidecarContext);

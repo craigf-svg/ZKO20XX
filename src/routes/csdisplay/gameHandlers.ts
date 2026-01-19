@@ -89,9 +89,9 @@ export async function initGameState(
 
 	// TODO: Make error message more specific on failing behavior in try
 	try {
-		const allStagesKOData = await loadMatchupData(myChar, opponentChar);
-		console.log("Loaded character matchup data:", allStagesKOData);
-		matchupData = allStagesKOData.find((entry: MatchupEntry) =>
+		const result = await loadMatchupData(myChar, opponentChar);
+		console.log("Loaded character matchup data:", result.data);
+		matchupData = result.data.find((entry: MatchupEntry) =>
 			isCurrentStage(entry, settings.stageName),
 		);
 	} catch {

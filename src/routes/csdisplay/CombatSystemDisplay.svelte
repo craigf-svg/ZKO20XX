@@ -1,6 +1,7 @@
 <script lang="ts">
 import { io, type Socket } from "socket.io-client";
-import { onMount } from "svelte";
+import { getContext, onMount } from "svelte";
+import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
 import { settings } from "$lib/state/settings.svelte";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 import { trackIfAllowed } from "./analyticsService";
@@ -36,6 +37,22 @@ let gameState: GameState = $state({
 	opponentPlayerIdx: 1,
 	myConnectCode: settings.connectCode,
 	opponentConnectCode: "",
+});
+
+const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
+
+$effect(function applyScreenshotState() {
+	if (sidecar.isScreenshotMode()) {
+		gameState = {
+			...gameState,
+			myChar: "fox",
+			opponentChar: "marth",
+			displayStageName: "Yoshi's Story",
+			matchupData: SAMPLE_DYNAMIC_DATA,
+			currentPercent: 121,
+		};
+		currentPercent = 121;
+	}
 });
 
 $effect(function syncGameStateConnectCode() {

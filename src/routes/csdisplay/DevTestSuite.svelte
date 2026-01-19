@@ -1,5 +1,11 @@
 <script lang="ts">
+import { getContext } from "svelte";
+import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
+
 let { currentPercent = $bindable(), limit = $bindable() } = $props();
+
+const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
+const isScreenshotMode = $derived.by(() => sidecar.isScreenshotMode());
 </script>
 
 <div class="dev">
@@ -44,6 +50,13 @@ let { currentPercent = $bindable(), limit = $bindable() } = $props();
         class="btn preset-filled"
         onclick={() => (currentPercent = 0)}>Reset</button
     >
+    <button
+        type="button"
+        class="btn {isScreenshotMode ? 'preset-filled-secondary' : 'preset-outline'}"
+        onclick={() => sidecar.setScreenshotMode(!isScreenshotMode)}
+    >
+        {isScreenshotMode ? "Exit Screenshot Mode" : "Screenshot Mode"}
+    </button>
     {limit}
     <button
         type="button"

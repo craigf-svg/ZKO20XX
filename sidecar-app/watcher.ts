@@ -126,7 +126,7 @@ function processPlayerStats(players: PlayerType[], latestFrame: FrameEntryType):
 	});
 }
 
-Spinner.start("waiting for new file...", 0.25);
+Spinner.start("waiting for new file...", 10);
 
 watcher.on("ready", () => {
 	console.log("Watcher is ready and monitoring:", SLIPPI_FOLDER_PATH);
@@ -167,7 +167,7 @@ watcher.on("add", async (filePath: string) => {
 		cleanupResources();
 	} finally {
 		if (!intId) {
-			Spinner.start("waiting for new file...", 0.25);
+			Spinner.start("waiting for new file...", 10);
 		}
 	}
 });

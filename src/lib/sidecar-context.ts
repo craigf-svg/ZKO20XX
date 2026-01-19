@@ -6,4 +6,6 @@ export type SidecarContext = {
 	stopSidecar: () => void;
 	sidecarNeedsRestart: () => boolean;
 	setSidecarNeedsRestart: (value: boolean) => void;
+	isScreenshotMode: () => boolean;
+	setScreenshotMode: (value: boolean) => void;
 };
