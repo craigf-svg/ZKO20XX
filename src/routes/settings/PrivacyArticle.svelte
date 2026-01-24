@@ -20,7 +20,7 @@ const exampleData = `{
 </script>
 
 <article>
-    <p class="opacity-80 text-s">
+    <p class="text-s">
         If enabled, I collect minimal anonymous analytics via Aptabase to better
         understand app usage and share aggregated metrics with the community.
     </p>

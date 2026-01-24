@@ -10,11 +10,11 @@ export const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
 	stage: "YS",
 	moves: {
 		default_data: 1,
-		upSmash: [73, 74, 83], // { in: 81, neutral: 82, out: 91 },
-		strongUpTilt: 100,
-		shuAir: 103,
-		downTilt: 133,
-		bAir: [101, 122, 122],
+		// upSmash: [73, 74, 83], // { in: 81, neutral: 82, out: 91 },
+		// stronguptilt: 100,
+		// shuair: 103,
+		// downtilt: 133,
+		// bAir: [101, 122, 122],
 		// Test Data
 		// fakeMove1: 100,
 		// fakeMove2: 110,

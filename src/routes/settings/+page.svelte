@@ -17,6 +17,7 @@
     const sidecar = getContext<SidecarContext>(SIDECAR_KEY);
 
     let openState = $state(false);
+    let slippiHelpOpen = $state(false);
     function popoverClose() {
         openState = false;
     }
@@ -138,7 +139,35 @@
             </div>
 
             <div class="mb-7">
-                <label for="slippiPath">Slippi Folder Path</label>
+                <label for="slippiPath" class="label-with-help">
+                    <span>Slippi Folder Path</span>
+                    <Popover
+                        open={slippiHelpOpen}
+                        onOpenChange={(e) => (slippiHelpOpen = e.open)}
+                        positioning={{ placement: "right" }}
+                        contentBase="card bg-surface-800 p-4 space-y-2 max-w-[260px]"
+                        arrow
+                        arrowBackground="bg-surface-800"
+                    >
+                        {#snippet trigger()}
+                            <button
+                                type="button"
+                                class="help-trigger"
+                                aria-label="Slippi folder path help"
+                            >
+                                <HelpCircle size={16} />
+                            </button>
+                        {/snippet}
+                        {#snippet content()}
+                            <p class="font-bold text-base">Find your Slippi folder</p>
+                            <ol class="help-list">
+                                <li>Open the Slippi app.</li>
+                                <li>Go to <strong>Settings</strong> → <strong>Replays</strong>.</li>
+                                <li>Copy the root <strong>.slp</strong> folder path and paste it here.</li>
+                            </ol>
+                        {/snippet}
+                    </Popover>
+                </label>
                 <div class="input-wrapper">
                     <input
                         type="text"
@@ -194,16 +223,16 @@
                 <Popover
                     open={openState}
                     onOpenChange={(e) => (openState = e.open)}
-                    positioning={{ placement: "left" }}
+                    positioning={{ placement: "right" }}
                     triggerBase="btn preset-tonal"
                     contentBase="card bg-surface-800 p-4 space-y-4 max-w-[320px]"
                     arrow
                     arrowBackground="bg-surface-800"
                 >
                     {#snippet trigger()}
-                        <div class="inline-flex items-center row gap-2">
+                        <div class="inline-flex items-center row gap-2 mb-1">
                             Anonymous Analytics
-                            <HelpCircle size={18} />
+                            <HelpCircle size={16} />
                         </div>
                     {/snippet}
                     {#snippet content()}
@@ -300,6 +329,49 @@
         font-weight: 500;
         margin-bottom: 0.5rem;
         font-size: 0.9375rem;
+    }
+
+    .label-with-help {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .help-trigger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 999px;
+        border: none;
+        background-color: transparent;
+        color: var(--color-text-main);
+        font-size: 0.85rem;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .help-trigger:hover {
+        background-color: transparent;
+    }
+
+    .help-trigger:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+    }
+
+
+    .help-list {
+        margin: 0;
+        padding-left: 1.2rem;
+        color: var(--color-text-main);
+        display: grid;
+        gap: 0.4rem;
+        font-size: 0.9rem;
     }
 
     .input-wrapper {
