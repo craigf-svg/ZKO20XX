@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri_plugin_aptabase::EventTracker;
+use tauri_plugin_store::StoreExt;
 mod system_info;
 mod version;
 use system_info::get_cpu_usage;
@@ -36,7 +37,7 @@ async fn main() {
                 let _ = app.track_event(
                     "app_test",
                     None,
-            );
+                );
             }
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -52,8 +53,18 @@ async fn main() {
         .run(move |app_handle, event| match event {
             tauri::RunEvent::Exit { .. } => {
                 if aptabase_enabled {
-                    let _ = app_handle.track_event("app_exited", None);
-                    app_handle.flush_events_blocking();
+                    let privacy_allowed = app_handle
+                        .store("settings.json")
+                        .ok()
+                        .and_then(|store| store.get("settings"))
+                        .and_then(|settings| settings.get("privacyLevel").cloned())
+                        .and_then(|level| level.as_str().map(|s| s == "allowed"))
+                        .unwrap_or(false);
+
+                    if privacy_allowed {
+                        let _ = app_handle.track_event("app_exited", None);
+                        app_handle.flush_events_blocking();
+                    }
                 }
             }
             _ => {}
