@@ -15,7 +15,7 @@ async fn main() {
     let cpu_usage = get_cpu_usage();
     println!("cpu_usage is {}", cpu_usage);
 
-    let aptabase_key = std::env::var("APTABASE_KEY").ok();
+    let aptabase_key = option_env!("APTABASE_KEY");
     let aptabase_enabled = aptabase_key.is_some();
 
     let mut builder = tauri::Builder::default()
