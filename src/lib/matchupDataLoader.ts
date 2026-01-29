@@ -23,7 +23,7 @@ function validateMatchupData(data: unknown): data is MatchupEntry[] {
 	);
 }
 
-function isTauri(): boolean {
+export function isTauri(): boolean {
 	return globalThis.window !== undefined && "__TAURI__" in globalThis.window;
 }
 
