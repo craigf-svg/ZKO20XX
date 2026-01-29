@@ -32,9 +32,6 @@ const { theme, cycleTheme, iceUnlocked = false } = $props<{
             <a href="/lab" class="link">Lab</a>
         </li>
         <li>
-            <a href="/about" class="link">About</a>
-        </li>
-        <li>
             <a href="/settings" class="link">Settings</a>
         </li>
     </ul>
