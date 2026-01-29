@@ -1,14 +1,14 @@
 <script lang="ts">
 import { createToaster, Toaster } from "@skeletonlabs/skeleton-svelte";
 import { openPath } from "@tauri-apps/plugin-opener";
-import { getMatchupDataPath, loadMatchupData, type MatchupDataSource } from "$lib/matchupDataLoader";
-import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+
+import { getMatchupDataPath, isTauri, loadMatchupData, type MatchupDataSource } from "$lib/matchupDataLoader";
+import { calculateProgress, koPercentReached } from "../csdisplay/koUtils";
 import Bars from "../csdisplay/Bars.svelte";
 import type { MoveBar } from "../csdisplay/types";
+import type { MatchupEntry } from "../../../static/data/MatchupEntry";
 
 const toaster = createToaster({ placement: "bottom-start" });
-
-import { calculateProgress, koPercentReached } from "../csdisplay/koUtils";
 
 function getErrorMessage(error: unknown) {
 	if (error instanceof Error) return error.message;
@@ -72,11 +72,39 @@ let matchupData: MatchupEntry | undefined = $state();
 let dataSource: MatchupDataSource | undefined = $state();
 const currentPercent = $state(0);
 const filePath = $derived(`/matchup_data/${myChar}/vs_${opponentChar}.json`);
+let matchupDataPath = $state<string | null>(null);
+let fullMatchupPath = $state<string>("");
+
+async function loadMatchupPath() {
+	console.log("[loadMatchupPath] Starting to load matchup data path...");
+	try {
+		const path = await getMatchupDataPath();
+		console.log("[loadMatchupPath] Got path:", path);
+		matchupDataPath = path || "Folder not created yet";
+
+		// Get the full path for display
+		if (isTauri()) {
+			const { appDataDir } = await import("@tauri-apps/api/path");
+			const path = await appDataDir();
+			fullMatchupPath = path;
+			console.log("[loadMatchupPath] Full app data path:", path);
+		}
+	} catch (error) {
+		console.error("[loadMatchupPath] Error:", error);
+		matchupDataPath = "Error loading path";
+	}
+}
 
 $effect(() => {
-	console.log(myChar);
-	console.log(opponentChar);
-	console.log(selectedStage);
+	console.log("[$effect] Component mounted, calling loadMatchupPath");
+	loadMatchupPath();
+});
+
+$effect(() => {
+	// Debugging
+	// console.log(myChar);
+	// console.log(opponentChar);
+	// console.log(selectedStage);
 });
 
 async function openMatchupDataFolder() {
@@ -118,12 +146,11 @@ async function loadFile(): Promise<MatchupEntry | null> {
 }
 
 const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
-	"fileDone?": false,
 	attacker: "Fox",
-	defender: "Marth",
+	defender: "Falco",
 	stage: "YS",
 	moves: {
-		SampleValueUpSmash: 83,
+		Default_Value: 1,
 	},
 };
 
@@ -177,9 +204,30 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
         <option value="Pokémon Stadium">Pokemon Stadium</option>
       </select>
     </div>
-    <div class="text-sm text-[var(--color-muted)]">
-      File Path: {filePath}
-    </div>
+    <div class="text-sm text-[var(--color-muted)] space-y-1">
+      <div class="text-center">
+        <div class="flex items-center justify-center gap-1">
+          Matchup Data Folder: {matchupDataPath}
+          {#if matchupDataPath === "Folder not created yet" && fullMatchupPath}
+            <button
+              type="button"
+              onclick={function copyFolderPath() {
+				navigator.clipboard.writeText(`${fullMatchupPath}\\`)
+			}}
+              class="relative group inline-block text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+              title="Click to copy full path"
+            >
+              📋
+              <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-[var(--color-neutral-900)] text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                <div>Open your file explorer and create the folder "matchup_data" here:</div>
+                <div class="font-mono mt-1">{fullMatchupPath}</div>
+              </div>
+            </button>
+          {/if}
+        </div>
+		File Path of {myChar} vs {opponentChar}: {filePath}
+	  </div>
+	</div>
     <button
       class="bg-[var(--color-lab-button)] text-white font-semibold py-2 px-4 border border-[var(--color-lab-button-border)] rounded shadow"
       type="button"
@@ -188,9 +236,10 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
       Fetch Loadout File
     </button>
     <button
-      class="bg-[var(--color-lab-button)] text-white font-semibold py-2 px-4 border border-[var(--color-lab-button-border)] rounded shadow"
+      class="bg-[var(--color-lab-button)] text-white font-semibold py-2 px-4 border border-[var(--color-lab-button-border)] rounded shadow disabled:opacity-50 disabled:cursor-not-allowed"
       type="button"
       onclick={openMatchupDataFolder}
+      disabled={matchupDataPath === "Folder not created yet"}
     >
       Open Matchup Data Folder
     </button>
