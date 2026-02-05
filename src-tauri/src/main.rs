@@ -33,12 +33,6 @@ async fn main() {
 
     builder
         .setup(move |app| {
-            if aptabase_enabled {
-                let _ = app.track_event(
-                    "app_test",
-                    None,
-                );
-            }
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
@@ -62,7 +56,7 @@ async fn main() {
                         .unwrap_or(false);
 
                     if privacy_allowed {
-                        let _ = app_handle.track_event("app_exited", None);
+                        let _ = app_handle.track_event("app_exit", None);
                         app_handle.flush_events_blocking();
                     }
                 }

@@ -12,6 +12,7 @@
         saveSettings,
         settings,
     } from "$lib/state/settings.svelte";
+    import { trackIfAllowed } from "$lib/analytics";
 
     type Theme = "light" | "dark" | "ice" | "catppuccin";
     let theme = $state<Theme>("dark");
@@ -106,6 +107,7 @@
         // IIFE
         (async () => {
             await loadSettings();
+            await trackIfAllowed("app_start", settings.privacyLevel);
             iceUnlocked = settings.iceUnlocked ?? false;
             const savedTheme = settings.theme;
             if (

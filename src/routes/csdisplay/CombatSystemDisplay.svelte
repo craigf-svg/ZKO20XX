@@ -4,7 +4,7 @@ import { getContext, onMount } from "svelte";
 import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
 import { settings } from "$lib/state/settings.svelte";
 import type { MatchupEntry } from "../../../static/data/MatchupEntry";
-import { trackIfAllowed } from "./analyticsService";
+import { trackIfAllowed } from "$lib/analytics";
 import Bars from "./Bars.svelte";
 import DevTestSuite from "./DevTestSuite.svelte";
 import { extractOpponentPercent, initGameState } from "./gameHandlers";
@@ -75,8 +75,6 @@ const socket: Socket = io(
 
 async function onGameStart(gameSettings: TrimmedSettings) {
 	try {
-		await trackIfAllowed("game_start", settings.privacyLevel);
-
 		const newGameState = await initGameState(gameSettings, gameState.myConnectCode);
 		gameState = { ...gameState, ...newGameState };
 	} catch (err) {
