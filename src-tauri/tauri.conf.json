@@ -21,7 +21,7 @@
 			}
 		],
 		"security": {
-			"csp": null
+			"csp": "default-src 'self'; connect-src 'self' http://localhost:8090 ws://localhost:8090 https://raw.githubusercontent.com https://rsms.me; style-src 'self' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self';"
 		}
 	},
 	"bundle": {
