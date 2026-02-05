@@ -29,6 +29,9 @@ const { theme, cycleTheme, iceUnlocked = false } = $props<{
             >
         </li>
         <li>
+            <a href="/about" class="link">About</a>
+        </li>
+        <li>
             <a href="/lab" class="link">Lab</a>
         </li>
         <li>
