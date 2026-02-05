@@ -14,8 +14,20 @@ import dotenv from "dotenv";
 import { Server as SocketIOServer } from "socket.io";
 import Spinner from "./Spinner";
 
+const AUTH_TOKEN = process.env.SIDECAR_AUTH_TOKEN || "zko20xx-local-dev";
+
 const io = new SocketIOServer(8090, {
-	cors: { origin: "*" },
+	cors: { origin: ["http://localhost:5173", "tauri://localhost", "https://tauri.localhost"] },
+});
+
+io.use((socket, next) => {
+	const token = socket.handshake.auth?.token;
+	if (token === AUTH_TOKEN) {
+		next();
+	} else {
+		console.warn("Unauthorized socket connection attempt");
+		next(new Error("Unauthorized"));
+	}
 });
 
 console.log("WebSocket server running on http://localhost:8090");

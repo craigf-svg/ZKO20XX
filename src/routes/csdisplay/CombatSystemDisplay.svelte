@@ -70,6 +70,9 @@ const socket: Socket = io(
 	{
 		autoConnect: false,
 		transports: ["websocket"],
+		auth: {
+			token: "zko20xx-local-dev",
+		},
 	},
 );
 
