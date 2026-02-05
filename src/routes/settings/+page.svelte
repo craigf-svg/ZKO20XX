@@ -145,9 +145,9 @@
                         open={slippiHelpOpen}
                         onOpenChange={(e) => (slippiHelpOpen = e.open)}
                         positioning={{ placement: "right" }}
-                        contentBase="card bg-surface-800 p-4 space-y-2 max-w-[260px]"
+                        contentBase="card p-4 space-y-2 max-w-[260px] popover-bg"
                         arrow
-                        arrowBackground="bg-surface-800"
+                        arrowBackground=""
                     >
                         {#snippet trigger()}
                             <button
@@ -220,21 +220,25 @@
             </div>
 
             <div class="mb-7">
-                <Popover
-                    open={openState}
-                    onOpenChange={(e) => (openState = e.open)}
-                    positioning={{ placement: "right" }}
-                    triggerBase="btn preset-tonal"
-                    contentBase="card bg-surface-800 p-4 space-y-4 max-w-[320px]"
-                    arrow
-                    arrowBackground="bg-surface-800"
-                >
-                    {#snippet trigger()}
-                        <div class="inline-flex items-center row gap-2 mb-1">
-                            Anonymous Analytics
-                            <HelpCircle size={16} />
-                        </div>
-                    {/snippet}
+                <label class="label-with-help">
+                    <span>Anonymous Analytics</span>
+                    <Popover
+                        open={openState}
+                        onOpenChange={(e) => (openState = e.open)}
+                        positioning={{ placement: "right" }}
+                        contentBase="card p-4 space-y-4 max-w-[320px] popover-bg"
+                        arrow
+                        arrowBackground=""
+                    >
+                        {#snippet trigger()}
+                            <button
+                                type="button"
+                                class="help-trigger"
+                                aria-label="Analytics help"
+                            >
+                                <HelpCircle size={16} />
+                            </button>
+                        {/snippet}
                     {#snippet content()}
                         <header class="flex justify-between">
                             <p class="font-bold text-xl">Privacy</p>
@@ -249,8 +253,9 @@
                         </header>
                         <PrivacyArticle />
                     {/snippet}
-                </Popover>
-                <select bind:value={privacyLevel} class="select">
+                    </Popover>
+                </label>
+                <select bind:value={privacyLevel} class="select dropdown">
                     <option value="allowed">Allowed</option>
                     <option value="not_allowed">Not Allowed</option>
                 </select>
@@ -268,17 +273,15 @@
             </div>
         </form>
     </div>
-    <p class="version-info">
-        App version: {appVersion}
-    </p>
 </div>
+<p class="version-info">v{appVersion}</p>
 
 <style>
     .version-info {
-        position: absolute;
-        bottom: 5px;
-        right: 10px;
-        opacity: 50%;
+        text-align: center;
+        opacity: 0.5;
+        font-size: 0.85rem;
+        margin-top: 1rem;
     }
     .settings-container {
         padding: 2rem 1rem;
@@ -413,7 +416,7 @@
 
     .form-actions {
         display: flex;
-        justify-content: flex-end;
+        justify-content: center;
         gap: 1rem;
         margin-top: 2.5rem;
         padding-top: 1.5rem;
@@ -470,4 +473,16 @@
         }
     }
 
+    .popover-bg {
+        background-color: var(--color-bg-navbar);
+        border: 1px solid var(--color-border);
+    }
+
+    .dropdown {
+        border: 2px solid var(--color-border);
+        border-radius: 10px;
+        padding: 0.875rem 1rem;
+        background-color: var(--color-bg-navbar-hover);
+        color: var(--color-text-main);
+    }
 </style>
