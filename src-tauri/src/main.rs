@@ -3,8 +3,10 @@
 
 use tauri_plugin_aptabase::EventTracker;
 use tauri_plugin_store::StoreExt;
+mod commands;
 mod system_info;
 mod version;
+use commands::matchup::{list_matchups, load_matchup_file, save_matchup_file};
 use system_info::get_cpu_usage;
 
 #[tokio::main]
@@ -23,7 +25,12 @@ async fn main() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_cpu_usage]);
+        .invoke_handler(tauri::generate_handler![
+            get_cpu_usage,
+            save_matchup_file,
+            load_matchup_file,
+            list_matchups,
+        ]);
 
     if let Some(ref key) = aptabase_key {
         builder = builder.plugin(tauri_plugin_aptabase::Builder::new(key).build());

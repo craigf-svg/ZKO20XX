@@ -1,33 +1,26 @@
 import { loadMatchupData } from "$lib/matchupDataLoader";
-import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+import type { MatchupFile, StageEntry } from "../../../static/data/MatchupEntry";
 import type { PlayerWithShortName, TrimmedSettings } from "./types";
 
 /**
- * Converts stage initials to full stage name
- * @param initials - Stage initials (e.g., 'YS' for Yoshi's Story)
- * @returns Full stage name or 'Battlefield' if not found
+ * Maps display stage names to the snake_case stage IDs used in the new schema
  */
-function stageInitialsToName(initials: string): string {
-	const stageNames: { [key: string]: string } = {
-		DL: "Dream Land N64",
-		YS: "Yoshi's Story",
-		PS: "Pokémon Stadium",
-		FD: "Final Destination",
-		FoD: "Fountain of Dreams",
-		BF: "Battlefield",
-	};
-
-	return stageNames[initials] || "Battlefield";
-}
+const STAGE_DISPLAY_TO_ID: Record<string, string> = {
+	"Dream Land N64": "dream_land",
+	"Yoshi's Story": "yoshis_story",
+	"Pokémon Stadium": "pokemon_stadium",
+	"Final Destination": "final_destination",
+	"Fountain of Dreams": "fountain_of_dreams",
+	Battlefield: "battlefield",
+};
 
 /**
- * Checks if a matchup entry matches the current stage
- * @param matchupEntry - The matchup entry to check
- * @param stageName - The current stage name
- * @returns true if the entry matches the current stage
+ * Finds the stage entry matching the current display stage name
  */
-function isCurrentStage(matchupEntry: MatchupEntry, stageName: string): boolean {
-	return stageInitialsToName(matchupEntry.stage) === stageName;
+function findStageEntry(stages: StageEntry[], displayStageName: string): StageEntry | undefined {
+	const stageId = STAGE_DISPLAY_TO_ID[displayStageName];
+	if (!stageId) return undefined;
+	return stages.find((s) => s.stage === stageId);
 }
 
 /**
@@ -43,7 +36,8 @@ export async function initGameState(
 	myChar: string;
 	opponentChar: string;
 	opponentPlayerIdx: number;
-	matchupData: MatchupEntry | undefined;
+	matchupData: MatchupFile | undefined;
+	stageEntry: StageEntry | undefined;
 	displayStageName: string;
 	error?: string;
 }> {
@@ -62,6 +56,7 @@ export async function initGameState(
 			opponentChar: "",
 			opponentPlayerIdx: 1,
 			matchupData: undefined,
+			stageEntry: undefined,
 			displayStageName,
 			error: errorMsg,
 		};
@@ -75,6 +70,7 @@ export async function initGameState(
 			opponentChar: "",
 			opponentPlayerIdx: 1,
 			matchupData: undefined,
+			stageEntry: undefined,
 			displayStageName,
 			error: errorMsg,
 		};
@@ -85,15 +81,15 @@ export async function initGameState(
 	const myChar = players[myPlayerIdx]?.characterShortName.toLowerCase();
 	const opponentChar = players[opponentPlayerIdx]?.characterShortName.toLowerCase();
 
-	let matchupData: MatchupEntry | undefined;
+	let matchupData: MatchupFile | undefined;
+	let stageEntry: StageEntry | undefined;
 
 	// TODO: Make error message more specific on failing behavior in try
 	try {
 		const result = await loadMatchupData(myChar, opponentChar);
 		console.log("Loaded character matchup data:", result.data);
-		matchupData = result.data.find((entry: MatchupEntry) =>
-			isCurrentStage(entry, settings.stageName),
-		);
+		matchupData = result.data;
+		stageEntry = findStageEntry(result.data.stages, settings.stageName);
 	} catch {
 		const errorMsg = `Could not load matchup data for ${myChar} vs ${opponentChar}. Check connect code "${myConnectCode}" in settings.`;
 		return {
@@ -101,6 +97,7 @@ export async function initGameState(
 			opponentChar,
 			opponentPlayerIdx,
 			matchupData: undefined,
+			stageEntry: undefined,
 			displayStageName,
 			error: errorMsg,
 		};
@@ -111,6 +108,7 @@ export async function initGameState(
 		opponentChar,
 		opponentPlayerIdx,
 		matchupData,
+		stageEntry,
 		displayStageName,
 	};
 }

@@ -1,43 +1,23 @@
-export const getMoveIcon = (moveName: string): string => {
-	const name = moveName.toLowerCase();
+export const getMoveIcon = (moveId: string): string => {
 	if (
-		name.includes("uptilt") ||
-		name.includes("utilt") ||
-		name.includes("up") ||
-		name.includes("uair") ||
-		name.includes("usmash")
+		moveId.includes("up_tilt") ||
+		moveId.includes("up_smash") ||
+		moveId.includes("up_air") ||
+		moveId.includes("_ua")
 	) {
 		return "ArrowUp";
 	} else if (
-		name.includes("down") ||
-		name.includes("dair") ||
-		name.includes("dsmash") ||
-		name.includes("dtilt")
+		moveId.includes("down") ||
+		moveId.includes("d_air") ||
+		moveId.includes("d_smash") ||
+		moveId.includes("d_tilt")
 	) {
 		return "ArrowDown";
-	} else if (name.includes("back") || name.includes("bair")) {
+	} else if (moveId.includes("back") || moveId.includes("b_air")) {
 		return "Undo2";
 	}
 
 	return "ChevronRight";
-};
-
-export const getShortLabel = (moveName: string): string => {
-	const abbreviations: Record<string, string> = {
-		upsmash: "Up Smash",
-		uptilt: "Up-Tilt",
-		dtilt: "Down-Tilt",
-		shuair: "Short Hop Up air",
-		bair: "Back Air",
-	};
-	const lower = moveName.toLowerCase();
-	for (const [key, value] of Object.entries(abbreviations)) {
-		if (lower.includes(key)) {
-			return value;
-		}
-	}
-
-	return moveName;
 };
 
 export const getPriorityColor = (koPercent: number | number[], currentPercent: number): string => {

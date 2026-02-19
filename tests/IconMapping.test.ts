@@ -1,15 +1,12 @@
 import { expect, it } from "vitest";
-import { getMoveIcon, getPriorityColor, getShortLabel } from "../src/routes/csdisplay/iconMapping";
+import { getMoveIcon, getPriorityColor } from "../src/routes/csdisplay/iconMapping";
 
 it("covers IconMapping helpers", () => {
-	expect(getMoveIcon("upsmash")).toBe("ArrowUp");
-	expect(getMoveIcon("dtilt")).toBe("ArrowDown");
-	expect(getMoveIcon("bair")).toBe("Undo2");
+	expect(getMoveIcon("up_smash")).toBe("ArrowUp");
+	expect(getMoveIcon("strong_up_tilt")).toBe("ArrowUp");
+	expect(getMoveIcon("down_tilt")).toBe("ArrowDown");
+	expect(getMoveIcon("back_air")).toBe("Undo2");
 	expect(getMoveIcon("jab")).toBe("ChevronRight");
-
-	expect(getShortLabel("upsmash")).toBe("Up Smash");
-	expect(getShortLabel("bair")).toBe("Back Air");
-	expect(getShortLabel("kick")).toBe("kick");
 
 	expect(getPriorityColor(80, 70)).toBe("neutral");
 	expect(getPriorityColor(80, 90)).toBe("danger");

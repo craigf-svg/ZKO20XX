@@ -1,17 +1,18 @@
 <script lang="ts">
 import * as LucideIcons from "@lucide/svelte";
-import { getMoveIcon, getShortLabel } from "./iconMapping";
+import { getMoveIcon } from "./iconMapping";
 import type { MoveBar } from "./types";
 
-const { moveName, koPercent, width, highlight }: MoveBar = $props();
+const { moveId, label, shortLabel, koPercent, width, highlight }: MoveBar = $props();
 
 const formatRange = ([min, mid, max]: number[]) => `${min}-${mid}-${max}`;
 
 const displayPercent = $derived(Array.isArray(koPercent) ? formatRange(koPercent) : koPercent);
 
-const shortLabel = $derived(getShortLabel(moveName));
-const iconName = $derived(getMoveIcon(moveName));
-const Icon = $derived((LucideIcons as any)[iconName] || LucideIcons.ChevronRight);
+const displayLabel = $derived(shortLabel || label || moveId);
+const iconName = $derived(getMoveIcon(moveId));
+const iconLookup = LucideIcons as unknown as Record<string, typeof LucideIcons.ChevronRight>;
+const Icon = $derived(iconLookup[iconName] || LucideIcons.ChevronRight);
 </script>
 
 <div class="move-card priority-{highlight}" data-highlight={highlight}>
@@ -20,7 +21,7 @@ const Icon = $derived((LucideIcons as any)[iconName] || LucideIcons.ChevronRight
             <div class="move-icon">
                 <Icon size={20} strokeWidth={2.5} />
             </div>
-            <span class="move-name">{shortLabel}</span>
+            <span class="move-name">{displayLabel}</span>
         </div>
         <div class="ko-percent">
             <span class="percent-value">{displayPercent}</span>

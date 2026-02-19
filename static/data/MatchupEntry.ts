@@ -1,9 +1,16 @@
-export interface MatchupEntry {
-	"fileDone?"?: boolean;
-	attacker: string;
-	defender: string;
+export interface MoveCatalogEntry {
+	label: string;
+	shortLabel: string;
+}
+
+export interface StageEntry {
 	stage: string;
-	moves: {
-		[key: string]: number | number[];
-	};
+	moves: Record<string, number | number[]>;
+}
+
+export interface MatchupFile {
+	character: string;
+	opponent: string;
+	moveCatalog: Record<string, MoveCatalogEntry>;
+	stages: StageEntry[];
 }

@@ -1,110 +1,148 @@
-[
-	{
-		"attacker": "Fox",
-		"defender": "Puff",
-		"stage": "YS",
-		"moves": {
-			"fcUpSmash": 33,
-			"utUa0Sdi": 44,
-			"utUa1_5Sdi": 48,
-			"utUaTas": 58,
-			"upSmash": 58,
-			"ssSingleHitUa": 75,
-			"strongUpTilt": 88,
-			"weakUpTilt": 106,
-			"downTilt": 105,
-			"bAir": 110,
-			"nAir": 131
+{
+	"character": "fox",
+	"opponent": "puff",
+	"moveCatalog": {
+		"fc_up_smash": {
+			"label": "Full Charge Up Smash",
+			"shortLabel": "FCUSmash"
+		},
+		"ut_ua_0_sdi": {
+			"label": "Up Throw Up Air (No SDI)",
+			"shortLabel": "UTUA 0SDI"
+		},
+		"ut_ua_1_5_sdi": {
+			"label": "Up Throw Up Air (1.5 SDI)",
+			"shortLabel": "UTUA 1.5SDI"
+		},
+		"ut_ua_tas": {
+			"label": "Up Throw Up Air (TAS SDI)",
+			"shortLabel": "UTUA TAS"
+		},
+		"up_smash": {
+			"label": "Up Smash",
+			"shortLabel": "USmash"
+		},
+		"ss_single_hit_ua": {
+			"label": "Single-Hit Up Air",
+			"shortLabel": "SH UAir"
+		},
+		"strong_up_tilt": {
+			"label": "Strong Up Tilt",
+			"shortLabel": "sUTilt"
+		},
+		"weak_up_tilt": {
+			"label": "Weak Up Tilt",
+			"shortLabel": "wUTilt"
+		},
+		"down_tilt": {
+			"label": "Down Tilt",
+			"shortLabel": "DTilt"
+		},
+		"back_air": {
+			"label": "Back Air",
+			"shortLabel": "Bair"
+		},
+		"neutral_air": {
+			"label": "Neutral Air",
+			"shortLabel": "Nair"
 		}
 	},
-	{
-		"attacker": "Fox",
-		"defender": "Puff",
-		"stage": "PS",
-		"moves": {
-			"fcUpSmash": 36,
-			"utUa0Sdi": 47,
-			"utUa1_5Sdi": 51,
-			"utUaTas": 60,
-			"upSmash": 60,
-			"ssSingleHitUa": 78,
-			"strongUpTilt": 90,
-			"weakUpTilt": 109,
-			"downTilt": 109,
-			"bAir": 119,
-			"nAir": 142
+	"stages": [
+		{
+			"stage": "yoshis_story",
+			"moves": {
+				"fc_up_smash": 33,
+				"ut_ua_0_sdi": 44,
+				"ut_ua_1_5_sdi": 48,
+				"ut_ua_tas": 58,
+				"up_smash": 58,
+				"ss_single_hit_ua": 75,
+				"strong_up_tilt": 88,
+				"weak_up_tilt": 106,
+				"down_tilt": 105,
+				"back_air": 110,
+				"neutral_air": 131
+			}
+		},
+		{
+			"stage": "pokemon_stadium",
+			"moves": {
+				"fc_up_smash": 36,
+				"ut_ua_0_sdi": 47,
+				"ut_ua_1_5_sdi": 51,
+				"ut_ua_tas": 60,
+				"up_smash": 60,
+				"ss_single_hit_ua": 78,
+				"strong_up_tilt": 90,
+				"weak_up_tilt": 109,
+				"down_tilt": 109,
+				"back_air": 119,
+				"neutral_air": 142
+			}
+		},
+		{
+			"stage": "final_destination",
+			"moves": {
+				"fc_up_smash": 36,
+				"ut_ua_0_sdi": 50,
+				"ut_ua_1_5_sdi": 53,
+				"ut_ua_tas": 62,
+				"up_smash": 62,
+				"ss_single_hit_ua": 80,
+				"strong_up_tilt": 92,
+				"weak_up_tilt": 112,
+				"down_tilt": 113,
+				"back_air": 121,
+				"neutral_air": 145
+			}
+		},
+		{
+			"stage": "battlefield",
+			"moves": {
+				"ut_ua_0_sdi": 53,
+				"ut_ua_1_5_sdi": 56,
+				"ut_ua_tas": 65,
+				"up_smash": 64,
+				"fc_up_smash": 38,
+				"ss_single_hit_ua": 83,
+				"strong_up_tilt": 95,
+				"weak_up_tilt": 115,
+				"down_tilt": 116,
+				"back_air": 119,
+				"neutral_air": 142
+			}
+		},
+		{
+			"stage": "fountain_of_dreams",
+			"moves": {
+				"fc_up_smash": 38,
+				"ut_ua_0_sdi": 54,
+				"ut_ua_1_5_sdi": 57,
+				"ut_ua_tas": 66,
+				"up_smash": 65,
+				"ss_single_hit_ua": 83,
+				"strong_up_tilt": 96,
+				"weak_up_tilt": 116,
+				"down_tilt": 114,
+				"back_air": 119,
+				"neutral_air": 143
+			}
+		},
+		{
+			"stage": "dream_land",
+			"moves": {
+				"fc_up_smash": 45,
+				"ut_ua_0_sdi": 66,
+				"ut_ua_1_5_sdi": 69,
+				"ut_ua_tas": 77,
+				"up_smash": 74,
+				"ss_single_hit_ua": 95,
+				"strong_up_tilt": 107,
+				"weak_up_tilt": 129,
+				"down_tilt": 129,
+				"back_air": 132,
+				"neutral_air": 158
+			}
 		}
-	},
-	{
-		"attacker": "Fox",
-		"defender": "Puff",
-		"stage": "FD",
-		"moves": {
-			"fcUpSmash": 36,
-			"utUa0Sdi": 50,
-			"utUa1_5Sdi": 53,
-			"utUaTas": 62,
-			"upSmash": 62,
-			"ssSingleHitUa": 80,
-			"strongUpTilt": 92,
-			"weakUpTilt": 112,
-			"downTilt": 113,
-			"bAir": 121,
-			"nAir": 145
-		}
-	},
-	{
-		"attacker": "Fox",
-		"defender": "Puff",
-		"stage": "BF",
-		"moves": {
-			"utUa0Sdi": 53,
-			"utUa1_5Sdi": 56,
-			"utUaTas": 65,
-			"upSmash": 64,
-			"fcUpSmash": 38,
-			"ssSingleHitUa": 83,
-			"strongUpTilt": 95,
-			"weakUpTilt": 115,
-			"downTilt": 116,
-			"bAir": 119,
-			"nAir": 142
-		}
-	},
-	{
-		"attacker": "Fox",
-		"defender": "Puff",
-		"stage": "FoD",
-		"moves": {
-			"fcUpSmash": 38,
-			"utUa0Sdi": 54,
-			"utUa1_5Sdi": 57,
-			"utUaTas": 66,
-			"upSmash": 65,
-			"ssSingleHitUa": 83,
-			"strongUpTilt": 96,
-			"weakUpTilt": 116,
-			"downTilt": 114,
-			"bAir": 119,
-			"nAir": 143
-		}
-	},
-	{
-		"attacker": "Fox",
-		"defender": "Puff",
-		"stage": "DL",
-		"moves": {
-			"fcUpSmash": 45,
-			"utUa0Sdi": 66,
-			"utUa1_5Sdi": 69,
-			"utUaTas": 77,
-			"upSmash": 74,
-			"ssSingleHitUa": 95,
-			"strongUpTilt": 107,
-			"weakUpTilt": 129,
-			"downTilt": 129,
-			"bAir": 132,
-			"nAir": 158
-		}
-	}
-]
+	]
+}

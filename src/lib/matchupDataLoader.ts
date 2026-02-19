@@ -1,25 +1,23 @@
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { BaseDirectory, open, exists } from "@tauri-apps/plugin-fs";
-import type { MatchupEntry } from "../../static/data/MatchupEntry";
+import type { MatchupFile } from "../../static/data/MatchupEntry";
 
 export type MatchupDataSource = "user" | "bundled";
 
 export interface MatchupDataResult {
-	data: MatchupEntry[];
+	data: MatchupFile;
 	source: MatchupDataSource;
 }
 
-function validateMatchupData(data: unknown): data is MatchupEntry[] {
-	if (!Array.isArray(data)) return false;
-	return data.every(
-		(entry) =>
-			entry &&
-			typeof entry === "object" &&
-			typeof entry.stage === "string" &&
-			typeof entry.attacker === "string" &&
-			typeof entry.defender === "string" &&
-			typeof entry.moves === "object" &&
-			entry.moves !== null,
+function validateMatchupData(data: unknown): data is MatchupFile {
+	if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+	const obj = data as Record<string, unknown>;
+	return (
+		typeof obj.character === "string" &&
+		typeof obj.opponent === "string" &&
+		typeof obj.moveCatalog === "object" &&
+		obj.moveCatalog !== null &&
+		Array.isArray(obj.stages)
 	);
 }
 
@@ -40,7 +38,7 @@ async function getMatchupDataDir(): Promise<string> {
  *
  * @param myChar - Character name (e.g., "fox")
  * @param opponentChar - Opponent character name (e.g., "falco")
- * @returns Array of matchup entries for all stages
+ * @returns MatchupFile containing all stages and move catalog
  */
 export async function loadMatchupData(
 	myChar: string,

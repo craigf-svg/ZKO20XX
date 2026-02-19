@@ -1,7 +1,9 @@
-import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+import type { MatchupFile, StageEntry } from "../../../static/data/MatchupEntry";
 
 export interface MoveBar {
-	moveName: string;
+	moveId: string;
+	label: string;
+	shortLabel: string;
 	koPercent: number | number[];
 	width: string;
 	highlight: "none" | "dim" | "full";
@@ -22,7 +24,8 @@ export interface PlayerStats {
 }
 
 export interface CombatSystemGameState {
-	matchupData: MatchupEntry | undefined;
+	matchupData: MatchupFile | undefined;
+	stageEntry: StageEntry | undefined;
 	currentPercent: number | undefined;
 	displayStageName: string | undefined;
 	myChar: string;

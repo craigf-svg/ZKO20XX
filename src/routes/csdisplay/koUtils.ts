@@ -1,33 +1,25 @@
-import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+import type { MatchupFile, StageEntry } from "../../../static/data/MatchupEntry";
 
 /**
  * Sample dynamic data for testing
  */
-export const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
-	"fileDone?": false,
-	attacker: "Fox",
-	defender: "Default Data",
-	stage: "YS",
-	moves: {
-		default_data: 1,
-		// upSmash: [73, 74, 83], // { in: 81, neutral: 82, out: 91 },
-		// stronguptilt: 100,
-		// shuair: 103,
-		// downtilt: 133,
-		// bAir: [101, 122, 122],
-		// Test Data
-		// fakeMove1: 100,
-		// fakeMove2: 110,
-		// fakeMove3: 120,
-		// fakeMove4: 130,
-		// fakeMove5: 140,
-		// fakeMove6: 150,
-		// fakeMove7: 160,
-		// fakeMove8: 170,
-		// fakeMove9: 180,
-		// fakeMove10: 190,
+export const SAMPLE_MATCHUP_DATA: MatchupFile = {
+	character: "fox",
+	opponent: "default_data",
+	moveCatalog: {
+		default_data: { label: "Default Data", shortLabel: "Default" },
 	},
+	stages: [
+		{
+			stage: "yoshis_story",
+			moves: {
+				default_data: 1,
+			},
+		},
+	],
 };
+
+export const SAMPLE_STAGE_ENTRY: StageEntry = SAMPLE_MATCHUP_DATA.stages[0];
 
 /**
  * Determines if the current percent is high enough to highlight a KO move

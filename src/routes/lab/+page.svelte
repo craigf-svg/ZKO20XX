@@ -6,7 +6,7 @@ import { getMatchupDataPath, isTauri, loadMatchupData, type MatchupDataSource } 
 import { calculateProgress, koPercentReached } from "../csdisplay/koUtils";
 import Bars from "../csdisplay/Bars.svelte";
 import type { MoveBar } from "../csdisplay/types";
-import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+import type { MatchupFile, StageEntry, MoveCatalogEntry } from "../../../static/data/MatchupEntry";
 
 const toaster = createToaster({ placement: "bottom-start" });
 
@@ -45,30 +45,21 @@ const CHARACTER_SHORT_NAMES: string[] = [
 ];
 const STAGE_NOT_FOUND_ERROR = "STAGE_NOT_FOUND";
 
-function stageInitialsToName(initials: string): string {
-	const stageNames: { [key: string]: string } = {
-		DL: "Dream Land N64",
-		YS: "Yoshi's Story",
-		PS: "Pokémon Stadium",
-		FD: "Final Destination",
-		FoD: "Fountain of Dreams",
-		BF: "Battlefield",
-	};
-
-	return stageNames[initials] || "Battlefield";
-}
-
-// Review logic
-function isCurrentStage(matchupEntry: MatchupEntry) {
-	const fullStageName = stageInitialsToName(matchupEntry.stage);
-	return fullStageName === selectedStage;
-}
+const STAGE_DISPLAY_TO_ID: Record<string, string> = {
+	"Dream Land N64": "dream_land",
+	"Yoshi's Story": "yoshis_story",
+	"Pokémon Stadium": "pokemon_stadium",
+	"Final Destination": "final_destination",
+	"Fountain of Dreams": "fountain_of_dreams",
+	"Battlefield": "battlefield",
+};
 
 let myChar = $state("fox"),
 	opponentChar = $state("falco"),
 	selectedStage = $state("Yoshi's Story");
 
-let matchupData: MatchupEntry | undefined = $state();
+let matchupFile: MatchupFile | undefined = $state();
+let stageEntry: StageEntry | undefined = $state();
 let dataSource: MatchupDataSource | undefined = $state();
 const currentPercent = $state(0);
 const filePath = $derived(`/matchup_data/${myChar}/vs_${opponentChar}.json`);
@@ -120,18 +111,20 @@ async function openMatchupDataFolder() {
 	}
 }
 
-async function loadFile(): Promise<MatchupEntry | null> {
+async function loadFile(): Promise<StageEntry | null> {
 	console.info("[loadFile] matchup:", myChar, "vs", opponentChar, "on", selectedStage);
 	try {
 		const result = await loadMatchupData(myChar, opponentChar);
-		console.info("[loadFile] Loaded matchup entries:", result.data);
-		const currentStageData = result.data.find(isCurrentStage);
+		console.info("[loadFile] Loaded matchup file:", result.data);
+		const stageId = STAGE_DISPLAY_TO_ID[selectedStage];
+		const currentStageData = result.data.stages.find((s) => s.stage === stageId);
 		console.info("currentStageData", currentStageData);
 		if (!currentStageData) {
 			throw new Error(STAGE_NOT_FOUND_ERROR);
 		}
 		toaster.success({ title: "Success!" });
-		matchupData = currentStageData;
+		matchupFile = result.data;
+		stageEntry = currentStageData;
 		dataSource = result.source;
 		return currentStageData;
 	} catch (error) {
@@ -145,26 +138,34 @@ async function loadFile(): Promise<MatchupEntry | null> {
 	}
 }
 
-const SAMPLE_DYNAMIC_DATA: MatchupEntry = {
-	attacker: "Fox",
-	defender: "Falco",
-	stage: "YS",
-	moves: {
-		Default_Value: 1,
-	},
+const SAMPLE_MOVES: Record<string, number | number[]> = {
+	default_value: 1,
+};
+
+const SAMPLE_CATALOG: Record<string, MoveCatalogEntry> = {
+	default_value: { label: "Default Value", shortLabel: "Default" },
 };
 
 const movesSource = $derived.by(function determineSource() {
-	return matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
+	return stageEntry?.moves ?? SAMPLE_MOVES;
+});
+
+const moveCatalog = $derived.by(function determineCatalog() {
+	return matchupFile?.moveCatalog ?? SAMPLE_CATALOG;
 });
 
 const dynamicBars: MoveBar[] = $derived.by(() => {
-	const allBars = Object.entries(movesSource).map(([moveName, koPercent]) => ({
-		moveName,
-		koPercent,
-		width: calculateProgress(currentPercent || 0, koPercent),
-		highlight: koPercentReached(currentPercent || 0, koPercent),
-	}));
+	const allBars = Object.entries(movesSource).map(([moveId, koPercent]) => {
+		const catalogEntry = moveCatalog[moveId];
+		return {
+			moveId,
+			label: catalogEntry?.label ?? moveId,
+			shortLabel: catalogEntry?.shortLabel ?? moveId,
+			koPercent,
+			width: calculateProgress(currentPercent || 0, koPercent),
+			highlight: koPercentReached(currentPercent || 0, koPercent),
+		};
+	});
 	return allBars;
 });
 </script>

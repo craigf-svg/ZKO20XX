@@ -3,12 +3,12 @@ import { io, type Socket } from "socket.io-client";
 import { getContext, onMount } from "svelte";
 import { SIDECAR_KEY, type SidecarContext } from "$lib/sidecar-context";
 import { settings } from "$lib/state/settings.svelte";
-import type { MatchupEntry } from "../../../static/data/MatchupEntry";
+import type { MatchupFile, StageEntry } from "../../../static/data/MatchupEntry";
 import { trackIfAllowed } from "$lib/analytics";
 import Bars from "./Bars.svelte";
 import DevTestSuite from "./DevTestSuite.svelte";
 import { extractOpponentPercent, initGameState } from "./gameHandlers";
-import { calculateProgress, koPercentReached, SAMPLE_DYNAMIC_DATA } from "./koUtils";
+import { calculateProgress, koPercentReached, SAMPLE_MATCHUP_DATA, SAMPLE_STAGE_ENTRY } from "./koUtils";
 import Status from "./Status.svelte";
 import type { MoveBar, TrimmedSettings } from "./types";
 
@@ -18,7 +18,8 @@ interface PlayerStats {
 }
 
 interface GameState {
-	matchupData: MatchupEntry | undefined;
+	matchupData: MatchupFile | undefined;
+	stageEntry: StageEntry | undefined;
 	currentPercent: number | undefined;
 	displayStageName: string | undefined;
 	myChar: string;
@@ -30,6 +31,7 @@ interface GameState {
 
 let gameState: GameState = $state({
 	matchupData: undefined,
+	stageEntry: undefined,
 	currentPercent: undefined,
 	displayStageName: undefined,
 	myChar: "",
@@ -48,7 +50,8 @@ $effect(function applyScreenshotState() {
 			myChar: "fox",
 			opponentChar: "marth",
 			displayStageName: "Yoshi's Story",
-			matchupData: SAMPLE_DYNAMIC_DATA,
+			matchupData: SAMPLE_MATCHUP_DATA,
+			stageEntry: SAMPLE_STAGE_ENTRY,
 			currentPercent: 121,
 		};
 		currentPercent = 121;
@@ -95,6 +98,7 @@ function onGameEnd() {
 	gameState = {
 		...gameState,
 		// matchupData: undefined,
+		// stageEntry: undefined,
 		// currentPercent: undefined,
 		// displayStageName: undefined,
 	};
@@ -120,16 +124,23 @@ onMount(() => {
 });
 
 const movesSource = $derived.by(function determineSource() {
-	return gameState.matchupData?.moves ?? SAMPLE_DYNAMIC_DATA.moves;
+	return gameState.stageEntry?.moves ?? SAMPLE_STAGE_ENTRY.moves;
+});
+
+const moveCatalog = $derived.by(function determineCatalog() {
+	return gameState.matchupData?.moveCatalog ?? SAMPLE_MATCHUP_DATA.moveCatalog;
 });
 
 let currentPercent: number | undefined = $state(undefined);
 let limit: number = $state(0);
 
 const dynamicBars: MoveBar[] = $derived.by(() => {
-	const allBars = Object.entries(movesSource).map(function prepareBarData([moveName, koPercent]) {
+	const allBars = Object.entries(movesSource).map(function prepareBarData([moveId, koPercent]) {
+		const catalogEntry = moveCatalog[moveId];
 		return {
-			moveName,
+			moveId,
+			label: catalogEntry?.label ?? moveId,
+			shortLabel: catalogEntry?.shortLabel ?? moveId,
 			koPercent,
 			width: calculateProgress(currentPercent || 0, koPercent),
 			highlight: koPercentReached(currentPercent || 0, koPercent),
