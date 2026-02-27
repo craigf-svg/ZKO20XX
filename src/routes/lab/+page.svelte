@@ -67,35 +67,19 @@ let matchupDataPath = $state<string | null>(null);
 let fullMatchupPath = $state<string>("");
 
 async function loadMatchupPath() {
-	console.log("[loadMatchupPath] Starting to load matchup data path...");
 	try {
-		const path = await getMatchupDataPath();
-		console.log("[loadMatchupPath] Got path:", path);
-		matchupDataPath = path || "Folder not created yet";
-
-		// Get the full path for display
+		matchupDataPath = (await getMatchupDataPath()) || "Folder not created yet";
 		if (isTauri()) {
 			const { appDataDir } = await import("@tauri-apps/api/path");
-			const path = await appDataDir();
-			fullMatchupPath = path;
-			console.log("[loadMatchupPath] Full app data path:", path);
+			fullMatchupPath = await appDataDir();
 		}
-	} catch (error) {
-		console.error("[loadMatchupPath] Error:", error);
+	} catch {
 		matchupDataPath = "Error loading path";
 	}
 }
 
 $effect(() => {
-	console.log("[$effect] Component mounted, calling loadMatchupPath");
 	loadMatchupPath();
-});
-
-$effect(() => {
-	// Debugging
-	// console.log(myChar);
-	// console.log(opponentChar);
-	// console.log(selectedStage);
 });
 
 async function openMatchupDataFolder() {
@@ -112,30 +96,28 @@ async function openMatchupDataFolder() {
 }
 
 async function loadFile(): Promise<StageEntry | null> {
-	console.info("[loadFile] matchup:", myChar, "vs", opponentChar, "on", selectedStage);
 	try {
 		const result = await loadMatchupData(myChar, opponentChar);
-		console.info("[loadFile] Loaded matchup file:", result.data);
 		const stageId = STAGE_DISPLAY_TO_ID[selectedStage];
 		const currentStageData = result.data.stages.find((s) => s.stage === stageId);
-		console.info("currentStageData", currentStageData);
-		if (!currentStageData) {
-			throw new Error(STAGE_NOT_FOUND_ERROR);
-		}
-		toaster.success({ title: "Success!" });
+		if (!currentStageData) throw new Error(STAGE_NOT_FOUND_ERROR);
+		toaster.success({ title: "Loaded!" });
 		matchupFile = result.data;
 		stageEntry = currentStageData;
 		dataSource = result.source;
 		return currentStageData;
 	} catch (error) {
-		console.error("[loadFile] Error:", getErrorMessage(error));
-		let message: string = `Could not load matchup data for ${myChar} vs ${opponentChar}.`;
-		if (getErrorMessage(error) === STAGE_NOT_FOUND_ERROR) {
-			message = `Could not find ${selectedStage} stage in the matchup data.`;
-		}
+		const isStageError = getErrorMessage(error) === STAGE_NOT_FOUND_ERROR;
+		const message = isStageError
+			? `Could not find ${selectedStage} in the matchup data.`
+			: `Could not load matchup data for ${myChar} vs ${opponentChar}.`;
 		toaster.error({ title: message, closable: false, duration: 1200 });
 		return null;
 	}
+}
+
+function copyFolderPath() {
+	navigator.clipboard.writeText(`${fullMatchupPath}\\`);
 }
 
 const SAMPLE_MOVES: Record<string, number | number[]> = {
@@ -170,90 +152,171 @@ const dynamicBars: MoveBar[] = $derived.by(() => {
 });
 </script>
 
-<Toaster {toaster}></Toaster>
-<div class="space-y-4">
-  <div class="text-3xl font-bold">The Lab</div>
-  <div class="font-italicized">Test your setup here beforehand.</div>
-  <form class="mx-auto w-full max-w-2xl space-y-4">
-    <div class="flex items-center justify-center gap-3 flex-wrap">
-      <select
-        id="myChar"
-        bind:value={myChar}
-        class="select p-2 border rounded"
-      >
-        {#each CHARACTER_SHORT_NAMES as short_name}
-          <option value={short_name}>{short_name}</option>
-        {/each}
-      </select>
-      <span>vs</span>
-      <select
-        id="opponentChar"
-        bind:value={opponentChar}
-        class="select p-2 border rounded"
-      >
-        {#each CHARACTER_SHORT_NAMES as short_name}
-          <option value={short_name}>{short_name}</option>
-        {/each}
-      </select>
-      <span>on</span>
-      <select bind:value={selectedStage} class="select p-2 border rounded">
-        <option value="Yoshi's Story">Yoshi's Story</option>
-        <option value="Fountain of Dreams">Fountain of Dreams</option>
-        <option value="Dream Land N64">Dreamland</option>
-        <option value="Final Destination">Final Destination</option>
-        <option value="Battlefield">Battlefield</option>
-        <option value="Pokémon Stadium">Pokemon Stadium</option>
-      </select>
-    </div>
-    <div class="text-sm text-[var(--color-muted)] space-y-1">
-      <div class="text-center">
-        <div class="flex items-center justify-center gap-1">
-          Matchup Data Folder: {matchupDataPath}
-          {#if matchupDataPath === "Folder not created yet" && fullMatchupPath}
-            <button
-              type="button"
-              onclick={function copyFolderPath() {
-				navigator.clipboard.writeText(`${fullMatchupPath}\\`)
-			}}
-              class="relative group inline-block text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
-              title="Click to copy full path"
-            >
-              📋
-              <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-[var(--color-neutral-900)] text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-                <div>Open your file explorer and create the folder "matchup_data" here:</div>
-                <div class="font-mono mt-1">{fullMatchupPath}</div>
-              </div>
-            </button>
-          {/if}
-        </div>
-		File Path of {myChar} vs {opponentChar}: {filePath}
-	  </div>
+<Toaster {toaster} />
+
+<div class="lab-page">
+	<h1 class="text-3xl font-bold mb-1">The Lab</h1>
+	<p class="text-[var(--color-muted)] mb-4">Test your setup here beforehand.</p>
+
+	<div class="selector-bar">
+		<select bind:value={myChar} class="select">
+			{#each CHARACTER_SHORT_NAMES as name (name)}
+				<option value={name}>{name}</option>
+			{/each}
+		</select>
+		<span class="text-[var(--color-muted)]">vs</span>
+		<select bind:value={opponentChar} class="select">
+			{#each CHARACTER_SHORT_NAMES as name (name)}
+				<option value={name}>{name}</option>
+			{/each}
+		</select>
+		<span class="text-[var(--color-muted)]">on</span>
+		<select bind:value={selectedStage} class="select">
+			<option value="Yoshi's Story">Yoshi's Story</option>
+			<option value="Fountain of Dreams">Fountain of Dreams</option>
+			<option value="Dream Land N64">Dream Land</option>
+			<option value="Final Destination">Final Destination</option>
+			<option value="Battlefield">Battlefield</option>
+			<option value="Pokémon Stadium">Pokémon Stadium</option>
+		</select>
+		<button class="btn btn-primary" type="button" onclick={loadFile}>
+			Fetch Loadout
+		</button>
+		<button
+			class="btn"
+			type="button"
+			onclick={openMatchupDataFolder}
+			disabled={matchupDataPath === "Folder not created yet"}
+		>
+			Open Data Folder
+		</button>
 	</div>
-    <button
-      class="bg-[var(--color-lab-button)] text-white font-semibold py-2 px-4 border border-[var(--color-lab-button-border)] rounded shadow"
-      type="button"
-      onclick={loadFile}
-    >
-      Fetch Loadout File
-    </button>
-    <button
-      class="bg-[var(--color-lab-button)] text-white font-semibold py-2 px-4 border border-[var(--color-lab-button-border)] rounded shadow disabled:opacity-50 disabled:cursor-not-allowed"
-      type="button"
-      onclick={openMatchupDataFolder}
-      disabled={matchupDataPath === "Folder not created yet"}
-    >
-      Open Matchup Data Folder
-    </button>
-    {#if dataSource}
-      <div class="text-sm text-[var(--color-muted)]">
-        {dataSource === 'user' ? '✓ Using your custom data' : 'Using default bundled data'}
-      </div>
-    {/if}
-    <div>
-      <Bars {dynamicBars} />
-    </div>
-  </form>
+
+	<div class="path-info">
+		<span>Matchup folder: {matchupDataPath}</span>
+		{#if matchupDataPath === "Folder not created yet" && fullMatchupPath}
+			<button class="copy-btn" type="button" onclick={copyFolderPath} title="Copy path to clipboard">
+				📋
+				<span class="copy-tooltip">
+					Create folder "matchup_data" at:<br />
+					<code>{fullMatchupPath}</code>
+				</span>
+			</button>
+		{/if}
+		<span class="text-[var(--color-muted)]">·</span>
+		<span>File: {filePath}</span>
+	</div>
+
+	{#if dataSource}
+		<div class="source-badge">
+			{dataSource === 'user' ? '✓ Using your custom data' : 'Using default bundled data'}
+		</div>
+	{/if}
+
+	<div class="mt-4">
+		<Bars {dynamicBars} />
+	</div>
 </div>
 
 <style>
+	.lab-page {
+		text-align: left;
+		padding: 1.5rem;
+		max-width: 72rem;
+		margin: 0 auto;
+	}
+
+	.selector-bar {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+		margin-bottom: 0.75rem;
+	}
+
+	.select {
+		background: var(--color-bg-navbar);
+		color: var(--color-text-main);
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		padding: 0.4rem 0.6rem;
+	}
+
+	.btn {
+		padding: 0.4rem 1rem;
+		border-radius: 4px;
+		font-weight: 600;
+		cursor: pointer;
+		border: 1px solid var(--color-border);
+		color: var(--color-text-main);
+		background: var(--color-bg-navbar);
+		transition: background 0.15s;
+	}
+
+	.btn:hover:not(:disabled) {
+		background: var(--color-bg-navbar-hover);
+	}
+
+	.btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.btn-primary {
+		background: var(--color-orange-main);
+		color: white;
+		border-color: var(--color-orange-main);
+	}
+
+	.btn-primary:hover:not(:disabled) {
+		opacity: 0.9;
+		background: var(--color-orange-main);
+	}
+
+	.path-info {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.8rem;
+		color: var(--color-muted);
+		margin-bottom: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.copy-btn {
+		position: relative;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0;
+		line-height: 1;
+	}
+
+	.copy-btn:hover .copy-tooltip {
+		opacity: 1;
+	}
+
+	.copy-tooltip {
+		position: absolute;
+		bottom: calc(100% + 6px);
+		left: 50%;
+		transform: translateX(-50%);
+		background: var(--color-bg-navbar);
+		border: 1px solid var(--color-border);
+		border-radius: 6px;
+		padding: 0.5rem 0.75rem;
+		white-space: nowrap;
+		font-size: 0.8rem;
+		color: var(--color-text-main);
+		opacity: 0;
+		transition: opacity 0.15s;
+		pointer-events: none;
+		z-index: 20;
+	}
+
+	.source-badge {
+		font-size: 0.85rem;
+		color: var(--color-muted);
+		margin-bottom: 0.5rem;
+	}
 </style>
