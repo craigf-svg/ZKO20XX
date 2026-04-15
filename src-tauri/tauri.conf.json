@@ -1,7 +1,7 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
 	"productName": "ZKO_20XX",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"identifier": "ZKO20XX",
 	"build": {
 		"frontendDist": "../build",
